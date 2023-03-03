@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.provider;
+package io.github.mortuusars.wares.data.generation.provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.provider;
+package io.github.mortuusars.wares.data.generation.provider;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;

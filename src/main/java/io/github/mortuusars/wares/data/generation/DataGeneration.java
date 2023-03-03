@@ -1,7 +1,6 @@
-package io.github.mortuusars.wares.data;
+package io.github.mortuusars.wares.data.generation;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.provider.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

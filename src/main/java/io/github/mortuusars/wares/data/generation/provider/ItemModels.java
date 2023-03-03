@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.provider;
+package io.github.mortuusars.wares.data.generation.provider;
 
 
 import io.github.mortuusars.wares.Wares;
