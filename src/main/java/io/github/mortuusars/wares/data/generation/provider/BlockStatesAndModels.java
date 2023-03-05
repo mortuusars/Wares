@@ -13,5 +13,6 @@ public class BlockStatesAndModels extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        simpleBlock(Wares.Blocks.DELIVERY_TABLE.get());
     }
 }

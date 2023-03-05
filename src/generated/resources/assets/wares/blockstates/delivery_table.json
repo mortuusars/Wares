@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "wares:block/delivery_table"
+    }
+  }
+}
