@@ -6,10 +6,13 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.data.bill.Bill;
 import io.github.mortuusars.wares.item.BillItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -63,10 +66,17 @@ public class Wares
         ItemStack billStack = new ItemStack(Items.BILL.get());
 
         Bill bill = new Bill(
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                List.of(new ItemStack(net.minecraft.world.item.Items.STONE, 4)), List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), -1, -1, -1);
+                Optional.of(new TextComponent("example").withStyle(ChatFormatting.GOLD)
+                        .append(new TextComponent("asd"))), Optional.empty(), Optional.empty(), Optional.empty(),
+                List.of(new ItemStack(net.minecraft.world.item.Items.STONE, 2)),
+                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), 50, 10, 10,
+                20, player.level.getGameTime() + 3000);
 
         try {
+
+            MutableComponent asd = new TextComponent("asd").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+            String s1 = Component.Serializer.toJson(asd);
+
             Tag tag = Bill.CODEC.encodeStart(NbtOps.INSTANCE, bill).getOrThrow(false, s -> {});
             CompoundTag compoundTag = new CompoundTag();
             compoundTag.put("Bill", tag);

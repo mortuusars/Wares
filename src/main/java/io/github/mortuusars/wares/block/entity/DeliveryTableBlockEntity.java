@@ -11,7 +11,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -89,11 +92,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return;
 
         Bill bill = deliveryTableEntity.getBill();
-        if (bill == Bill.EMPTY) // TODO: validate
-            return;
 
+        // TODO: validate
         // TODO: update on inventory changed
-        if (!deliveryTableEntity.hasRequestedItems() || !deliveryTableEntity.hasSpaceInOutputSlotsFor(deliveryTableEntity.getBill().paymentItems())) {
+        if (bill == Bill.EMPTY || !deliveryTableEntity.canDeliver()) {
             deliveryTableEntity.resetProgress();
             return;
         }
@@ -121,17 +123,40 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public int getBatchSize() {
-        return 4;
+        return 1;
     }
 
     private boolean tryDeliverBatch() {
-        if (hasRequestedItems() && hasSpaceInOutputSlotsFor(getBill().paymentItems())) {
-            consumeFromInputSlots(getBill().requestedItems());
-            insertCopiesToOutputSlots(getBill().paymentItems());
-            return true;
+        if (!canDeliver())
+            return false;
+
+        consumeFromInputSlots(getBill().getRequestedItems());
+        insertCopiesToOutputSlots(getBill().getPaymentItems());
+
+        int quantity = getBill().getQuantity();
+        if (quantity > 0) {
+            getBill().setQuantity(--quantity);
+
+            if (quantity <= 0)
+                onBillCompleted();
+
+            updateBillItemStack();
         }
 
-        return false;
+        return true;
+    }
+
+    private void onBillCompleted() {
+        int experience = getBill().getExperience();
+        if (experience > 0 && level instanceof ServerLevel serverLevel)
+            ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()), experience);
+    }
+
+    private boolean canDeliver() {
+        return !getBill().isExpired(level.getGameTime())
+                && (getBill().getQuantity() > 0 || getBill().getOrderedQuantity() == -1)
+                && hasRequestedItems()
+                && hasSpaceForPayment();
     }
 
     private void consumeFromInputSlots(List<ItemStack> requestedItems) {
@@ -162,7 +187,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     private boolean hasRequestedItems() {
-        List<ItemStack> requestedItems = bill.requestedItems();
+        List<ItemStack> requestedItems = bill.getRequestedItems();
 
         List<ItemStack> inputStacks = new ArrayList<>();
         for (int slotIndex : INPUT_SLOTS) {
@@ -191,8 +216,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
-    private boolean hasSpaceInOutputSlotsFor(List<ItemStack> stacks) {
-        for (ItemStack stack : stacks) {
+    private boolean hasSpaceForPayment() {
+        for (ItemStack stack : getBill().getPaymentItems()) {
             for (int slotIndex : OUTPUT_SLOTS) {
                 stack = inventory.insertItem(slotIndex, stack, true);
                 if (stack.isEmpty())
@@ -210,9 +235,14 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return bill;
     }
 
-    public void updateBill() {
+    public void refreshBill() {
         bill = Bill.fromItemStack(getItem(BILL_SLOT)).orElse(Bill.EMPTY);
         resetProgress();
+    }
+
+    public void updateBillItemStack() {
+        getBill().toItemStack(inventory.getStackInSlot(BILL_SLOT));
+        setChanged();
     }
 
 
@@ -223,7 +253,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             @Override
             protected void onContentsChanged(int slot) {
                 if (slot == BILL_SLOT)
-                    updateBill();
+                    refreshBill();
                 setChanged();
             }
         };
@@ -342,14 +372,16 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         this.inventory.deserializeNBT(tag.getCompound("Inventory"));
+        this.progress = tag.getInt("DeliveryTime");
 
-        updateBill();
+        refreshBill();
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put("Inventory", this.inventory.serializeNBT());
+        tag.putInt("DeliveryTime", progress);
     }
 
 
