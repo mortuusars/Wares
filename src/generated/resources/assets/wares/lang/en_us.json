@@ -1,0 +1,7 @@
+{
+  "wares.gui.tooltip.days": "%sd",
+  "wares.gui.tooltip.expired": "Expired",
+  "wares.gui.tooltip.expires_in": "Expires in ",
+  "wares.gui.tooltip.hours": "%sh",
+  "wares.gui.tooltip.minutes": "%sm"
+}

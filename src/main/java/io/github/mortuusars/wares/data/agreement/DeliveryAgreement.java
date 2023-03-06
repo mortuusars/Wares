@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.bill;
+package io.github.mortuusars.wares.data.agreement;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
@@ -19,26 +19,26 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class Bill {
-    public static final Codec<Bill> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ComponentCodec.CODEC.optionalFieldOf("buyerName").forGetter(Bill::getBuyerName),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress").forGetter(Bill::getBuyerAddress),
-                    ComponentCodec.CODEC.optionalFieldOf("title").forGetter(Bill::getTitle),
-                    ComponentCodec.CODEC.optionalFieldOf("message").forGetter(Bill::getMessage),
-                    Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(Bill::getRequestedItems),
-                    Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(Bill::getPaymentItems),
-                    Codec.INT.optionalFieldOf("orderedQuantity", -1).forGetter(Bill::getOrderedQuantity),
-                    Codec.INT.optionalFieldOf("quantity", -1).forGetter(Bill::getQuantity),
-                    Codec.INT.optionalFieldOf("experience", -1).forGetter(Bill::getExperience),
-                    Codec.INT.optionalFieldOf("deliveryTime", -1).forGetter(Bill::getDeliveryDuration),
-                    Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(Bill::getExpireTime))
-            .apply(instance, Bill::new));
+public final class DeliveryAgreement {
+    public static final Codec<DeliveryAgreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                    ComponentCodec.CODEC.optionalFieldOf("buyerName").forGetter(DeliveryAgreement::getBuyerName),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress").forGetter(DeliveryAgreement::getBuyerAddress),
+                    ComponentCodec.CODEC.optionalFieldOf("title").forGetter(DeliveryAgreement::getTitle),
+                    ComponentCodec.CODEC.optionalFieldOf("message").forGetter(DeliveryAgreement::getMessage),
+                    Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(DeliveryAgreement::getRequestedItems),
+                    Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(DeliveryAgreement::getPaymentItems),
+                    Codec.INT.optionalFieldOf("ordered", -1).forGetter(DeliveryAgreement::getOrdered),
+                    Codec.INT.optionalFieldOf("remaining", -1).forGetter(DeliveryAgreement::getRemaining),
+                    Codec.INT.optionalFieldOf("experience", -1).forGetter(DeliveryAgreement::getExperience),
+                    Codec.INT.optionalFieldOf("deliveryTime", -1).forGetter(DeliveryAgreement::getDeliveryTimeOrDefault),
+                    Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(DeliveryAgreement::getExpireTime))
+            .apply(instance, DeliveryAgreement::new));
 
-    public static final Bill EMPTY = new Bill(
+    public static final DeliveryAgreement EMPTY = new DeliveryAgreement(
             Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Collections.emptyList(), Collections.emptyList(), -1, -1, -1, -1, -1);
 
-    private static final String BILL_TAG = "Bill";
+    private static final String AGREEMENT_TAG = "Agreement";
 
     private final Optional<Component> buyerName;
     private final Optional<Component> buyerAddress;
@@ -46,38 +46,38 @@ public final class Bill {
     private final Optional<Component> message;
     private final List<ItemStack> requestedItems;
     private final List<ItemStack> paymentItems;
-    private final int orderedQuantity;
+    private final int ordered;
     private final int experience;
-    private final int deliveryDuration;
+    private final int deliveryTime;
     private final long expireTime;
-    private int quantity;
+    private int remaining;
 
-    public Bill(Optional<Component> buyerName, Optional<Component> buyerAddress, Optional<Component> title, Optional<Component> message,
-                List<ItemStack> requestedItems, List<ItemStack> paymentItems,
-                int orderedQuantity, int quantity, int experience, int deliveryDuration, long expireTime) {
+    public DeliveryAgreement(Optional<Component> buyerName, Optional<Component> buyerAddress, Optional<Component> title, Optional<Component> message,
+                             List<ItemStack> requestedItems, List<ItemStack> paymentItems,
+                             int orderedQuantity, int quantity, int experience, int deliveryDuration, long expireTime) {
         this.buyerName = buyerName;
         this.buyerAddress = buyerAddress;
         this.title = title;
         this.message = message;
         this.requestedItems = requestedItems;
         this.paymentItems = paymentItems;
-        this.orderedQuantity = orderedQuantity;
-        this.quantity = quantity;
+        this.ordered = orderedQuantity;
+        this.remaining = quantity;
         this.experience = experience;
-        this.deliveryDuration = deliveryDuration;
+        this.deliveryTime = deliveryDuration;
         this.expireTime = expireTime;
     }
 
-    public static Optional<Bill> fromItemStack(ItemStack itemStack) {
-        if (itemStack.hasTag() && itemStack.getTag().contains(BILL_TAG, Tag.TAG_COMPOUND)) {
-            CompoundTag billTag = itemStack.getTag().getCompound(BILL_TAG);
+    public static Optional<DeliveryAgreement> fromItemStack(ItemStack itemStack) {
+        if (itemStack.hasTag() && itemStack.getTag().contains(AGREEMENT_TAG, Tag.TAG_COMPOUND)) {
+            CompoundTag agreementTag = itemStack.getTag().getCompound(AGREEMENT_TAG);
 
             try {
-                DataResult<Pair<Bill, Tag>> result = CODEC.decode(NbtOps.INSTANCE, billTag);
+                DataResult<Pair<DeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, agreementTag);
                 return Optional.of(result.getOrThrow(false, s -> {
                 }).getFirst());
             } catch (Exception e) {
-                Wares.LOGGER.error("Failed to decode Bill from item : '" + itemStack + "'.\n" + e);
+                Wares.LOGGER.error("Failed to decode DeliveryAgreement from item : '" + itemStack + "'.\n" + e);
             }
         }
 
@@ -88,15 +88,18 @@ public final class Bill {
         try {
             CompoundTag tag = stack.getOrCreateTag();
             DataResult<Tag> result = CODEC.encodeStart(NbtOps.INSTANCE, this);
-            tag.put(BILL_TAG, result.getOrThrow(false, s -> {
+            tag.put(AGREEMENT_TAG, result.getOrThrow(false, s -> {
             }));
             return true;
         } catch (Exception e) {
-            Wares.LOGGER.error("Failed to encode Bill to item :\n" + e);
+            Wares.LOGGER.error("Failed to encode DeliveryAgreement to item :\n" + e);
             return false;
         }
     }
 
+    public boolean isInfinite() {
+        return getOrdered() <= 0;
+    }
 
     public boolean hasExpirationTime() {
         return expireTime > 0;
@@ -107,8 +110,8 @@ public final class Bill {
     }
 
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setRemaining(int remaining) {
+        this.remaining = remaining;
     }
 
     public Optional<Component> getBuyerName() {
@@ -135,20 +138,20 @@ public final class Bill {
         return paymentItems;
     }
 
-    public int getOrderedQuantity() {
-        return orderedQuantity;
+    public int getOrdered() {
+        return ordered;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getRemaining() {
+        return remaining;
     }
 
     public int getExperience() {
         return experience;
     }
 
-    public int getDeliveryDuration() {
-        return deliveryDuration > 0 ? deliveryDuration : 100; // TODO: config duration
+    public int getDeliveryTimeOrDefault() {
+        return deliveryTime > 0 ? deliveryTime : 100; // TODO: config duration
     }
 
     public long getExpireTime() {
@@ -159,46 +162,42 @@ public final class Bill {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (Bill) obj;
+        var that = (DeliveryAgreement) obj;
         return Objects.equals(this.buyerName, that.buyerName) &&
                 Objects.equals(this.buyerAddress, that.buyerAddress) &&
                 Objects.equals(this.title, that.title) &&
                 Objects.equals(this.message, that.message) &&
                 Objects.equals(this.requestedItems, that.requestedItems) &&
                 Objects.equals(this.paymentItems, that.paymentItems) &&
-                this.orderedQuantity == that.orderedQuantity &&
-                this.quantity == that.quantity &&
+                this.ordered == that.ordered &&
+                this.remaining == that.remaining &&
                 this.experience == that.experience &&
                 this.expireTime == that.expireTime;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(buyerName, buyerAddress, title, message, requestedItems, paymentItems, orderedQuantity, quantity, experience, expireTime);
+        return Objects.hash(buyerName, buyerAddress, title, message, requestedItems, paymentItems, ordered, remaining, experience, expireTime);
     }
 
     @Override
     public String toString() {
-        return "Bill[" +
+        return "DeliveryAgreement[" +
                 "buyerName=" + buyerName + ", " +
                 "buyerAddress=" + buyerAddress + ", " +
                 "title=" + title + ", " +
                 "message=" + message + ", " +
                 "requestedItems=" + requestedItems + ", " +
                 "paymentItems=" + paymentItems + ", " +
-                "orderedQuantity=" + orderedQuantity + ", " +
-                "quantity=" + quantity + ", " +
+                "ordered=" + ordered + ", " +
+                "remaining=" + remaining + ", " +
                 "experience=" + experience + ", " +
+                "deliveryTime=" + deliveryTime + ", " +
                 "expireTime=" + expireTime + ']';
     }
 
     public String toJsonString() {
         Optional<JsonElement> jsonElement = CODEC.encodeStart(JsonOps.INSTANCE, this).resultOrPartial(s -> {});
         return jsonElement.isPresent() ? jsonElement.get().toString() : "{}";
-    }
-
-    //TODO: Remove
-    private static Optional<Component> deserializeComponent(Optional<String> json) {
-        return json.map(Component.Serializer::fromJsonLenient);
     }
 }

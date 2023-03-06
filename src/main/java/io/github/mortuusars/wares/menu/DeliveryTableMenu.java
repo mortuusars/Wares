@@ -2,7 +2,7 @@ package io.github.mortuusars.wares.menu;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.menu.slot.BillSlot;
+import io.github.mortuusars.wares.menu.slot.AgreementSlot;
 import io.github.mortuusars.wares.menu.slot.OutputSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,7 +35,7 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
         IItemHandler itemHandler = blockEntity.getInventory();
         {
             int index = 0;
-            this.addSlot(new BillSlot(itemHandler, index++, 80, 17));
+            this.addSlot(new AgreementSlot(itemHandler, index++, 80, 17));
 
             // INPUT
             for (int row = 0; row < 2; row++) {

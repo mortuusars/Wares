@@ -3,14 +3,13 @@ package io.github.mortuusars.wares;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.data.bill.Bill;
-import io.github.mortuusars.wares.item.BillItem;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -63,26 +62,18 @@ public class Wares
         if (!player.isSecondaryUseActive() || player.level.isClientSide || event.getHand() == InteractionHand.OFF_HAND)
             return;
 
-        ItemStack billStack = new ItemStack(Items.BILL.get());
+        ItemStack agreementStack = new ItemStack(Items.DELIVERY_AGREEMENT.get());
 
-        Bill bill = new Bill(
+        DeliveryAgreement agreement = new DeliveryAgreement(
                 Optional.of(new TextComponent("example").withStyle(ChatFormatting.GOLD)
                         .append(new TextComponent("asd"))), Optional.empty(), Optional.empty(), Optional.empty(),
                 List.of(new ItemStack(net.minecraft.world.item.Items.STONE, 2)),
-                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), 50, 10, 10,
-                20, player.level.getGameTime() + 3000);
+                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), 50, 3, 10,
+                15, player.level.getGameTime() + 3000);
 
         try {
-
-            MutableComponent asd = new TextComponent("asd").withStyle(ChatFormatting.RED, ChatFormatting.BOLD);
-            String s1 = Component.Serializer.toJson(asd);
-
-            Tag tag = Bill.CODEC.encodeStart(NbtOps.INSTANCE, bill).getOrThrow(false, s -> {});
-            CompoundTag compoundTag = new CompoundTag();
-            compoundTag.put("Bill", tag);
-            billStack.setTag(compoundTag);
-
-            player.addItem(billStack);
+            agreement.toItemStack(agreementStack);
+            player.addItem(agreementStack);
         }
         catch (Throwable i) {
             boolean t = true;
@@ -102,7 +93,7 @@ public class Wares
      * Creates TranslatableComponent from a given key prefixed with the MOD ID.
      */
     public static MutableComponent translate(String key, Object... args) {
-        return new TranslatableComponent(ID + "." + key, args);
+        return new TranslatableComponent(key, args);
     }
 
     public static class Blocks {
@@ -130,8 +121,12 @@ public class Wares
     public static class Items {
         private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
 
-        public static final RegistryObject<BillItem> BILL = ITEMS.register("bill", () ->
-                new BillItem(new Item.Properties()
+        public static final RegistryObject<AgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
+                new AgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
+                        .stacksTo(1)));
+        public static final RegistryObject<AgreementItem> DELIVERY_NOTE = ITEMS.register("delivery_note", () ->
+                new AgreementItem(new Item.Properties()
                         .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
 
@@ -142,8 +137,8 @@ public class Wares
 
     public static class Tags {
         public static class Items {
-            public static final TagKey<Item> BILLS = ItemTags.create(
-                    Wares.resource("bills"));
+            public static final TagKey<Item> AGREEMENTS = ItemTags.create(
+                    Wares.resource("agreements"));
         }
     }
 }

@@ -1,10 +1,7 @@
 package io.github.mortuusars.wares.data.generation;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.generation.provider.BlockStatesAndModels;
-import io.github.mortuusars.wares.data.generation.provider.BlockTags;
-import io.github.mortuusars.wares.data.generation.provider.ItemModels;
-import io.github.mortuusars.wares.data.generation.provider.ItemTags;
+import io.github.mortuusars.wares.data.generation.provider.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,7 +29,7 @@ public class DataGeneration
             generator.addProvider(blockStates);
             generator.addProvider(new ItemModels(generator, blockStates.models().existingFileHelper));
 //            generator.addProvider(new Sounds(generator, helper));
-//            generator.addProvider(new Languages(generator, "en_us"));
+            generator.addProvider(new Languages(generator, "en_us"));
         }
     }
 }

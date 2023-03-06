@@ -16,8 +16,8 @@ public class ItemTags extends ItemTagsProvider {
 
     @Override
     protected void addTags() {
-        tag(Wares.Tags.Items.BILLS)
-                .add(Wares.Items.BILL.get());
+        tag(Wares.Tags.Items.AGREEMENTS)
+                .add(Wares.Items.DELIVERY_AGREEMENT.get());
     }
 
     private void optionalTags(TagAppender<Item> tag, String namespace, String... items) {
