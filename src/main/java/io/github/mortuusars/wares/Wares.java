@@ -68,8 +68,8 @@ public class Wares
                 Optional.of(new TextComponent("example").withStyle(ChatFormatting.GOLD)
                         .append(new TextComponent("asd"))), Optional.empty(), Optional.empty(), Optional.empty(),
                 List.of(new ItemStack(net.minecraft.world.item.Items.STONE, 2)),
-                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), 50, 3, 10,
-                15, player.level.getGameTime() + 3000);
+                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), -1, -1, 10,
+                -1, -1);
 
         try {
             agreement.toItemStack(agreementStack);

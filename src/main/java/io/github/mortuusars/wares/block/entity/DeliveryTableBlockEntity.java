@@ -3,6 +3,7 @@ package io.github.mortuusars.wares.block.entity;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,8 +13,11 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -52,7 +57,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 case CONTAINER_DATA_DELIVERY_PROGRESS:
                     return DeliveryTableBlockEntity.this.progress;
                 case CONTAINER_DATA_DELIVERY_DURATION:
-                    return DeliveryTableBlockEntity.this.getAgreement().getDeliveryTimeOrDefault();
+                    return DeliveryTableBlockEntity.this.getDeliveryTime();
                 default:
                     return 0;
             }
@@ -126,7 +131,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         deliveryTableEntity.canDeliverCached = true;
 
-        if (deliveryTableEntity.progress >= agreement.getDeliveryTimeOrDefault()) {
+        if (deliveryTableEntity.progress >= deliveryTableEntity.getDeliveryTime()) {
             boolean success = true;
 
             for (int i = 0; i < deliveryTableEntity.getBatchSize(); i++) {
@@ -146,6 +151,19 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         deliveryTableEntity.setChanged();
     }
 
+    private int getDeliveryTime() {
+        int ticks = agreement.getDeliveryTimeOrDefault();
+        List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
+
+        //TODO: Packager profession
+
+        if (!villagers.isEmpty()) {
+            ticks = Math.max(5, (int) (ticks * 0.25f));
+        }
+
+        return ticks;
+    }
+
     private boolean tryDeliverBatch() {
         if (!canDeliver())
             return false;
@@ -162,6 +180,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             updateAgreementItemStack();
         }
+
+        level.playSound(null, getBlockPos(), SoundEvents.EGG_THROW, SoundSource.BLOCKS,
+                0.2f, level.getRandom().nextFloat() * 0.1f + 0.9f);
 
         return true;
     }
