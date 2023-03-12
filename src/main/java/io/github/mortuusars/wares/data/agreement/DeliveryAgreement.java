@@ -11,6 +11,7 @@ import io.github.mortuusars.wares.data.serialization.ComponentCodec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -84,6 +85,10 @@ public final class DeliveryAgreement {
         return Optional.empty();
     }
 
+//    public static void fromBuffer(FriendlyByteBuf buffer) {
+//
+//    }
+
     public boolean toItemStack(ItemStack stack) {
         try {
             CompoundTag tag = stack.getOrCreateTag();
@@ -96,6 +101,11 @@ public final class DeliveryAgreement {
             return false;
         }
     }
+
+//    public void toBuffer(FriendlyByteBuf buffer) {
+//        buffer.nbt
+//    }
+
 
     public boolean isInfinite() {
         return getOrdered() <= 0;

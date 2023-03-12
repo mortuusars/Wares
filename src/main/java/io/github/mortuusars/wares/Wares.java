@@ -1,10 +1,12 @@
 package io.github.mortuusars.wares;
 
 import com.mojang.logging.LogUtils;
+import io.github.mortuusars.mpfui.helper.LoremIpsum;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.menu.AgreementMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -35,6 +37,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,12 +67,26 @@ public class Wares
 
         ItemStack agreementStack = new ItemStack(Items.DELIVERY_AGREEMENT.get());
 
+        List<ItemStack> items = new ArrayList<>();
+
+        for (int i = 0; i < player.level.random.nextInt(1, 7); i++) {
+            items.add(new ItemStack(net.minecraft.world.item.Items.BAKED_POTATO));
+        }
+
+        List<ItemStack> paymentItems = new ArrayList<>();
+
+        for (int i = 0; i < player.level.random.nextInt(1, 7); i++) {
+            paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
+        }
+
         DeliveryAgreement agreement = new DeliveryAgreement(
-                Optional.of(new TextComponent("example").withStyle(ChatFormatting.GOLD)
-                        .append(new TextComponent("asd"))), Optional.empty(), Optional.empty(), Optional.empty(),
-                List.of(new ItemStack(net.minecraft.world.item.Items.STONE, 2)),
-                List.of(new ItemStack(net.minecraft.world.item.Items.EMERALD)), -1, -1, 10,
-                -1, -1);
+                Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.GOLD)),
+                Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),
+                Optional.of(new TextComponent("An Agreement").withStyle(ChatFormatting.GOLD)),
+                Optional.of(new TextComponent(LoremIpsum.words(50))),
+//                Optional.empty(),
+                items, paymentItems, 50, 50, 10,
+                -1, 9818912);
 
         try {
             agreement.toItemStack(agreementStack);
@@ -116,6 +133,9 @@ public class Wares
 
         public static final RegistryObject<MenuType<DeliveryTableMenu>> DELIVERY_TABLE = MENU_TYPES
                 .register("delivery_table", () -> IForgeMenuType.create(DeliveryTableMenu::fromBuffer));
+
+        public static final RegistryObject<MenuType<AgreementMenu>> AGREEMENT = MENU_TYPES
+                .register("agreement", () -> IForgeMenuType.create(AgreementMenu::fromBuffer));
     }
 
     public static class Items {

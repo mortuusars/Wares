@@ -3,6 +3,9 @@ package io.github.mortuusars.wares.data;
 import io.github.mortuusars.wares.Wares;
 
 public class LangKeys {
+
+    public static final String GUI_DELIVERY_AGREEMENT_TITLE = Wares.ID + ".gui.delivery_agreement_title";
+
     public static final String GUI_EXPIRES_IN = Wares.ID + ".gui.tooltip.expires_in";
     public static final String GUI_EXPIRED = Wares.ID + ".gui.tooltip.expired";
     public static final String GUI_TIME_MINUTES = Wares.ID + ".gui.tooltip.minutes";
