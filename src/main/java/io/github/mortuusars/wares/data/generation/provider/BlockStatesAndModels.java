@@ -14,5 +14,7 @@ public class BlockStatesAndModels extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         simpleBlock(Wares.Blocks.DELIVERY_TABLE.get());
+
+//        simpleBlock(Wares.Blocks.AGREEMENT.get(), models().pressurePlate("agreement", Wares.resource("item/delivery_agreement")));
     }
 }

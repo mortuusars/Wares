@@ -1,33 +1,43 @@
 package io.github.mortuusars.wares.menu;
 
+import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.slot.DisplaySlot;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AgreementMenu extends AbstractContainerMenu {
-    public final DeliveryAgreement agreement;
+    public final Player player;
+    public final Level level;
     public int slotsY;
 
+    private final Either<DeliveryTableBlockEntity, DeliveryAgreement> tableOrAgreement;
 
-    public AgreementMenu(int containerId, Inventory playerInventory, DeliveryAgreement agreement) {
-        super(Wares.MenuTypes.AGREEMENT.get(), containerId);
-        this.agreement = agreement;
+    public AgreementMenu(int containerId, Inventory playerInventory, Either<DeliveryTableBlockEntity, ItemStack> source) {
+//        super(Wares.MenuTypes.AGREEMENT.get(), containerId);
+        super(null, containerId);
+        this.player = playerInventory.player;
+        this.level = playerInventory.player.level;
+
+        tableOrAgreement = source.mapRight(stack -> DeliveryAgreement.fromItemStack(stack).orElse(DeliveryAgreement.EMPTY));
+
+//        this.agreement = DeliveryAgreement.fromItemStack(agreementStack).orElse(DeliveryAgreement.EMPTY);
+
+        DeliveryAgreement agreement = getAgreement();
 
         List<ItemStack> allStacks = new ArrayList<>();
 
@@ -38,10 +48,8 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         List<ItemStack> requestedItems = agreement.getRequestedItems();
 
-
         if (!playerInventory.player.level.isClientSide)
             return;
-
 
         slotsY = 40;
 
@@ -52,6 +60,25 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         arrangeSlots(container, requestedItems.size(), 0, 23, slotsY);
         arrangeSlots(container, agreement.getPaymentItems().size(), requestedItems.size(), 109, slotsY);
+    }
+
+    public DeliveryAgreement getAgreement() {
+        return tableOrAgreement.map(deliveryTableBlockEntity -> deliveryTableBlockEntity.getAgreement(), agreement -> agreement);
+//        return tableOrAgreement.map(deliveryTableBlockEntity -> {
+//            BlockPos pos = deliveryTableBlockEntity.getBlockPos();
+//            if (level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryEntity) {
+//                return DeliveryAgreement.fromItemStack(deliveryEntity.getItem(DeliveryTableBlockEntity.AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
+//            }
+//
+//            return DeliveryAgreement.EMPTY;
+//            BlockEntity blockEntity = deliveryTableBlockEntity.getLevel().getBlockEntity(pos);
+
+//            ItemStack agreementStack = deliveryTableBlockEntity.getItem(DeliveryTableBlockEntity.AGREEMENT_SLOT);
+//            if (agreementStack.isEmpty())
+//                return DeliveryAgreement.EMPTY;
+//            else
+//            return DeliveryAgreement.fromItemStack(agreementStack).orElse(DeliveryAgreement.EMPTY);
+//        }, agreement -> agreement);
     }
 
     protected int arrangeSlots(Container container, int count, int startIndex, int startX, int startY) {
@@ -129,7 +156,8 @@ public class AgreementMenu extends AbstractContainerMenu {
     }
 
     public static AgreementMenu fromBuffer(int containerID, Inventory inventory, FriendlyByteBuf buffer) {
-        DeliveryAgreement deliveryAgreement = DeliveryAgreement.fromItemStack(buffer.readItem()).get();
-        return new AgreementMenu(containerID, inventory, deliveryAgreement);
+        ItemStack itemStack = buffer.readItem();
+        DeliveryAgreement deliveryAgreement = DeliveryAgreement.fromItemStack(itemStack).get();
+        return new AgreementMenu(containerID, inventory, Either.right(itemStack));
     }
 }

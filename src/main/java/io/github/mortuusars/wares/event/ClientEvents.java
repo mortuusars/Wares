@@ -15,7 +15,7 @@ public class ClientEvents {
     public static void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(Wares.MenuTypes.DELIVERY_TABLE.get(), DeliveryTableScreen::new);
-            MenuScreens.register(Wares.MenuTypes.AGREEMENT.get(), AgreementScreen::new);
+//            MenuScreens.register(Wares.MenuTypes.AGREEMENT.get(), AgreementScreen::new);
         });
     }
 }

@@ -1,9 +1,10 @@
 package io.github.mortuusars.wares.block.entity;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.block.DeliveryTableBlock;
+import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +14,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.WorldlyContainer;
@@ -25,7 +27,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -48,26 +49,21 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int[] INPUT_SLOTS = new int[] {1,2,3,4,5,6};
     public static final int[] OUTPUT_SLOTS = new int[] {7,8,9,10,11,12};
 
-    public static final int CONTAINER_DATA_DELIVERY_PROGRESS = 0;
-    public static final int CONTAINER_DATA_DELIVERY_DURATION = 1;
+    public static final int CONTAINER_DATA_PROGRESS = 0;
+    public static final int CONTAINER_DATA_DURATION = 1;
 
     protected final ContainerData containerData = new ContainerData() {
         public int get(int id) {
-            switch(id) {
-                case CONTAINER_DATA_DELIVERY_PROGRESS:
-                    return DeliveryTableBlockEntity.this.progress;
-                case CONTAINER_DATA_DELIVERY_DURATION:
-                    return DeliveryTableBlockEntity.this.getDeliveryTime();
-                default:
-                    return 0;
-            }
+            return switch (id) {
+                case CONTAINER_DATA_PROGRESS -> DeliveryTableBlockEntity.this.progress;
+                case CONTAINER_DATA_DURATION -> DeliveryTableBlockEntity.this.getDeliveryTime();
+                default -> 0;
+            };
         }
 
         public void set(int id, int value) {
-            switch(id) {
-                case 0:
-                    DeliveryTableBlockEntity.this.progress = value;
-                    break;
+            switch (id) {
+                case 0 -> DeliveryTableBlockEntity.this.progress = value;
             }
 
         }
@@ -83,12 +79,29 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected DeliveryAgreement agreement = DeliveryAgreement.EMPTY;
 
     protected int progress = 0;
-    protected boolean canDeliverCached = false; // Store value until inventory changed
+
+//    protected boolean canDeliverCached = false; // Store value until inventory changed
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
         inventory = createInventory(SLOTS);
         inventoryHandlers = SidedInvWrapper.create(this, Direction.DOWN, Direction.UP, Direction.NORTH);
+    }
+
+    public void serverTick() {
+        progress++;
+
+        if (/*!canDeliverCached && */!canDeliver()) {
+            resetProgress();
+            return;
+        }
+
+//        canDeliverCached = true;
+
+        if (progress >= getDeliveryTime() && tryDeliver(getBatchSize()))
+            resetProgress();
+
+        setChanged();
     }
 
     public int getBatchSize() {
@@ -102,56 +115,38 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public void refreshAgreement() {
         agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
         resetProgress();
+
+        AgreementStatus agreementStatus;
+        if (agreement == DeliveryAgreement.EMPTY)
+            agreementStatus = AgreementStatus.NONE;
+        else if (!agreement.isInfinite() && agreement.getRemaining() < 1)
+            agreementStatus = AgreementStatus.COMPLETED;
+        else if (agreement.isExpired(level.getGameTime()))
+            agreementStatus = AgreementStatus.EXPIRED;
+        else
+            agreementStatus = AgreementStatus.IN_PROGRESS;
+
+        BlockState currentBlockState = getBlockState();
+        if (currentBlockState.getValue(DeliveryTableBlock.AGREEMENT_STATUS) != agreementStatus)
+            level.setBlockAndUpdate(worldPosition, currentBlockState.setValue(DeliveryTableBlock.AGREEMENT_STATUS, agreementStatus));
     }
 
     public void updateAgreementItemStack() {
         getAgreement().toItemStack(inventory.getStackInSlot(AGREEMENT_SLOT));
         setChanged();
+
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
+        for (ServerPlayer player : nearbyPlayers) {
+            player.connection.send(this.getUpdatePacket());
+        }
     }
 
     public void resetProgress() {
         progress = 0;
-        canDeliverCached = false;
+//        canDeliverCached = false;
     }
 
-    public static <T extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState blockState, T blockEntity) {
-        if ( !(blockEntity instanceof DeliveryTableBlockEntity deliveryTableEntity))
-            return;
-
-        DeliveryAgreement agreement = deliveryTableEntity.getAgreement();
-
-        // TODO: validate
-
-        if (!deliveryTableEntity.canDeliverCached) {
-            if (agreement == DeliveryAgreement.EMPTY || !deliveryTableEntity.canDeliver()) {
-                deliveryTableEntity.resetProgress();
-                return;
-            }
-        }
-
-        deliveryTableEntity.canDeliverCached = true;
-
-        if (deliveryTableEntity.progress >= deliveryTableEntity.getDeliveryTime()) {
-            boolean success = true;
-
-            for (int i = 0; i < deliveryTableEntity.getBatchSize(); i++) {
-                if (!deliveryTableEntity.tryDeliverBatch()) {
-                    success = false;
-                    break;
-                }
-            }
-
-            if (success)
-                deliveryTableEntity.resetProgress();
-        }
-        else {
-            deliveryTableEntity.progress++;
-        }
-
-        deliveryTableEntity.setChanged();
-    }
-
-    private int getDeliveryTime() {
+    protected int getDeliveryTime() {
         int ticks = agreement.getDeliveryTimeOrDefault();
         List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
 
@@ -161,33 +156,41 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             ticks = Math.max(5, (int) (ticks * 0.25f));
         }
 
-        return ticks;
+//        return ticks;
+        return 600;
     }
 
-    private boolean tryDeliverBatch() {
-        if (!canDeliver())
-            return false;
+    protected boolean tryDeliver(int count) {
+        for (int i = 0; i < count; i++) {
+            if (!canDeliver())
+                return false;
 
-        consumeFromInputSlots(getAgreement().getRequestedItems());
-        insertCopiesToOutputSlots(getAgreement().getPaymentItems());
+            consumeFromInputSlots(agreement.getRequestedItems());
+            insertCopiesToOutputSlots(agreement.getPaymentItems());
 
-        int quantity = getAgreement().getRemaining();
-        if (quantity > 0) {
-            getAgreement().setRemaining(--quantity);
+            level.playSound(null, getBlockPos(), SoundEvents.FUNGUS_STEP, SoundSource.BLOCKS,
+                    0.25f, level.getRandom().nextFloat() * 0.1f + 0.9f);
 
-            if (quantity <= 0)
-                onAgreementCompleted();
+            if (!agreement.isInfinite()) {
 
-            updateAgreementItemStack();
+                int quantity = agreement.getRemaining();
+                if (quantity > 0) {
+                    getAgreement().setRemaining(--quantity);
+
+                    if (quantity <= 0) {
+                        completeAgreement();
+                        return true; // Completed.
+                    }
+                    else
+                        updateAgreementItemStack();
+                }
+            }
         }
 
-        level.playSound(null, getBlockPos(), SoundEvents.EGG_THROW, SoundSource.BLOCKS,
-                0.2f, level.getRandom().nextFloat() * 0.1f + 0.9f);
-
-        return true;
+        return true; // All delivered.
     }
 
-    private void onAgreementCompleted() {
+    protected void completeAgreement() {
         int experience = getAgreement().getExperience();
         if (experience > 0 && level instanceof ServerLevel serverLevel)
             ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()), experience);
@@ -203,41 +206,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         setChanged();
     }
 
-    private boolean canDeliver() {
-        return !getAgreement().isExpired(level.getGameTime())
-                && (getAgreement().isInfinite() || getAgreement().getRemaining() > 0)
+    protected boolean canDeliver() {
+        return agreement != DeliveryAgreement.EMPTY
+                && agreement.isNotExpired(level.getGameTime())
+                && !agreement.isCompleted()
                 && hasRequestedItems()
                 && hasSpaceForPayment();
     }
 
-    private void consumeFromInputSlots(List<ItemStack> requestedItems) {
-        for (ItemStack requestedItem : requestedItems) {
-            int requiredCount = requestedItem.getCount();
-
-            for (int slotIndex : INPUT_SLOTS) {
-                if (ItemStack.isSameItemSameTags(requestedItem, inventory.getStackInSlot(slotIndex))) {
-                    ItemStack extractedStack = inventory.extractItem(slotIndex, requiredCount, false);
-                    requiredCount -= extractedStack.getCount();
-
-                    if (requiredCount <= 0)
-                        break;
-                }
-            }
-        }
-    }
-
-    private void insertCopiesToOutputSlots(List<ItemStack> paymentItems) {
-        for (ItemStack stack : paymentItems) {
-            ItemStack insertedStack = stack.copy();
-            for (int slotIndex : OUTPUT_SLOTS) {
-                insertedStack = inventory.insertItem(slotIndex, insertedStack, false);
-                if (insertedStack.isEmpty())
-                    break;
-            }
-        }
-    }
-
-    private boolean hasRequestedItems() {
+    protected boolean hasRequestedItems() {
         List<ItemStack> requestedItems = agreement.getRequestedItems();
 
         List<ItemStack> inputStacks = new ArrayList<>();
@@ -267,7 +244,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
-    private boolean hasSpaceForPayment() {
+    protected boolean hasSpaceForPayment() {
         for (ItemStack stack : getAgreement().getPaymentItems()) {
             for (int slotIndex : OUTPUT_SLOTS) {
                 stack = inventory.insertItem(slotIndex, stack, true);
@@ -280,6 +257,33 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
 
         return true;
+    }
+
+    protected void consumeFromInputSlots(List<ItemStack> requestedItems) {
+        for (ItemStack requestedItem : requestedItems) {
+            int requiredCount = requestedItem.getCount();
+
+            for (int slotIndex : INPUT_SLOTS) {
+                if (ItemStack.isSameItemSameTags(requestedItem, inventory.getStackInSlot(slotIndex))) {
+                    ItemStack extractedStack = inventory.extractItem(slotIndex, requiredCount, false);
+                    requiredCount -= extractedStack.getCount();
+
+                    if (requiredCount <= 0)
+                        break;
+                }
+            }
+        }
+    }
+
+    protected void insertCopiesToOutputSlots(List<ItemStack> paymentItems) {
+        for (ItemStack stack : paymentItems) {
+            ItemStack insertedStack = stack.copy();
+            for (int slotIndex : OUTPUT_SLOTS) {
+                insertedStack = inventory.insertItem(slotIndex, insertedStack, false);
+                if (insertedStack.isEmpty())
+                    break;
+            }
+        }
     }
 
 
@@ -328,6 +332,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public ItemStack getItem(int slot) {
         return inventory.getStackInSlot(slot);
+    }
+
+    public ItemStack getAgreementItem() {
+        return getItem(AGREEMENT_SLOT);
     }
 
     @Override
@@ -411,7 +419,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         this.inventory.deserializeNBT(tag.getCompound("Inventory"));
         this.progress = tag.getInt("DeliveryTime");
 
-        refreshAgreement();
+        agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
     }
 
     @Override
@@ -424,7 +432,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void setChanged() {
         super.setChanged();
-        canDeliverCached = false;
+//        canDeliverCached = false;
     }
 
     // <Updating>
@@ -455,8 +463,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        for (int i = 0; i < inventoryHandlers.length; i++) {
-            inventoryHandlers[i].invalidate();
+        for (LazyOptional<IItemHandlerModifiable> inventoryHandler : inventoryHandlers) {
+            inventoryHandler.invalidate();
         }
     }
 

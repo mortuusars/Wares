@@ -4,6 +4,7 @@ import io.github.mortuusars.wares.Wares;
 
 public class LangKeys {
 
+    // TODO: mod id after the category
     public static final String GUI_DELIVERY_AGREEMENT_TITLE = Wares.ID + ".gui.delivery_agreement_title";
 
     public static final String GUI_EXPIRES_IN = Wares.ID + ".gui.tooltip.expires_in";

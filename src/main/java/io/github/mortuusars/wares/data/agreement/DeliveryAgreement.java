@@ -11,7 +11,6 @@ import io.github.mortuusars.wares.data.serialization.ComponentCodec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -85,10 +84,6 @@ public final class DeliveryAgreement {
         return Optional.empty();
     }
 
-//    public static void fromBuffer(FriendlyByteBuf buffer) {
-//
-//    }
-
     public boolean toItemStack(ItemStack stack) {
         try {
             CompoundTag tag = stack.getOrCreateTag();
@@ -102,21 +97,24 @@ public final class DeliveryAgreement {
         }
     }
 
-//    public void toBuffer(FriendlyByteBuf buffer) {
-//        buffer.nbt
-//    }
-
-
     public boolean isInfinite() {
         return getOrdered() <= 0;
     }
 
-    public boolean hasExpirationTime() {
+    public boolean isCompleted() {
+        return !isInfinite() && getRemaining() <= 0;
+    }
+
+    public boolean canExpire() {
         return expireTime > 0;
     }
 
     public boolean isExpired(long gameTime) {
-        return hasExpirationTime() && expireTime <= gameTime;
+        return canExpire() && expireTime <= gameTime;
+    }
+
+    public boolean isNotExpired(long gameTime) {
+        return !isExpired(gameTime);
     }
 
 
@@ -161,7 +159,7 @@ public final class DeliveryAgreement {
     }
 
     public int getDeliveryTimeOrDefault() {
-        return deliveryTime > 0 ? deliveryTime : 100; // TODO: config duration
+        return deliveryTime > 0 ? deliveryTime : 40; // TODO: config duration
     }
 
     public long getExpireTime() {
@@ -182,6 +180,7 @@ public final class DeliveryAgreement {
                 this.ordered == that.ordered &&
                 this.remaining == that.remaining &&
                 this.experience == that.experience &&
+                this.deliveryTime == that.deliveryTime &&
                 this.expireTime == that.expireTime;
     }
 

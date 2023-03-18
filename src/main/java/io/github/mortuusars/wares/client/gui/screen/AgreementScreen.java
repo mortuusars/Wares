@@ -8,26 +8,69 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.LangKeys;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.AgreementMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/agreement.png");
     private static final int FONT_COLOR = 0xff886447;
-
-    private final DeliveryAgreement agreement;
+    private Screen parentScreen;
 
     public AgreementScreen(AgreementMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.agreement = menu.agreement;
+        minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
+    }
+
+    protected DeliveryAgreement getAgreement() {
+        return menu.getAgreement();
+    }
+
+    public boolean isOpen() {
+        return minecraft != null && minecraft.screen == this;
+    }
+
+    public void show() {
+        if (minecraft != null) {
+            if (!isOpen()) {
+                parentScreen = minecraft.screen;
+            }
+            minecraft.setScreen(this);
+
+//            menu.player.playSound(SoundEvents.BOOK_PAGE_TURN,
+//                    1f, menu.level.getRandom().nextFloat() * 0.2f + 1f);
+
+            Vec3 pos = menu.player.position();
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS,
+                    1f, menu.level.getRandom().nextFloat() * 0.2f + 0.65f);
+        }
+    }
+
+    @Override
+    public void onClose() {
+        if (isOpen() && minecraft != null) {
+            minecraft.setScreen(parentScreen);
+            parentScreen = null;
+
+            Vec3 pos = menu.player.position();
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS,
+                    1f, menu.level.getRandom().nextFloat() * 0.2f + 1.1f);
+
+            return;
+        }
+        super.onClose();
     }
 
     @Override
@@ -37,6 +80,8 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         super.init();
         inventoryLabelY = -1000;
         titleLabelY = -1000;
+
+        DeliveryAgreement agreement = getAgreement();
 
         TextBlockWidget title = new TextBlockWidget(this, agreement.getTitle().orElse(new TranslatableComponent(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE)),
                  getGuiLeft() + 20, getGuiTop() + 18, imageWidth - 40, 9)
@@ -93,5 +138,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     @Override
     protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
+
+        font.draw(poseStack, "R: " + getAgreement().getRemaining(), 140, 200, FONT_COLOR);
     }
 }

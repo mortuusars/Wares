@@ -22,7 +22,7 @@ import java.util.Objects;
 public class DeliveryTableMenu extends AbstractContainerMenu {
     private final Level level;
     private final Inventory playerInventory;
-    private final DeliveryTableBlockEntity blockEntity;
+    public final DeliveryTableBlockEntity blockEntity;
     private final ContainerData data;
 
     public DeliveryTableMenu(int containerId, final Inventory playerInventory, final DeliveryTableBlockEntity blockEntity, ContainerData containerData) {
@@ -72,8 +72,8 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
     }
 
     public float getDeliveryProgress() {
-        int progress = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_DELIVERY_PROGRESS);
-        int duration = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_DELIVERY_DURATION);
+        int progress = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_PROGRESS);
+        int duration = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_DURATION);
         float prog = progress / (float)duration;
 //        Wares.LOGGER.info(prog + "");
         return progress != 0 && duration != 0 ? prog : 0;

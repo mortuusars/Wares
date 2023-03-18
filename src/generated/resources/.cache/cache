@@ -1,5 +1,7 @@
+a53bb3a1d56f2fbe654f4d79aba2b6cf58888320 assets/wares/blockstates/agreement.json
 2aad961ec4419111057accf10a15eec5b0e3a9e3 assets/wares/blockstates/delivery_table.json
-235d87dc7859102bebbf5029336012feb3e3b5dd assets/wares/lang/en_us.json
+380470cc8d5b58fc330f2da504974ee9d9c86957 assets/wares/lang/en_us.json
+09d71f68f32177e3d69ad832c71d08dca1a5f606 assets/wares/models/block/agreement.json
 d260b6de6e7270b74aeab8f581c9e769cd826e4d assets/wares/models/block/delivery_table.json
 f93c5c2d6a3a574ad7d8a3a8196a060c7e4978cc assets/wares/models/item/delivery_agreement.json
 2248e0409cb8da4383bfa4a34ad26f3f4f54a74c assets/wares/models/item/delivery_note.json

@@ -2,6 +2,7 @@ package io.github.mortuusars.wares;
 
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.mpfui.helper.LoremIpsum;
+import io.github.mortuusars.wares.block.AgreementBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
@@ -64,39 +65,6 @@ public class Wares
         Player player = event.getPlayer();
         if (!player.isSecondaryUseActive() || player.level.isClientSide || event.getHand() == InteractionHand.OFF_HAND)
             return;
-
-        ItemStack agreementStack = new ItemStack(Items.DELIVERY_AGREEMENT.get());
-
-        List<ItemStack> items = new ArrayList<>();
-
-        for (int i = 0; i < player.level.random.nextInt(1, 7); i++) {
-            items.add(new ItemStack(net.minecraft.world.item.Items.BAKED_POTATO));
-        }
-
-        List<ItemStack> paymentItems = new ArrayList<>();
-
-        for (int i = 0; i < player.level.random.nextInt(1, 7); i++) {
-            paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
-        }
-
-        DeliveryAgreement agreement = new DeliveryAgreement(
-                Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.GOLD)),
-                Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),
-                Optional.of(new TextComponent("An Agreement").withStyle(ChatFormatting.GOLD)),
-                Optional.of(new TextComponent(LoremIpsum.words(50))),
-//                Optional.empty(),
-                items, paymentItems, 50, 50, 10,
-                -1, 9818912);
-
-        try {
-            agreement.toItemStack(agreementStack);
-            player.addItem(agreementStack);
-        }
-        catch (Throwable i) {
-            boolean t = true;
-        }
-
-
     }
 
     /**
@@ -118,6 +86,9 @@ public class Wares
 
         public static final RegistryObject<DeliveryTableBlock> DELIVERY_TABLE = BLOCKS.register("delivery_table",
                 () -> new DeliveryTableBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2f)));
+
+//        public static final RegistryObject<AgreementBlock> AGREEMENT = BLOCKS.register("agreement",
+//                () -> new AgreementBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(0.3f)));
     }
 
     public static class BlockEntities {

@@ -1,4 +1,5 @@
 {
+  "wares.gui.delivery_agreement_title": "Delivery Agreement",
   "wares.gui.tooltip.days": "%sd",
   "wares.gui.tooltip.expired": "Expired",
   "wares.gui.tooltip.expires_in": "Expires in ",
