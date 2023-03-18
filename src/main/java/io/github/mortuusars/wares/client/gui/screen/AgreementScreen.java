@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.helper.HorizontalAlignment;
 import io.github.mortuusars.mpfui.widget.TextBlockWidget;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.LangKeys;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.AgreementMenu;
 import net.minecraft.client.Minecraft;
@@ -15,22 +14,24 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/agreement.png");
     private static final int FONT_COLOR = 0xff886447;
     private Screen parentScreen;
 
-    public AgreementScreen(AgreementMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+    public AgreementScreen(AgreementMenu menu) {
+        super(menu, menu.playerInventory, TextComponent.EMPTY);
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
     }
 
@@ -38,19 +39,32 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         return menu.getAgreement();
     }
 
+    public static void showAsOverlay(Player player, Supplier<DeliveryAgreement> agreementSupplier) {
+        if (!player.level.isClientSide)
+            throw new IllegalStateException("Tried to open Agreement screen on the server. That's illegal.");
+
+        int containerId = 1;
+        AbstractContainerMenu containerMenu = Minecraft.getInstance().player.containerMenu;
+        if (containerMenu != null)
+            containerId = containerMenu.containerId + 1;
+
+        AgreementMenu menu = new AgreementMenu(containerId, player.getInventory(), agreementSupplier);
+        AgreementScreen screen = new AgreementScreen(menu);
+
+        screen.showAsOverlay();
+    }
+
     public boolean isOpen() {
         return minecraft != null && minecraft.screen == this;
     }
 
-    public void show() {
+
+    public void showAsOverlay() {
         if (minecraft != null) {
             if (!isOpen()) {
                 parentScreen = minecraft.screen;
             }
             minecraft.setScreen(this);
-
-//            menu.player.playSound(SoundEvents.BOOK_PAGE_TURN,
-//                    1f, menu.level.getRandom().nextFloat() * 0.2f + 1f);
 
             Vec3 pos = menu.player.position();
             menu.level.playSound(menu.player, pos.x, pos.y, pos.z, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS,
@@ -81,26 +95,26 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         inventoryLabelY = -1000;
         titleLabelY = -1000;
 
-        DeliveryAgreement agreement = getAgreement();
-
-        TextBlockWidget title = new TextBlockWidget(this, agreement.getTitle().orElse(new TranslatableComponent(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE)),
+        TextBlockWidget title = new TextBlockWidget(this, menu.getTitle(),
                  getGuiLeft() + 20, getGuiTop() + 18, imageWidth - 40, 9)
                 .setAlignment(HorizontalAlignment.CENTER)
                 .setDefaultColor(FONT_COLOR);
         addRenderableOnly(title);
 
-        if (agreement.getMessage().isPresent()) {
-            int messageWidth = imageWidth - 24;
-            int messageHeight = TextBlockWidget.getDesiredHeight(agreement.getMessage().get(), messageWidth, 6);
+        if (menu.getMessage().isPresent()) {
+            Component messageComponent = menu.getMessage().get();
 
-            TextBlockWidget message = new TextBlockWidget(this, agreement.getMessage().get(),
+            int messageWidth = imageWidth - 24; // Side margins
+            int messageHeight = TextBlockWidget.getDesiredHeight(messageComponent, messageWidth, 6);
+
+            TextBlockWidget message = new TextBlockWidget(this, messageComponent,
                     getGuiLeft() + 12, getGuiTop() + 40, messageWidth, messageHeight)
                     .setAlignment(HorizontalAlignment.CENTER)
                     .setDefaultColor(FONT_COLOR);
             addRenderableOnly(message);
         }
 
-        ImageButton arrow = new ImageButton(getGuiLeft() + 84, getGuiTop() + menu.slotsY + 18 - 6, 19, 11, 186, 0, 0, TEXTURE, 256, 256, pButton -> {
+        ImageButton arrow = new ImageButton(getGuiLeft() + 84, getGuiTop() + menu.slotsStartYPos + 18 - 6, 19, 11, 186, 0, 0, TEXTURE, 256, 256, pButton -> {
             }, ((button, poseStack, mouseX, mouseY) -> this.renderTooltip(poseStack, new TextComponent("ARROW"), mouseX, mouseY)), new TextComponent(""));
         addRenderableOnly(arrow);
 

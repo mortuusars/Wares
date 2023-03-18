@@ -25,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -62,8 +61,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
 
         public void set(int id, int value) {
-            switch (id) {
-                case 0 -> DeliveryTableBlockEntity.this.progress = value;
+            if (id == 0) {
+                DeliveryTableBlockEntity.this.progress = value;
             }
 
         }
@@ -104,12 +103,25 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         setChanged();
     }
 
+    public DeliveryAgreement getAgreement() {
+        return agreement;
+    }
+
     public int getBatchSize() {
         return 1;
     }
 
-    public DeliveryAgreement getAgreement() {
-        return agreement;
+    protected int getDeliveryTime() {
+        int ticks = agreement.getDeliveryTimeOrDefault();
+        List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
+
+        //TODO: Packager profession
+
+        if (!villagers.isEmpty()) {
+            ticks = Math.max(5, (int) (ticks * 0.25f));
+        }
+
+        return ticks;
     }
 
     public void refreshAgreement() {
@@ -131,33 +143,22 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             level.setBlockAndUpdate(worldPosition, currentBlockState.setValue(DeliveryTableBlock.AGREEMENT_STATUS, agreementStatus));
     }
 
-    public void updateAgreementItemStack() {
-        getAgreement().toItemStack(inventory.getStackInSlot(AGREEMENT_SLOT));
-        setChanged();
-
-        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
-        for (ServerPlayer player : nearbyPlayers) {
-            player.connection.send(this.getUpdatePacket());
-        }
-    }
-
     public void resetProgress() {
         progress = 0;
 //        canDeliverCached = false;
     }
 
-    protected int getDeliveryTime() {
-        int ticks = agreement.getDeliveryTimeOrDefault();
-        List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
+    public void updateAgreementItemStack() {
+        ItemStack agreementStack = inventory.getStackInSlot(AGREEMENT_SLOT);
+        if (getAgreement().toItemStack(agreementStack)) {
+            setItem(AGREEMENT_SLOT, agreementStack);
+            setChanged();
 
-        //TODO: Packager profession
-
-        if (!villagers.isEmpty()) {
-            ticks = Math.max(5, (int) (ticks * 0.25f));
+            List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
+            for (ServerPlayer player : nearbyPlayers) {
+                player.connection.send(this.getUpdatePacket());
+            }
         }
-
-//        return ticks;
-        return 600;
     }
 
     protected boolean tryDeliver(int count) {
@@ -384,10 +385,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public boolean canPlaceItem(int slotIndex, ItemStack stack) {
         if (slotIndex >= 7)
             return false;
-        if (slotIndex == AGREEMENT_SLOT && !stack.is(Wares.Tags.Items.AGREEMENTS))
-            return false;
-
-        return true;
+        return slotIndex != AGREEMENT_SLOT || stack.is(Wares.Tags.Items.AGREEMENTS);
     }
 
     @Override

@@ -1,20 +1,11 @@
 package io.github.mortuusars.wares;
 
 import com.mojang.logging.LogUtils;
-import io.github.mortuusars.mpfui.helper.LoremIpsum;
-import io.github.mortuusars.wares.block.AgreementBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.item.AgreementItem;
-import io.github.mortuusars.wares.menu.AgreementMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -22,7 +13,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -37,10 +30,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Wares.ID)
@@ -104,9 +93,6 @@ public class Wares
 
         public static final RegistryObject<MenuType<DeliveryTableMenu>> DELIVERY_TABLE = MENU_TYPES
                 .register("delivery_table", () -> IForgeMenuType.create(DeliveryTableMenu::fromBuffer));
-
-        public static final RegistryObject<MenuType<AgreementMenu>> AGREEMENT = MENU_TYPES
-                .register("agreement", () -> IForgeMenuType.create(AgreementMenu::fromBuffer));
     }
 
     public static class Items {

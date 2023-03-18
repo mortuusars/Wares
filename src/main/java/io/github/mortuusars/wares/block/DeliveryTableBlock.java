@@ -1,10 +1,9 @@
 package io.github.mortuusars.wares.block;
 
-import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
+import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
 import io.github.mortuusars.wares.data.agreement.AgreementStatus;
-import io.github.mortuusars.wares.item.AgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -28,8 +27,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings({"NullableProblems", "deprecation"})
 public class DeliveryTableBlock extends BaseEntityBlock {
     public static final EnumProperty<AgreementStatus> AGREEMENT_STATUS = EnumProperty.create("agreement_status", AgreementStatus.class);
 
@@ -47,14 +48,14 @@ public class DeliveryTableBlock extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (!state.hasProperty(AGREEMENT_STATUS))
             return TABLE_SHAPE;
         return state.getValue(AGREEMENT_STATUS) == AgreementStatus.NONE ? TABLE_SHAPE : TABLE_WITH_AGREEMENT_SHAPE;
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -84,16 +85,16 @@ public class DeliveryTableBlock extends BaseEntityBlock {
                 if (!level.isClientSide) {
                     ItemStack agreement = deliveryTableBlockEntity.removeItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, 1);
                     ItemEntity drop = player.drop(agreement, false);
-                    drop.setPickUpDelay(0);
+                    if (drop != null)
+                        drop.setPickUpDelay(0);
                 }
-                return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            else if (agreementStack.getItem() instanceof AgreementItem agreementItem) {
+            else {
                 if (level.isClientSide)
-                    agreementItem.openClientAgreementGui(Either.left(deliveryTableBlockEntity), player);
+                    AgreementScreen.showAsOverlay(player, deliveryTableBlockEntity::getAgreement);
 
-                return InteractionResult.sidedSuccess(level.isClientSide);
             }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (player instanceof ServerPlayer serverPlayer)

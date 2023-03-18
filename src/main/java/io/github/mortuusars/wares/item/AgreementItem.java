@@ -1,6 +1,5 @@
 package io.github.mortuusars.wares.item;
 
-import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
@@ -8,8 +7,6 @@ import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import io.github.mortuusars.wares.client.gui.tooltip.AgreementTooltip;
 import io.github.mortuusars.wares.data.LangKeys;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
-import io.github.mortuusars.wares.menu.AgreementMenu;
-import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,16 +16,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
@@ -40,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class AgreementItem extends Item {
     public AgreementItem(Properties properties) {
@@ -47,38 +41,43 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public boolean overrideOtherStackedOnMe(ItemStack agreementStack, ItemStack otherStack, Slot slot, ClickAction action, Player player, SlotAccess pAccess) {
+    public boolean overrideOtherStackedOnMe(ItemStack agreementStack, ItemStack otherStack, Slot slot, ClickAction action, Player player, SlotAccess slotAccess) {
         // This method is called only client-side when in player inventory,
         // but both client- and server-side when in other containers.
 
         if (agreementStack.getItem() == this && otherStack.isEmpty() && action == ClickAction.SECONDARY) {
-            Optional<DeliveryAgreement> agreementOptional = DeliveryAgreement.fromItemStack(agreementStack);
-            if (agreementOptional.isEmpty()){
-                Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt. No UI will be shown.");
-                return false;
+            DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(agreementStack).orElse(DeliveryAgreement.EMPTY);
+
+            if (agreement == DeliveryAgreement.EMPTY){
+                Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt OR Agreement is empty. No UI will be shown.");
+                return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, slotAccess);
             }
 
             if (player instanceof LocalPlayer) {
-                Either<DeliveryTableBlockEntity, ItemStack> source;
+                Supplier<DeliveryAgreement> agreementSupplier;
 
-                if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen) {
-                    DeliveryTableMenu menu = deliveryTableScreen.getMenu();
-                    source = Either.left(menu.blockEntity);
-                }
+                if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen)
+                    agreementSupplier = () -> deliveryTableScreen.getMenu().blockEntity.getAgreement();
                 else
-                    source = Either.right(agreementStack);
+                    agreementSupplier = () -> agreement;
 
-
-                return openClientAgreementGui(source, player);
+                AgreementScreen.showAsOverlay(player, agreementSupplier);
             }
-            else
-                return true;
 
-            // If true is returned - stack will not be picked up from a slot:
-//            return player instanceof LocalPlayer ? openClientAgreementGui(Either.right(agreementStack), player) : true;
+            return true; // If true is returned - stack will not be picked up from a slot.
         }
 
-        return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, pAccess);
+        return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, slotAccess);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        String id = this.getDescriptionId(stack);
+
+        if (DeliveryAgreement.fromItemStack(stack).orElse(DeliveryAgreement.EMPTY).isCompleted())
+            id = id + "_completed";
+
+        return new TranslatableComponent(id);
     }
 
     @Override
@@ -138,68 +137,18 @@ public class AgreementItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack agreementStack = player.getItemInHand(hand);
+        ItemStack usedItemStack = player.getItemInHand(hand);
 
-        if (agreementStack.getItem() != this)
-            return InteractionResultHolder.pass(agreementStack);
+        DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(usedItemStack).orElse(DeliveryAgreement.EMPTY);
 
-        Optional<DeliveryAgreement> agreementOptional = DeliveryAgreement.fromItemStack(agreementStack);
-
-        if (agreementOptional.isEmpty()){
-            Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt. No UI will be shown.");
-            return InteractionResultHolder.pass(agreementStack);
+        if (agreement == DeliveryAgreement.EMPTY){
+            Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt OR Agreement is empty. No UI will be shown.");
+            return InteractionResultHolder.pass(usedItemStack);
         }
 
         if (level.isClientSide)
-            openClientAgreementGui(Either.right(agreementStack), player);
-        else
-            level.playSound(player,
-                    player.position().x,
-                    player.position().y,
-                    player.position().z, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1f, level.getRandom()
-                            .nextFloat() * 0.2f + 0.9f);
+            AgreementScreen.showAsOverlay(player, () -> agreement);
 
-        return InteractionResultHolder.sidedSuccess(agreementStack, level.isClientSide);
+        return InteractionResultHolder.sidedSuccess(usedItemStack, level.isClientSide);
     }
-
-    public boolean openClientAgreementGui(Either<DeliveryTableBlockEntity, ItemStack> source, Player player) {
-        if (!player.level.isClientSide)
-            throw new IllegalStateException("Tried to open Agreement gui on the server. Not gonna happen.");
-
-        int containerId = 1;
-        AbstractContainerMenu containerMenu = Minecraft.getInstance().player.containerMenu;
-        if (containerMenu != null)
-            containerId = containerMenu.containerId + 1;
-
-        Component title = source.map(
-                deliveryEntity -> deliveryEntity.getItem(DeliveryTableBlockEntity.AGREEMENT_SLOT).getHoverName(),
-                stack -> stack.getHoverName());
-
-        Inventory playerInventory = player.getInventory();
-        AgreementScreen screen = new AgreementScreen(new AgreementMenu(containerId, playerInventory, source),
-                playerInventory, title);
-
-        screen.show();
-        return true;
-    }
-
-//    public static boolean openAgreementGui(ServerPlayer serverPlayer, ItemStack agreementStack) {
-//        if (!(agreementStack.getItem() instanceof AgreementItem))
-//            throw new IllegalArgumentException("Attempted to open Agreement gui with wrong item: '" + agreementStack + "'.");
-//
-//        Optional<DeliveryAgreement> agreementOptional = DeliveryAgreement.fromItemStack(agreementStack);
-//
-//        if (agreementOptional.isEmpty()){
-//            Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt. No UI will be shown.");
-//            return false;
-//        }
-//
-//        NetworkHooks.openGui(serverPlayer,
-//                new SimpleMenuProvider((id, playerInventory, playerArg) ->
-//                        new AgreementMenu(id, playerInventory, agreementOptional.get()), new TranslatableComponent("ASD")),
-//                buf -> buf.writeItem(agreementStack));
-//
-//
-//        return true;
-//    }
 }
