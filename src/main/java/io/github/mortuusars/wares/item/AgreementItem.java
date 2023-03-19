@@ -7,6 +7,7 @@ import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import io.github.mortuusars.wares.client.gui.tooltip.AgreementTooltip;
 import io.github.mortuusars.wares.data.LangKeys;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -91,7 +92,7 @@ public class AgreementItem extends Item {
                 MutableComponent expireTooltip = agreement.isExpired(level.getGameTime()) ?
                         Wares.translate(LangKeys.GUI_EXPIRED).withStyle(ChatFormatting.RED)
                         : Wares.translate(LangKeys.GUI_EXPIRES_IN)
-                            .append(AgreementTooltip.timeFromTicks(agreement.getExpireTime() - level.getGameTime()))
+                            .append(TextUtil.timeFromTicks(agreement.getExpireTime() - level.getGameTime()))
                         .withStyle(ChatFormatting.DARK_RED);
 
                 tooltipComponents.add(1, expireTooltip);

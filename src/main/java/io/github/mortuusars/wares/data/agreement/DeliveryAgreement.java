@@ -154,6 +154,10 @@ public final class DeliveryAgreement {
         return remaining;
     }
 
+    public int getDelivered() {
+        return isInfinite() ? -1 : Math.max(0, getOrdered() - getRemaining());
+    }
+
     public int getExperience() {
         return experience;
     }

@@ -21,6 +21,10 @@ public class Languages extends LanguageProvider {
 
     protected void addEN_US() {
         add(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE, "Delivery Agreement");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE, "Experience Reward");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE_TOOLTIP, "Experience Reward on Agreement completion");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS, "Deliveries");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS_TOOLTIP, "%s / %s");
 
         add(LangKeys.GUI_EXPIRED, "Expired");
         add(LangKeys.GUI_EXPIRES_IN, "Expires in ");

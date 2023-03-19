@@ -2,34 +2,40 @@ package io.github.mortuusars.mpfui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.helper.HorizontalAlignment;
+import io.github.mortuusars.mpfui.helper.LeftoverTooltipBehavior;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class TextBlockWidget extends AbstractWidget {
     private AbstractContainerScreen screen;
-    private final Component text;
+    private final Supplier<Component> textSupplier;
     private int maxLines;
 
     private @Nullable Integer color;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+    private LeftoverTooltipBehavior tooltipBehavior = LeftoverTooltipBehavior.LEFTOVER_ONLY;
+    private int tooltipWidth = 220;
 
     private List<FormattedCharSequence> leftoverLines = new ArrayList<>();
 
     public TextBlockWidget(AbstractContainerScreen screen, Component text, int x, int y, int width, int height) {
-        super(x, y, width, height, text);
+        this(screen, () -> text, x, y, width, height);
+    }
+
+    public TextBlockWidget(AbstractContainerScreen screen, Supplier<Component> textSupplier, int x, int y, int width, int height) {
+        super(x, y, width, height, textSupplier.get());
         this.screen = screen;
-        this.text = text;
+        this.textSupplier = textSupplier;
 
         this.maxLines = height / Minecraft.getInstance().font.lineHeight;
     }
@@ -43,6 +49,16 @@ public class TextBlockWidget extends AbstractWidget {
 
     public TextBlockWidget setAlignment(HorizontalAlignment horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
+        return this;
+    }
+
+    public TextBlockWidget setTooltipBehavior(LeftoverTooltipBehavior tooltipBehavior) {
+        this.tooltipBehavior = tooltipBehavior;
+        return this;
+    }
+
+    public TextBlockWidget setTooltipWidth(int tooltipWidth) {
+        this.tooltipWidth = tooltipWidth;
         return this;
     }
 
@@ -67,6 +83,8 @@ public class TextBlockWidget extends AbstractWidget {
 
     protected void renderText(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
+
+        Component text = this.textSupplier.get();
 
         List<FormattedCharSequence> lines = font.split(text, width);
         boolean hasLeftoverLines = lines.size() > maxLines;
@@ -99,17 +117,13 @@ public class TextBlockWidget extends AbstractWidget {
 
     private int getColor() {
         return this.color != null ? this.color : 0;
-//        @Nullable TextColor textColor = text.getStyle().getColor();
-//        if (textColor != null)
-//            return textColor.getValue();
-//        else if (this.color != null)
-//            return this.color;
-//        else
-//            return 0;
     }
 
     @Override
     public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
-        screen.renderTooltip(poseStack, leftoverLines, mouseX, mouseY);
+        if (this.tooltipBehavior == LeftoverTooltipBehavior.FULL)
+            screen.renderTooltip(poseStack, Minecraft.getInstance().font.split(textSupplier.get(), tooltipWidth), mouseX, mouseY);
+        else
+            screen.renderTooltip(poseStack, leftoverLines, mouseX, mouseY);
     }
 }

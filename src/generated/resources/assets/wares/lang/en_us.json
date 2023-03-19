@@ -1,8 +1,12 @@
 {
-  "wares.gui.delivery_agreement_title": "Delivery Agreement",
-  "wares.gui.tooltip.days": "%sd",
-  "wares.gui.tooltip.expired": "Expired",
-  "wares.gui.tooltip.expires_in": "Expires in ",
-  "wares.gui.tooltip.hours": "%sh",
-  "wares.gui.tooltip.minutes": "%sm"
+  "gui.wares.delivery_agreement.experience": "Experience Reward",
+  "gui.wares.delivery_agreement.experience.tooltip": "Experience Reward on Agreement completion",
+  "gui.wares.delivery_agreement.orders": "Deliveries",
+  "gui.wares.delivery_agreement.orders.tooltip": "%s / %s",
+  "gui.wares.delivery_agreement.title": "Delivery Agreement",
+  "gui.wares.tooltip.days": "%sd",
+  "gui.wares.tooltip.expired": "Expired",
+  "gui.wares.tooltip.expires_in": "Expires in ",
+  "gui.wares.tooltip.hours": "%sh",
+  "gui.wares.tooltip.minutes": "%sm"
 }

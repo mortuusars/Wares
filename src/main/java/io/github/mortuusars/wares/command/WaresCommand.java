@@ -40,25 +40,29 @@ public class WaresCommand {
             ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
 
             List<ItemStack> items = new ArrayList<>();
-            for (int i = 0; i < player.level.random.nextInt(1, 2); i++) {
+            for (int i = 0; i < player.level.random.nextInt(4, 7); i++) {
                 items.add(new ItemStack(net.minecraft.world.item.Items.BAKED_POTATO));
             }
 
             List<ItemStack> paymentItems = new ArrayList<>();
-            for (int i = 0; i < player.level.random.nextInt(1, 2); i++) {
+            for (int i = 0; i < player.level.random.nextInt(4, 7); i++) {
                 paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
             }
 
             DeliveryAgreement agreement = new DeliveryAgreement(
                     Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_RED)),
+//                    Optional.empty(),
                     Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),
+//                    Optional.empty(),
                     Optional.of(new TextComponent("Test Agreement").withStyle(ChatFormatting.GOLD)),
+//                    Optional.empty(),
                     Optional.of(new TextComponent(LoremIpsum.words(50))),
+//                    Optional.empty(),
                     items,
                     paymentItems,
-                    105,
-                    105,
-                    10,
+                    356815,
+                    5,
+                    112121,
                     -1,
                     player.level.getGameTime() + 1728000); // 1 day
 

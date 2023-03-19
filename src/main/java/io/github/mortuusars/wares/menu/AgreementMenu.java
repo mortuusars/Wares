@@ -1,11 +1,11 @@
 package io.github.mortuusars.wares.menu;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.data.LangKeys;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.slot.DisplaySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,7 +25,7 @@ public class AgreementMenu extends AbstractContainerMenu {
     public final Player player;
     public final Level level;
     protected final Supplier<DeliveryAgreement> agreementSupplier;
-    public int slotsStartYPos;
+    public int slotsStartPosY;
 
     public AgreementMenu(int containerId, Inventory playerInventory, Supplier<DeliveryAgreement> agreementSupplier) {
         super(null, containerId);
@@ -39,12 +39,12 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         DeliveryAgreement agreement = getAgreement();
 
-        slotsStartYPos = 40;
+        slotsStartPosY = 74;
 
         if (agreement.getMessage().isPresent()) {
             // Measures message length to shift slots down:
             int lines = Math.min(6, Minecraft.getInstance().font.split(agreement.getMessage().get(), 186 - (12 * 2)).size());
-            slotsStartYPos += lines * Minecraft.getInstance().font.lineHeight + 13;
+            slotsStartPosY += lines * Minecraft.getInstance().font.lineHeight + 13;
         }
 
         SimpleContainer container = new SimpleContainer(Stream.concat(agreement.getRequestedItems().stream(),
@@ -53,8 +53,8 @@ public class AgreementMenu extends AbstractContainerMenu {
         int requestedSlotsCount = agreement.getRequestedItems().size();
         int paymentSlotsCount = agreement.getPaymentItems().size();
 
-        arrangeSlotsInGrid(container, requestedSlotsCount, 0, 23, slotsStartYPos);
-        arrangeSlotsInGrid(container, paymentSlotsCount, requestedSlotsCount, 109, slotsStartYPos);
+        arrangeSlotsInGrid(container, requestedSlotsCount, 0, 23, slotsStartPosY);
+        arrangeSlotsInGrid(container, paymentSlotsCount, requestedSlotsCount, 109, slotsStartPosY);
     }
 
     public DeliveryAgreement getAgreement() {
@@ -62,7 +62,7 @@ public class AgreementMenu extends AbstractContainerMenu {
     }
 
     public Component getTitle() {
-        return getAgreement().getTitle().orElse(new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get()).getHoverName());
+        return getAgreement().getTitle().orElse(Wares.translate(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE));
     }
 
     public Optional<Component> getMessage() {
