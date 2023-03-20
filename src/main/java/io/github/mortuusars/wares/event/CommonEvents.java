@@ -14,6 +14,8 @@ public class CommonEvents {
         public static void commonSetup(FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 ModPackets.register();
+
+                Wares.testDesc();
             });
         }
     }

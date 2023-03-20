@@ -151,7 +151,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         int deliveryInfoPosY = getGuiTop() + slotsEndPosY + 18 + 13;
 
 
-        if (!getAgreement().isInfinite() && !getAgreement().isCompleted()) {
+        if (!getAgreement().isInfinite()) {
             int width = 60;
             int x = getGuiLeft() + (imageWidth / 2) - width / 2;
             int y = deliveryInfoPosY;
