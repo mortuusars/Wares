@@ -8,7 +8,7 @@ import io.github.mortuusars.mpfui.widget.CombinedContentWidget;
 import io.github.mortuusars.mpfui.widget.TextBlockWidget;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.LangKeys;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.menu.AgreementMenu;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.client.Minecraft;
@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -41,11 +40,11 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
     }
 
-    protected DeliveryAgreement getAgreement() {
+    protected Agreement getAgreement() {
         return menu.getAgreement();
     }
 
-    public static void showAsOverlay(Player player, Supplier<DeliveryAgreement> agreementSupplier) {
+    public static void showAsOverlay(Player player, Supplier<Agreement> agreementSupplier) {
         if (!player.level.isClientSide)
             throw new IllegalStateException("Tried to open Agreement screen on the server. That's illegal.");
 

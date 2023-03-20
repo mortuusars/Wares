@@ -2,7 +2,7 @@ package io.github.mortuusars.wares.menu;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.LangKeys;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.menu.slot.DisplaySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -24,10 +24,10 @@ public class AgreementMenu extends AbstractContainerMenu {
     public final Inventory playerInventory;
     public final Player player;
     public final Level level;
-    protected final Supplier<DeliveryAgreement> agreementSupplier;
+    protected final Supplier<Agreement> agreementSupplier;
     public int slotsStartPosY;
 
-    public AgreementMenu(int containerId, Inventory playerInventory, Supplier<DeliveryAgreement> agreementSupplier) {
+    public AgreementMenu(int containerId, Inventory playerInventory, Supplier<Agreement> agreementSupplier) {
         super(null, containerId);
         this.player = playerInventory.player;
         this.level = playerInventory.player.level;
@@ -37,7 +37,7 @@ public class AgreementMenu extends AbstractContainerMenu {
         if (!playerInventory.player.level.isClientSide)
             throw new IllegalStateException("AgreementMenu can exist only on client-side.");
 
-        DeliveryAgreement agreement = getAgreement();
+        Agreement agreement = getAgreement();
 
         slotsStartPosY = 74;
 
@@ -57,7 +57,7 @@ public class AgreementMenu extends AbstractContainerMenu {
         arrangeSlotsInGrid(container, paymentSlotsCount, requestedSlotsCount, 109, slotsStartPosY);
     }
 
-    public DeliveryAgreement getAgreement() {
+    public Agreement getAgreement() {
         return agreementSupplier.get();
     }
 

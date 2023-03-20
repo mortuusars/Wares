@@ -19,22 +19,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DeliveryAgreement {
-    public static final Codec<DeliveryAgreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ComponentCodec.CODEC.optionalFieldOf("buyerName").forGetter(DeliveryAgreement::getBuyerName),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress").forGetter(DeliveryAgreement::getBuyerAddress),
-                    ComponentCodec.CODEC.optionalFieldOf("title").forGetter(DeliveryAgreement::getTitle),
-                    ComponentCodec.CODEC.optionalFieldOf("message").forGetter(DeliveryAgreement::getMessage),
-                    Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(DeliveryAgreement::getRequestedItems),
-                    Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(DeliveryAgreement::getPaymentItems),
-                    Codec.INT.optionalFieldOf("ordered", -1).forGetter(DeliveryAgreement::getOrdered),
-                    Codec.INT.optionalFieldOf("remaining", -1).forGetter(DeliveryAgreement::getRemaining),
-                    Codec.INT.optionalFieldOf("experience", -1).forGetter(DeliveryAgreement::getExperience),
-                    Codec.INT.optionalFieldOf("deliveryTime", -1).forGetter(DeliveryAgreement::getDeliveryTimeOrDefault),
-                    Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(DeliveryAgreement::getExpireTime))
-            .apply(instance, DeliveryAgreement::new));
+public final class Agreement {
+    public static final Codec<Agreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                    ComponentCodec.CODEC.optionalFieldOf("buyerName").forGetter(Agreement::getBuyerName),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress").forGetter(Agreement::getBuyerAddress),
+                    ComponentCodec.CODEC.optionalFieldOf("title").forGetter(Agreement::getTitle),
+                    ComponentCodec.CODEC.optionalFieldOf("message").forGetter(Agreement::getMessage),
+                    Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(Agreement::getRequestedItems),
+                    Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(Agreement::getPaymentItems),
+                    Codec.INT.optionalFieldOf("ordered", -1).forGetter(Agreement::getOrdered),
+                    Codec.INT.optionalFieldOf("remaining", -1).forGetter(Agreement::getRemaining),
+                    Codec.INT.optionalFieldOf("experience", -1).forGetter(Agreement::getExperience),
+                    Codec.INT.optionalFieldOf("deliveryTime", -1).forGetter(Agreement::getDeliveryTimeOrDefault),
+                    Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(Agreement::getExpireTime))
+            .apply(instance, Agreement::new));
 
-    public static final DeliveryAgreement EMPTY = new DeliveryAgreement(
+    public static final Agreement EMPTY = new Agreement(
             Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Collections.emptyList(), Collections.emptyList(), -1, -1, -1, -1, -1);
 
@@ -52,9 +52,9 @@ public final class DeliveryAgreement {
     private final long expireTime;
     private int remaining;
 
-    public DeliveryAgreement(Optional<Component> buyerName, Optional<Component> buyerAddress, Optional<Component> title, Optional<Component> message,
-                             List<ItemStack> requestedItems, List<ItemStack> paymentItems,
-                             int orderedQuantity, int quantity, int experience, int deliveryDuration, long expireTime) {
+    public Agreement(Optional<Component> buyerName, Optional<Component> buyerAddress, Optional<Component> title, Optional<Component> message,
+                     List<ItemStack> requestedItems, List<ItemStack> paymentItems,
+                     int orderedQuantity, int quantity, int experience, int deliveryTime, long expireTime) {
         this.buyerName = buyerName;
         this.buyerAddress = buyerAddress;
         this.title = title;
@@ -64,16 +64,16 @@ public final class DeliveryAgreement {
         this.ordered = orderedQuantity;
         this.remaining = quantity;
         this.experience = experience;
-        this.deliveryTime = deliveryDuration;
+        this.deliveryTime = deliveryTime;
         this.expireTime = expireTime;
     }
 
-    public static Optional<DeliveryAgreement> fromItemStack(ItemStack itemStack) {
+    public static Optional<Agreement> fromItemStack(ItemStack itemStack) {
         if (itemStack.hasTag() && itemStack.getTag().contains(AGREEMENT_TAG, Tag.TAG_COMPOUND)) {
             CompoundTag agreementTag = itemStack.getTag().getCompound(AGREEMENT_TAG);
 
             try {
-                DataResult<Pair<DeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, agreementTag);
+                DataResult<Pair<Agreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, agreementTag);
                 return Optional.of(result.getOrThrow(false, s -> {
                 }).getFirst());
             } catch (Exception e) {
@@ -174,7 +174,7 @@ public final class DeliveryAgreement {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (DeliveryAgreement) obj;
+        var that = (Agreement) obj;
         return Objects.equals(this.buyerName, that.buyerName) &&
                 Objects.equals(this.buyerAddress, that.buyerAddress) &&
                 Objects.equals(this.title, that.title) &&

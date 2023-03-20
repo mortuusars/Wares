@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.block.entity;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.agreement.AgreementStatus;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -75,7 +75,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
 
-    protected DeliveryAgreement agreement = DeliveryAgreement.EMPTY;
+    protected Agreement agreement = Agreement.EMPTY;
 
     protected int progress = 0;
 
@@ -103,7 +103,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         setChanged();
     }
 
-    public DeliveryAgreement getAgreement() {
+    public Agreement getAgreement() {
         return agreement;
     }
 
@@ -125,11 +125,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public void refreshAgreement() {
-        agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
+        agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
         resetProgress();
 
         AgreementStatus agreementStatus;
-        if (agreement == DeliveryAgreement.EMPTY)
+        if (agreement == Agreement.EMPTY)
             agreementStatus = AgreementStatus.NONE;
         else if (!agreement.isInfinite() && agreement.getRemaining() < 1)
             agreementStatus = AgreementStatus.COMPLETED;
@@ -208,7 +208,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected boolean canDeliver() {
-        return agreement != DeliveryAgreement.EMPTY
+        return agreement != Agreement.EMPTY
                 && agreement.isNotExpired(level.getGameTime())
                 && !agreement.isCompleted()
                 && hasRequestedItems()
@@ -417,7 +417,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         this.inventory.deserializeNBT(tag.getCompound("Inventory"));
         this.progress = tag.getInt("DeliveryTime");
 
-        agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
+        agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
     }
 
     @Override

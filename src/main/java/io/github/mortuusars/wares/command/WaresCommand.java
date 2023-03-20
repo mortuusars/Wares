@@ -5,7 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mortuusars.mpfui.helper.LoremIpsum;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -49,7 +49,7 @@ public class WaresCommand {
                 paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
             }
 
-            DeliveryAgreement agreement = new DeliveryAgreement(
+            Agreement agreement = new Agreement(
                     Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_RED)),
 //                    Optional.empty(),
                     Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),

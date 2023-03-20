@@ -2,13 +2,12 @@ package io.github.mortuusars.wares;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreementDescription;
+import io.github.mortuusars.wares.data.agreement.AgreementDescription;
 import io.github.mortuusars.wares.data.agreement.SteppedInt;
 import io.github.mortuusars.wares.data.agreement.TextProvider;
 import io.github.mortuusars.wares.data.agreement.WeightedComponent;
@@ -73,7 +72,7 @@ public class Wares
     }
 
     public static void testDesc() {
-        DeliveryAgreementDescription description = new DeliveryAgreementDescription(
+        AgreementDescription description = new AgreementDescription(
                 Optional.of(TextProvider.of(List.of(WeightedComponent.of(new TextComponent("Simple Buyer"), 45)))),
                 Optional.of(TextProvider.of(List.of(WeightedComponent.of(new TextComponent("Simple Address")), WeightedComponent.of(new TextComponent("Simple 2"))))),
                 Optional.of(TextProvider.of(Wares.translate("title.translate.key"))),
@@ -83,17 +82,19 @@ public class Wares
                 Either.left(50),
                 Either.right(new SteppedInt(1, 10)),
                 Either.left(50),
-                Either.left(20000L));
+                Either.left(20000));
 
         try {
-            DataResult<JsonElement> jsonElementDataResult = DeliveryAgreementDescription.CODEC.encodeStart(JsonOps.INSTANCE, description);
+            DataResult<JsonElement> jsonElementDataResult = AgreementDescription.CODEC.encodeStart(JsonOps.INSTANCE, description);
             JsonElement element = jsonElementDataResult.getOrThrow(false, s -> Wares.LOGGER.error(s));
             String s = element.toString();
             Wares.LOGGER.info(s);
 
-            DeliveryAgreementDescription orThrow = DeliveryAgreementDescription.CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(s))
+            AgreementDescription orThrow = AgreementDescription.CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(s))
                     .getOrThrow(false, st -> Wares.LOGGER.error(st));
             Wares.LOGGER.info(s);
+
+
         }
         catch (Exception e) {
             Wares.LOGGER.error(e.toString());

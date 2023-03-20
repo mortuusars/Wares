@@ -4,9 +4,8 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
-import io.github.mortuusars.wares.client.gui.tooltip.AgreementTooltip;
 import io.github.mortuusars.wares.data.LangKeys;
-import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -47,15 +46,15 @@ public class AgreementItem extends Item {
         // but both client- and server-side when in other containers.
 
         if (agreementStack.getItem() == this && otherStack.isEmpty() && action == ClickAction.SECONDARY) {
-            DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(agreementStack).orElse(DeliveryAgreement.EMPTY);
+            Agreement agreement = Agreement.fromItemStack(agreementStack).orElse(Agreement.EMPTY);
 
-            if (agreement == DeliveryAgreement.EMPTY){
+            if (agreement == Agreement.EMPTY){
                 Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt OR Agreement is empty. No UI will be shown.");
                 return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, slotAccess);
             }
 
             if (player instanceof LocalPlayer) {
-                Supplier<DeliveryAgreement> agreementSupplier;
+                Supplier<Agreement> agreementSupplier;
 
                 if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen)
                     agreementSupplier = () -> deliveryTableScreen.getMenu().blockEntity.getAgreement();
@@ -75,7 +74,7 @@ public class AgreementItem extends Item {
     public Component getName(ItemStack stack) {
         String id = this.getDescriptionId(stack);
 
-        if (DeliveryAgreement.fromItemStack(stack).orElse(DeliveryAgreement.EMPTY).isCompleted())
+        if (Agreement.fromItemStack(stack).orElse(Agreement.EMPTY).isCompleted())
             id = id + "_completed";
 
         return new TranslatableComponent(id);
@@ -83,7 +82,7 @@ public class AgreementItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        Optional<DeliveryAgreement> agreementOptional = DeliveryAgreement.fromItemStack(stack);
+        Optional<Agreement> agreementOptional = Agreement.fromItemStack(stack);
 
         agreementOptional.ifPresent(agreement -> {
             if (agreement.getRemaining() <= 0 && agreement.getOrdered() > 0)
@@ -111,7 +110,7 @@ public class AgreementItem extends Item {
 
         if (stack.is(this) && clickedFace == Direction.UP
                 && level.getBlockEntity(clickedPos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity
-                && deliveryTableBlockEntity.getAgreement() == DeliveryAgreement.EMPTY) {
+                && deliveryTableBlockEntity.getAgreement() == Agreement.EMPTY) {
             deliveryTableBlockEntity.setItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, stack.split(1));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -128,7 +127,7 @@ public class AgreementItem extends Item {
 
         if (stack.is(this) && clickedFace == Direction.UP
                 && level.getBlockEntity(clickedPos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity
-                && deliveryTableBlockEntity.getAgreement() == DeliveryAgreement.EMPTY) {
+                && deliveryTableBlockEntity.getAgreement() == Agreement.EMPTY) {
             deliveryTableBlockEntity.setItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, stack.split(1));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -140,9 +139,9 @@ public class AgreementItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack usedItemStack = player.getItemInHand(hand);
 
-        DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(usedItemStack).orElse(DeliveryAgreement.EMPTY);
+        Agreement agreement = Agreement.fromItemStack(usedItemStack).orElse(Agreement.EMPTY);
 
-        if (agreement == DeliveryAgreement.EMPTY){
+        if (agreement == Agreement.EMPTY){
             Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt OR Agreement is empty. No UI will be shown.");
             return InteractionResultHolder.pass(usedItemStack);
         }
