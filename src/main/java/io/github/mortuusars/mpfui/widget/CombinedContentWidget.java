@@ -31,7 +31,7 @@ public class CombinedContentWidget extends Button {
             }
 
             if (isHoveredOrFocused())
-                onTooltip.onTooltip(this, poseStack, mouseX - 10, mouseY - 16);
+                onTooltip.onTooltip(this, poseStack, mouseX, mouseY);
         }
     }
 

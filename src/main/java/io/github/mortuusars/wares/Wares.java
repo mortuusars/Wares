@@ -12,6 +12,7 @@ import io.github.mortuusars.wares.data.agreement.SteppedInt;
 import io.github.mortuusars.wares.data.agreement.TextProvider;
 import io.github.mortuusars.wares.data.agreement.WeightedComponent;
 import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -77,8 +78,8 @@ public class Wares
                 Optional.of(TextProvider.of(List.of(WeightedComponent.of(new TextComponent("Simple Address")), WeightedComponent.of(new TextComponent("Simple 2"))))),
                 Optional.of(TextProvider.of(Wares.translate("title.translate.key"))),
                 Optional.of(TextProvider.of(new TextComponent("message here"))),
-                Either.left("asd"),
-                Either.left("asd"),
+                Either.left(new ResourceLocation("asd")),
+                Either.left(new ResourceLocation("asdasdasd")),
                 Either.left(50),
                 Either.right(new SteppedInt(1, 10)),
                 Either.left(50),
@@ -142,6 +143,11 @@ public class Wares
 
     public static class Items {
         private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
+
+        public static final RegistryObject<SealedAgreementItem> SEALED_AGREEMENT = ITEMS.register("sealed_delivery_agreement", () ->
+                new SealedAgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
+                        .stacksTo(1)));
 
         public static final RegistryObject<AgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()

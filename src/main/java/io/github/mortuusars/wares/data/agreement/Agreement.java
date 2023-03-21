@@ -77,7 +77,7 @@ public final class Agreement {
                 return Optional.of(result.getOrThrow(false, s -> {
                 }).getFirst());
             } catch (Exception e) {
-                Wares.LOGGER.error("Failed to decode DeliveryAgreement from item : '" + itemStack + "'.\n" + e);
+                Wares.LOGGER.error("Failed to decode Agreement from item : '" + itemStack + "'.\n" + e);
             }
         }
 
@@ -92,7 +92,7 @@ public final class Agreement {
             }));
             return true;
         } catch (Exception e) {
-            Wares.LOGGER.error("Failed to encode DeliveryAgreement to item :\n" + e);
+            Wares.LOGGER.error("Failed to encode Agreement to item :\n" + e);
             return false;
         }
     }

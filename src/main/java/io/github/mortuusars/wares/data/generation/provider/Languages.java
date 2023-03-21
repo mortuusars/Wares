@@ -20,11 +20,20 @@ public class Languages extends LanguageProvider {
     }
 
     protected void addEN_US() {
+        add(Wares.Items.SEALED_AGREEMENT.get(), "Sealed Delivery Agreement");
+        add(Wares.Items.SEALED_AGREEMENT.get().getDescriptionId() + "_damaged", "Damaged Sealed Delivery Agreement");
+        add(Wares.Items.DELIVERY_AGREEMENT.get(), "Delivery Agreement");
+
+        add(LangKeys.SEALED_AGREEMENT_DAMAGED_MESSAGE, "The letter is badly damaged, torn shape and faded ink make the contents unreadable.");
+        add(LangKeys.SEALED_AGREEMENT_UNOPENABLE_MESSAGE, "The letter seems intact but sealed in a way that will damage and make the contents unreadable when opened.");
+
         add(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE, "Delivery Agreement");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE, "Experience Reward");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE_TOOLTIP, "Experience Reward on Agreement completion");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPIRES, "Expire time");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPIRES_TOOLTIP, "Expires in: %s");
         add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS, "Deliveries");
         add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS_TOOLTIP, "%s / %s");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE, "Experience Reward");
+        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPERIENCE_TOOLTIP, "Experience Reward on Agreement completion");
 
         add(LangKeys.GUI_EXPIRED, "Expired");
         add(LangKeys.GUI_EXPIRES_IN, "Expires in ");

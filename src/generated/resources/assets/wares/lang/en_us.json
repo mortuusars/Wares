@@ -1,6 +1,8 @@
 {
   "gui.wares.delivery_agreement.experience": "Experience Reward",
   "gui.wares.delivery_agreement.experience.tooltip": "Experience Reward on Agreement completion",
+  "gui.wares.delivery_agreement.expires": "Expire time",
+  "gui.wares.delivery_agreement.expires.tooltip": "Expires in: %s",
   "gui.wares.delivery_agreement.orders": "Deliveries",
   "gui.wares.delivery_agreement.orders.tooltip": "%s / %s",
   "gui.wares.delivery_agreement.title": "Delivery Agreement",
@@ -8,5 +10,10 @@
   "gui.wares.tooltip.expired": "Expired",
   "gui.wares.tooltip.expires_in": "Expires in ",
   "gui.wares.tooltip.hours": "%sh",
-  "gui.wares.tooltip.minutes": "%sm"
+  "gui.wares.tooltip.minutes": "%sm",
+  "item.wares.delivery_agreement": "Delivery Agreement",
+  "item.wares.sealed_delivery_agreement": "Sealed Delivery Agreement",
+  "item.wares.sealed_delivery_agreement.damaged.message": "The letter is badly damaged, torn shape and faded ink make the contents unreadable.",
+  "item.wares.sealed_delivery_agreement.unopenable.message": "The letter seems intact but sealed in a way that will damage and make the contents unreadable when opened.",
+  "item.wares.sealed_delivery_agreement_damaged": "Damaged Sealed Delivery Agreement"
 }

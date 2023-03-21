@@ -7,6 +7,7 @@ import io.github.mortuusars.wares.data.serialization.ComponentCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -22,6 +23,10 @@ public record TextProvider(Either<Component, List<WeightedComponent>> provider) 
 
     public static TextProvider of(List<WeightedComponent> list) {
         return new TextProvider(Either.right(list));
+    }
+
+    public static TextProvider of(WeightedComponent... components) {
+        return new TextProvider(Either.right(Arrays.stream(components).toList()));
     }
 
     public Component get(Random random) {

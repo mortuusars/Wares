@@ -56,8 +56,10 @@ public class AgreementItem extends Item {
             if (player instanceof LocalPlayer) {
                 Supplier<Agreement> agreementSupplier;
 
-                if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen)
+                if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen &&
+                    ItemStack.isSameItemSameTags(deliveryTableScreen.getMenu().blockEntity.getAgreementItem(), agreementStack)) {
                     agreementSupplier = () -> deliveryTableScreen.getMenu().blockEntity.getAgreement();
+                }
                 else
                     agreementSupplier = () -> agreement;
 
