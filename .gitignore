@@ -20,6 +20,8 @@ build
 # other
 eclipse
 run
+extra-mods-1.18.2
+*extra-mods*
 
 # Files from Forge MDK
 forge*changelog.txt
