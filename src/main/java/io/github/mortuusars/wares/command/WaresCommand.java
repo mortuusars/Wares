@@ -56,7 +56,7 @@ public class WaresCommand {
 //                    Optional.empty(),
                     Optional.of(TextProvider.of(new TextComponent("12 Side Road, Vibrant Plains Village"))),
 //                    Optional.empty(),
-                    Optional.of(TextProvider.of(new TextComponent("Test Agreement").withStyle(ChatFormatting.GOLD))),
+                    Optional.of(TextProvider.of(new TextComponent("Test Agreement"))),
 //                    Optional.empty(),
                     Optional.of(TextProvider.of(new TextComponent(LoremIpsum.words(50)))),
 //                    Optional.empty(),

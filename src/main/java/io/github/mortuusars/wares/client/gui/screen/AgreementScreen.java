@@ -93,8 +93,8 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
 
     @Override
     protected void init() {
-        this.imageWidth = 186;
-        this.imageHeight = 248;
+        this.imageWidth = 200;
+        this.imageHeight = 256;
         super.init();
         inventoryLabelY = -1000;
         titleLabelY = -1000;
@@ -136,7 +136,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             addRenderableOnly(message);
         }
 
-        ImageButton arrow = new ImageButton(getGuiLeft() + 84, getGuiTop() + menu.slotsStartPosY + 18 - 6, 19, 11, 186, 0, 0, TEXTURE, 256, 256, pButton -> {
+        ImageButton arrow = new ImageButton(getGuiLeft() + 84, getGuiTop() + menu.slotsStartPosY + 18 - 6, 19, 11, 200, 20, 0, TEXTURE, 256, 256, pButton -> {
             }, ((button, poseStack, mouseX, mouseY) -> this.renderTooltip(poseStack, new TextComponent("ARROW"), mouseX, mouseY)), new TextComponent(""));
         addRenderableOnly(arrow);
 
@@ -213,9 +213,9 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         }
 
 
-        ImageButton seal = new ImageButton(getGuiLeft() + 72, getGuiTop() + 222,
-                42, 42, 214, 0, 42, TEXTURE, 256, 256, pButton -> {
-        }, ((button, poseStack, mouseX, mouseY) -> this.renderTooltip(poseStack, new TextComponent("SEAL"), mouseX, mouseY)), new TextComponent(""));
+        ImageButton seal = new ImageButton(getGuiLeft() + 81, getGuiTop() + 22,
+                36, 35, 200, 32, 0, TEXTURE, 256, 256, pButton -> {
+        }/*, ((button, poseStack, mouseX, mouseY) -> this.renderTooltip(poseStack, new TextComponent("SEAL"), mouseX, mouseY)), new TextComponent("")*/);
         addRenderableOnly(seal);
     }
 
@@ -226,9 +226,9 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         RenderSystem.setShaderTexture(0, TEXTURE);
         this.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
-        //Slot BG
+        //Slots BG
         for (Slot slot : menu.slots) {
-            this.blit(poseStack, getGuiLeft() + slot.x - 1, getGuiTop() + slot.y - 1, 187, 21, 18, 18);
+            this.blit(poseStack, getGuiLeft() + slot.x - 1, getGuiTop() + slot.y - 1, 201, 1, 18, 18);
         }
     }
 
