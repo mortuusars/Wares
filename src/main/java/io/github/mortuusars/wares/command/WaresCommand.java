@@ -45,22 +45,22 @@ public class WaresCommand {
             }
 
             List<ItemStack> paymentItems = new ArrayList<>();
-            for (int i = 0; i < player.level.random.nextInt(4, 7); i++) {
+            for (int i = 0; i < player.level.random.nextInt(4, 5); i++) {
                 paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
             }
 
             AgreementDescription agreementDesctiption = new AgreementDescription(
-                    Optional.of(TextProvider.of(
-                            WeightedComponent.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY), 2),
-                            WeightedComponent.of(new TextComponent("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED)))),
-//                    Optional.empty(),
-                    Optional.of(TextProvider.of(new TextComponent("12 Side Road, Vibrant Plains Village"))),
-//                    Optional.empty(),
+//                    Optional.of(TextProvider.of(
+//                            WeightedComponent.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY), 2),
+//                            WeightedComponent.of(new TextComponent("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED)))),
+                    Optional.empty(),
+//                    Optional.of(TextProvider.of(new TextComponent("12 Side Road, Vibrant Plains Village"))),
+                    Optional.empty(),
                     Optional.of(TextProvider.of(new TextComponent("Test Agreement"))),
 //                    Optional.empty(),
-                    Optional.of(TextProvider.of(new TextComponent(LoremIpsum.words(50)))),
+                    Optional.of(TextProvider.of(new TextComponent("") /*LoremIpsum.words(1)*/)),
 //                    Optional.empty(),
-                    Either.left(new ResourceLocation("minecraft:chests/village/village_butcher")),
+                    Either.left(new ResourceLocation("minecraft:blocks/acacia_button")),
                     Either.right(paymentItems),
                     Either.left(164),
                     Either.right(new SteppedInt(10, 40, 10)),
@@ -95,13 +95,13 @@ public class WaresCommand {
             }
 
             Agreement agreement = new Agreement(
-                    Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_RED)),
-//                    Optional.empty(),
-                    Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),
-//                    Optional.empty(),
+//                    Optional.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_RED)),
+                    Optional.empty(),
+//                    Optional.of(new TextComponent("12 Side Road, Vibrant Plains Village")),
+                    Optional.empty(),
                     Optional.of(new TextComponent("Test Agreement").withStyle(ChatFormatting.GOLD)),
 //                    Optional.empty(),
-                    Optional.of(new TextComponent(LoremIpsum.words(50))),
+                    Optional.of(new TextComponent(LoremIpsum.words(3))),
 //                    Optional.empty(),
                     items,
                     paymentItems,

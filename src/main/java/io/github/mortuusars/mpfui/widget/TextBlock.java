@@ -2,13 +2,14 @@ package io.github.mortuusars.mpfui.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.helper.HorizontalAlignment;
-import io.github.mortuusars.mpfui.helper.LeftoverTooltipBehavior;
+import io.github.mortuusars.mpfui.helper.TextBlockTooltipBehavior;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,25 +17,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TextBlockWidget extends AbstractWidget {
-    private AbstractContainerScreen screen;
+public class TextBlock extends AbstractWidget {
     private final Supplier<Component> textSupplier;
     private int maxLines;
 
     private @Nullable Integer color;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
-    private LeftoverTooltipBehavior tooltipBehavior = LeftoverTooltipBehavior.LEFTOVER_ONLY;
+    private TextBlockTooltipBehavior tooltipBehavior = TextBlockTooltipBehavior.LEFTOVER_ONLY;
     private int tooltipWidth = 220;
 
-    private List<FormattedCharSequence> leftoverLines = new ArrayList<>();
+    private Supplier<Component> regularTooltipSupplier;
+    private List<FormattedCharSequence> regularTooltipLines;
+    private List<FormattedCharSequence> leftoverTooltipLines = new ArrayList<>();
+    private final List<FormattedCharSequence> tooltipSeparatorLines = Minecraft.getInstance().font.split(new TextComponent("\n-\n"), 30);
 
-    public TextBlockWidget(AbstractContainerScreen screen, Component text, int x, int y, int width, int height) {
-        this(screen, () -> text, x, y, width, height);
+    public TextBlock(Component text, int x, int y, int width, int height) {
+        this(() -> text, x, y, width, height);
     }
 
-    public TextBlockWidget(AbstractContainerScreen screen, Supplier<Component> textSupplier, int x, int y, int width, int height) {
+    public TextBlock(Supplier<Component> textSupplier, int x, int y, int width, int height) {
         super(x, y, width, height, textSupplier.get());
-        this.screen = screen;
         this.textSupplier = textSupplier;
 
         this.maxLines = height / Minecraft.getInstance().font.lineHeight;
@@ -47,22 +49,32 @@ public class TextBlockWidget extends AbstractWidget {
         return lines * font.lineHeight;
     }
 
-    public TextBlockWidget setAlignment(HorizontalAlignment horizontalAlignment) {
+    public TextBlock setAlignment(HorizontalAlignment horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
         return this;
     }
 
-    public TextBlockWidget setTooltipBehavior(LeftoverTooltipBehavior tooltipBehavior) {
+    public TextBlock setTooltipBehavior(TextBlockTooltipBehavior tooltipBehavior) {
         this.tooltipBehavior = tooltipBehavior;
         return this;
     }
 
-    public TextBlockWidget setTooltipWidth(int tooltipWidth) {
+    public TextBlock setTooltip(Supplier<Component> tooltip) {
+        this.regularTooltipSupplier = tooltip;
+        return this;
+    }
+
+    public TextBlock setTooltip(Component tooltip) {
+        this.regularTooltipSupplier = () -> tooltip;
+        return this;
+    }
+
+    public TextBlock setTooltipWidth(int tooltipWidth) {
         this.tooltipWidth = tooltipWidth;
         return this;
     }
 
-    public TextBlockWidget setDefaultColor(@Nullable Integer color) {
+    public TextBlock setDefaultColor(@Nullable Integer color) {
         this.color = color;
         return this;
     }
@@ -76,7 +88,7 @@ public class TextBlockWidget extends AbstractWidget {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             renderText(poseStack, mouseX, mouseX, partialTick);
 
-            if (isHovered && leftoverLines.size() > 0)
+            if (isHovered)
                 renderToolTip(poseStack, mouseX, mouseY);
         }
     }
@@ -90,11 +102,11 @@ public class TextBlockWidget extends AbstractWidget {
         boolean hasLeftoverLines = lines.size() > maxLines;
 
         if (hasLeftoverLines) {
-            leftoverLines = new ArrayList<>(lines.stream().skip(maxLines).toList());
-            leftoverLines.set(0, FormattedCharSequence.composite(FormattedCharSequence.forward("...", text.getStyle()), leftoverLines.get(0)));
+            leftoverTooltipLines = new ArrayList<>(lines.stream().skip(maxLines).toList());
+            leftoverTooltipLines.set(0, FormattedCharSequence.composite(FormattedCharSequence.forward("...", text.getStyle()), leftoverTooltipLines.get(0)));
         }
         else
-            leftoverLines = new ArrayList<>();
+            leftoverTooltipLines.clear();
 
         for (int lineIndex = 0; lineIndex < Math.min(lines.size(), maxLines); lineIndex++) {
             FormattedCharSequence line = lines.get(lineIndex);
@@ -121,9 +133,34 @@ public class TextBlockWidget extends AbstractWidget {
 
     @Override
     public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
-        if (this.tooltipBehavior == LeftoverTooltipBehavior.FULL)
-            screen.renderTooltip(poseStack, Minecraft.getInstance().font.split(textSupplier.get(), tooltipWidth), mouseX, mouseY);
-        else
-            screen.renderTooltip(poseStack, leftoverLines, mouseX, mouseY);
+        if (this.tooltipBehavior == TextBlockTooltipBehavior.NONE)
+            return;
+
+        if (this.tooltipBehavior == TextBlockTooltipBehavior.LEFTOVER_ONLY) {
+            Minecraft.getInstance().screen.renderTooltip(poseStack, leftoverTooltipLines, mouseX, mouseY);
+            return;
+        }
+
+
+        Font font = Minecraft.getInstance().font;
+        List<FormattedCharSequence> regularTooltipLines = font.split(this.regularTooltipSupplier.get(), tooltipWidth);
+
+        if (this.tooltipBehavior == TextBlockTooltipBehavior.REGULAR_ONLY && regularTooltipLines.size() > 0) {
+            Minecraft.getInstance().screen.renderTooltip(poseStack, regularTooltipLines, mouseX, mouseY);
+        }
+        else {
+            List<FormattedCharSequence> lines = new ArrayList<>();
+            if (regularTooltipLines.size() > 0) {
+                lines.addAll(regularTooltipLines);
+                lines.addAll(tooltipSeparatorLines);
+            }
+
+            if (this.tooltipBehavior == TextBlockTooltipBehavior.FULL)
+                lines.addAll(font.split(textSupplier.get(), tooltipWidth));
+            else if (this.tooltipBehavior == TextBlockTooltipBehavior.REGULAR_AND_LEFTOVER && leftoverTooltipLines.size() > 0)
+                lines.addAll(leftoverTooltipLines);
+
+            Minecraft.getInstance().screen.renderTooltip(poseStack, lines, mouseX, mouseY);
+        }
     }
 }
