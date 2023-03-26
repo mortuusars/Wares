@@ -37,7 +37,7 @@ public class WaresCommand {
         try {
             ServerPlayer player = context.getSource().getPlayerOrException();
 
-            ItemStack sealedAgreementStack = new ItemStack(Wares.Items.SEALED_AGREEMENT.get());
+            ItemStack sealedAgreementStack = new ItemStack(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
 
             List<ItemStack> items = new ArrayList<>();
             for (int i = 0; i < player.level.random.nextInt(4, 7); i++) {
@@ -49,7 +49,7 @@ public class WaresCommand {
                 paymentItems.add(new ItemStack(net.minecraft.world.item.Items.EMERALD));
             }
 
-            AgreementDescription agreementDesctiption = new AgreementDescription(
+            AgreementDescription agreementDescription = new AgreementDescription(
 //                    Optional.of(TextProvider.of(
 //                            WeightedComponent.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY), 2),
 //                            WeightedComponent.of(new TextComponent("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED)))),
@@ -67,7 +67,7 @@ public class WaresCommand {
                     Either.left(100),
                     Either.left(5 * 60));
 
-            agreementDesctiption.toItemStack(sealedAgreementStack);
+            agreementDescription.toItemStack(sealedAgreementStack);
             player.addItem(sealedAgreementStack);
         } catch (CommandSyntaxException e) {
             context.getSource().sendFailure(new TextComponent(e.toString()));
@@ -101,13 +101,13 @@ public class WaresCommand {
                     Optional.empty(),
                     Optional.of(new TextComponent("Test Agreement").withStyle(ChatFormatting.GOLD)),
 //                    Optional.empty(),
-                    Optional.of(new TextComponent(LoremIpsum.words(3))),
+                    Optional.of(new TextComponent(LoremIpsum.words(1))),
 //                    Optional.empty(),
                     items,
                     paymentItems,
-                    356815,
                     5,
-                    112121,
+                    2,
+                    5,
                     -1,
                     player.level.getGameTime() + 1728000); // 1 day
 

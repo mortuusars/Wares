@@ -1,6 +1,6 @@
-package io.github.mortuusars.mpfui.helper;
+package io.github.mortuusars.mpfui.component;
 
-public enum TextBlockTooltipBehavior {
+public enum TooltipBehavior {
     NONE,
     REGULAR_ONLY,
     LEFTOVER_ONLY,

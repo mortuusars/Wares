@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.block.entity;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
+import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
@@ -331,7 +332,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
         return inventory.getStackInSlot(slot);
     }
 
@@ -340,24 +341,24 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public @NotNull ItemStack removeItem(int slot, int amount) {
         return inventory.extractItem(slot, amount, false);
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
         ItemStack stack = inventory.getStackInSlot(slot);
         inventory.setStackInSlot(slot, ItemStack.EMPTY);
         return stack;
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         inventory.setStackInSlot(slot, stack);
     }
 
     @Override
-    public int[] getSlotsForFace(Direction side) {
+    public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
             case UP -> INPUT_PLUS_AGREEMENT_SLOTS;
@@ -366,12 +367,12 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStack, @Nullable Direction direction) {
         return canPlaceItem(index, itemStack);
     }
 
     @Override
-    public boolean canTakeItemThroughFace(int index, ItemStack pStack, Direction direction) {
+    public boolean canTakeItemThroughFace(int index, @NotNull ItemStack pStack, @NotNull Direction direction) {
         return index >= 7;
     }
 
@@ -382,14 +383,14 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
     }
 
-    public boolean canPlaceItem(int slotIndex, ItemStack stack) {
+    public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
         if (slotIndex >= 7)
             return false;
         return slotIndex != AGREEMENT_SLOT || stack.is(Wares.Tags.Items.AGREEMENTS);
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(@NotNull Player pPlayer) {
         if (this.level.getBlockEntity(this.worldPosition) != this)
             return false;
         else
@@ -399,12 +400,12 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    protected Component getDefaultName() {
-        return Wares.translate("container.delivery_table");
+    protected @NotNull Component getDefaultName() {
+        return Lang.BLOCK_DELIVERY_TABLE.translate();
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
+    protected @NotNull AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory) {
         return new DeliveryTableMenu(containerId, inventory, this, containerData);
     }
 

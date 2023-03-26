@@ -1,4 +1,4 @@
-package io.github.mortuusars.mpfui.helper;
+package io.github.mortuusars.mpfui.component;
 
 public enum HorizontalAlignment {
     LEFT,

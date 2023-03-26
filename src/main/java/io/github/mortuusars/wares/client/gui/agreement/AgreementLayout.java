@@ -1,8 +1,7 @@
-package io.github.mortuusars.wares.client.gui.screen.agreement;
+package io.github.mortuusars.wares.client.gui.agreement;
 
 import io.github.mortuusars.mpfui.component.Rectangle;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraftforge.common.util.Size2i;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class AgreementLayout {
         return null;
     }
 
-    public AgreementLayout add(Element type, int xPos, int width, int height, int spacing) {
+    public AgreementLayout append(Element type, int xPos, int width, int height, int spacing) {
         if (getElement(type) != null)
             throw new IllegalStateException("Attempted to add same type of element twice.");
 

@@ -1,7 +1,6 @@
 package io.github.mortuusars.wares.event;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

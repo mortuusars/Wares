@@ -1,7 +1,7 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.LangKeys;
+import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -15,28 +15,16 @@ public class Languages extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        if (locale.equals("en_us"))
-            addEN_US();
-    }
+        if (locale.equals("en_us")) {
+            for (Lang langEntry : Lang.values()) {
+                add(langEntry.key, langEntry.en_us);
+            }
+        }
 
-    protected void addEN_US() {
-        add(Wares.Items.SEALED_AGREEMENT.get(), "Sealed Delivery Agreement");
-        add(Wares.Items.SEALED_AGREEMENT.get().getDescriptionId() + "_damaged", "Damaged Sealed Delivery Agreement");
-        add(Wares.Items.DELIVERY_AGREEMENT.get(), "Delivery Agreement");
-
-        add(LangKeys.SEALED_AGREEMENT_DAMAGED_MESSAGE, "The letter is badly damaged, torn shape and faded ink make the contents unreadable.");
-        add(LangKeys.SEALED_AGREEMENT_UNOPENABLE_MESSAGE, "The letter seems intact but sealed in a way that will damage and make the contents unreadable when opened.");
-
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_TITLE, "Delivery Agreement");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPIRES, "Expire time");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_EXPIRES_TOOLTIP, "Expires in: %s");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS, "Deliveries");
-        add(LangKeys.GUI_DELIVERY_AGREEMENT_ORDERS_TOOLTIP, "%s / %s");
-
-        add(LangKeys.GUI_EXPIRED, "Expired");
-        add(LangKeys.GUI_EXPIRES_IN, "Expires in ");
-        add(LangKeys.GUI_TIME_DAYS, "%sd");
-        add(LangKeys.GUI_TIME_HOURS, "%sh");
-        add(LangKeys.GUI_TIME_MINUTES, "%sm");
+        if (locale.equals("uk_ua")) {
+            for (Lang langEntry : Lang.values()) {
+                add(langEntry.key, langEntry.uk_ua);
+            }
+        }
     }
 }

@@ -2,20 +2,15 @@ package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
+import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
-import io.github.mortuusars.wares.data.LangKeys;
+import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.util.TextUtil;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -29,10 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AgreementItem extends Item {
@@ -41,7 +36,7 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public boolean overrideOtherStackedOnMe(ItemStack agreementStack, ItemStack otherStack, Slot slot, ClickAction action, Player player, SlotAccess slotAccess) {
+    public boolean overrideOtherStackedOnMe(ItemStack agreementStack, @NotNull ItemStack otherStack, @NotNull Slot slot, @NotNull ClickAction action, @NotNull Player player, @NotNull SlotAccess slotAccess) {
         // This method is called only client-side when in player inventory,
         // but both client- and server-side when in other containers.
 
@@ -63,7 +58,7 @@ public class AgreementItem extends Item {
                 else
                     agreementSupplier = () -> agreement;
 
-                AgreementScreen.showAsOverlay(player, agreementSupplier);
+                AgreementGUI.showAsOverlay(player, agreementSupplier);
             }
 
             return true; // If true is returned - stack will not be picked up from a slot.
@@ -73,7 +68,7 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public @NotNull Component getName(@NotNull ItemStack stack) {
         String id = this.getDescriptionId(stack);
 
         if (Agreement.fromItemStack(stack).orElse(Agreement.EMPTY).isCompleted())
@@ -83,25 +78,8 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        Optional<Agreement> agreementOptional = Agreement.fromItemStack(stack);
-
-        agreementOptional.ifPresent(agreement -> {
-            if (agreement.getRemaining() <= 0 && agreement.getOrdered() > 0)
-                tooltipComponents.add(1, Wares.translate("COMPLETED"));
-            else if (level != null && agreement.canExpire()) {
-                MutableComponent expireTooltip = agreement.isExpired(level.getGameTime()) ?
-                        Wares.translate(LangKeys.GUI_EXPIRED).withStyle(ChatFormatting.RED)
-                        : Wares.translate(LangKeys.GUI_EXPIRES_IN)
-                            .append(TextUtil.timeFromTicks(agreement.getExpireTime() - level.getGameTime()))
-                        .withStyle(ChatFormatting.DARK_RED);
-
-                tooltipComponents.add(1, expireTooltip);
-            }
-
-            if (Screen.hasShiftDown() && isAdvanced.isAdvanced())
-                tooltipComponents.add(new TextComponent(agreement.toJsonString()).withStyle(ChatFormatting.GRAY));
-        });
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
+        Agreement.fromItemStack(stack).ifPresent(agreement -> tooltipComponents.add(Lang.AGREEMENT_VIEW_TOOLTIP.translate()));
     }
 
     @Override
@@ -121,7 +99,7 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         ItemStack stack = context.getItemInHand();
         Level level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
@@ -138,7 +116,7 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack usedItemStack = player.getItemInHand(hand);
 
         Agreement agreement = Agreement.fromItemStack(usedItemStack).orElse(Agreement.EMPTY);
@@ -149,7 +127,7 @@ public class AgreementItem extends Item {
         }
 
         if (level.isClientSide)
-            AgreementScreen.showAsOverlay(player, () -> agreement);
+            AgreementGUI.showAsOverlay(player, () -> agreement);
 
         return InteractionResultHolder.sidedSuccess(usedItemStack, level.isClientSide);
     }

@@ -2,7 +2,8 @@ package io.github.mortuusars.wares.block;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
-import io.github.mortuusars.wares.client.gui.screen.AgreementScreen;
+import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
+import io.github.mortuusars.wares.client.gui.agreement.AgreementScreen;
 import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -91,7 +92,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
             }
             else {
                 if (level.isClientSide)
-                    AgreementScreen.showAsOverlay(player, deliveryTableBlockEntity::getAgreement);
+                    AgreementGUI.showAsOverlay(player, deliveryTableBlockEntity::getAgreement);
 
             }
             return InteractionResult.sidedSuccess(level.isClientSide);

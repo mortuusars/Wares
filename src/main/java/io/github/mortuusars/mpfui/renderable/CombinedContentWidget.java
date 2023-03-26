@@ -1,4 +1,4 @@
-package io.github.mortuusars.mpfui.widget;
+package io.github.mortuusars.mpfui.renderable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.AbstractWidget;

@@ -17,7 +17,7 @@ public class ItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         blockItem(Wares.Items.DELIVERY_TABLE.get());
-        singleTextureItem(Wares.Items.SEALED_AGREEMENT.get());
+        singleTextureItem(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
         singleTextureItem(Wares.Items.DELIVERY_AGREEMENT.get());
         singleTextureItem(Wares.Items.DELIVERY_NOTE.get());
     }

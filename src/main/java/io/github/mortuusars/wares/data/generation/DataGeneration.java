@@ -30,6 +30,7 @@ public class DataGeneration
             generator.addProvider(new ItemModels(generator, blockStates.models().existingFileHelper));
 //            generator.addProvider(new Sounds(generator, helper));
             generator.addProvider(new Languages(generator, "en_us"));
+            generator.addProvider(new Languages(generator, "uk_ua"));
         }
     }
 }

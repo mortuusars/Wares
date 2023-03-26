@@ -1,7 +1,7 @@
 package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.LangKeys;
+import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementDescription;
 import net.minecraft.nbt.CompoundTag;
@@ -16,9 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+@SuppressWarnings("DataFlowIssue")
 public class SealedAgreementItem extends Item {
 
     public static final String DAMAGED_TAG = "AgreementDamaged";
@@ -28,7 +30,7 @@ public class SealedAgreementItem extends Item {
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public @NotNull Component getName(@NotNull ItemStack stack) {
         String id = this.getDescriptionId(stack);
 
         if (stack.hasTag() && stack.getTag().contains(DAMAGED_TAG))
@@ -38,7 +40,7 @@ public class SealedAgreementItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack usedItemStack = player.getItemInHand(hand);
 
         Optional<AgreementDescription> descriptionOptional = AgreementDescription.fromItemStack(usedItemStack);
@@ -51,7 +53,7 @@ public class SealedAgreementItem extends Item {
             }
 
             if (level.isClientSide)
-                player.displayClientMessage(Wares.translate(LangKeys.SEALED_AGREEMENT_DAMAGED_MESSAGE), true);
+                player.displayClientMessage(Lang.SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE.translate(), true);
 
             return InteractionResultHolder.pass(usedItemStack);
         }
@@ -75,7 +77,7 @@ public class SealedAgreementItem extends Item {
             }
             catch (Exception e) {
                 Wares.LOGGER.error(e.toString());
-                player.displayClientMessage(Wares.translate(LangKeys.SEALED_AGREEMENT_UNOPENABLE_MESSAGE), true);
+                player.displayClientMessage(Lang.SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE.translate(), true);
             }
         }
 
