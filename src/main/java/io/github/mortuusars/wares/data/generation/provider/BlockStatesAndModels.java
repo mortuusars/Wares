@@ -1,9 +1,16 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.block.DeliveryTableBlock;
+import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlockStatesAndModels extends BlockStateProvider {
 
@@ -13,8 +20,13 @@ public class BlockStatesAndModels extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        simpleBlock(Wares.Blocks.DELIVERY_TABLE.get());
-
-//        simpleBlock(Wares.Blocks.AGREEMENT.get(), models().pressurePlate("agreement", Wares.resource("item/delivery_agreement")));
+        getVariantBuilder(Wares.Blocks.DELIVERY_TABLE.get()).forAllStatesExcept(state -> {
+            ModelFile.ExistingModelFile model = models().getExistingFile(
+                    modLoc("block/delivery_table_agreement_" + state.getValue(DeliveryTableBlock.AGREEMENT).getSerializedName()));
+            return ConfiguredModel.builder()
+                    .modelFile(model)
+                    .rotationY((int) state.getValue(DeliveryTableBlock.FACING).getOpposite().toYRot())
+                    .build();
+        });
     }
 }

@@ -109,7 +109,7 @@ public class AgreementMenu extends AbstractContainerMenu {
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
         MutableComponent message = getAgreement().getMessage()
-                .orElse(Lang.GUI_AGREEMENT_TITLE.translate()).copy();
+                .orElse(Lang.GUI_AGREEMENT_MESSAGE.translate()).copy();
 
         if (Minecraft.getInstance().font.width(message) > 0)
             message.append("\n");

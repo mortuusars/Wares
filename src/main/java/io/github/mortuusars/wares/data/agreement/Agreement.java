@@ -97,12 +97,14 @@ public final class Agreement {
         }
     }
 
+//    public Agreement complete(RemoveExpireTimeEtc)
+
     public boolean isInfinite() {
-        return getOrdered() <= 0;
+        return getOrdered() <= 0 || getOrdered() == Integer.MAX_VALUE;
     }
 
     public boolean isCompleted() {
-        return !isInfinite() && getRemaining() <= 0;
+        return getOrdered() > 0 && getRemaining() <= 0;
     }
 
     public boolean canExpire() {

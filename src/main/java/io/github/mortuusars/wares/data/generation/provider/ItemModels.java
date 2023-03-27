@@ -16,10 +16,11 @@ public class ItemModels extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        blockItem(Wares.Items.DELIVERY_TABLE.get());
+        withExistingParent(Wares.Items.DELIVERY_TABLE.getId().getPath(), modLoc("block/delivery_table_agreement_none"));
         singleTextureItem(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
         singleTextureItem(Wares.Items.DELIVERY_AGREEMENT.get());
-        singleTextureItem(Wares.Items.DELIVERY_NOTE.get());
+        singleTextureItem(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get());
+        singleTextureItem(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
     }
 
     private ItemModelBuilder blockItem(BlockItem item) {

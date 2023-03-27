@@ -152,7 +152,8 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                 1, 27, STAMPS_TEXTURE)
                 .setTooltip(Lang.GUI_AGREEMENT_EXPIRED.translate()))
                 .setOpacity(0.75f)
-                .visibility((renderable, poseStack, mouseX, mouseY) -> getAgreement().getExpireTime() - menu.level.getGameTime() <= 0);
+                .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted() &&
+                        getAgreement().getExpireTime() - menu.level.getGameTime() <= 0);
 
         // SEAL
 

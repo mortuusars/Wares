@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wares:item/delivery_note"
+    "layer0": "wares:item/completed_delivery_agreement"
   }
 }

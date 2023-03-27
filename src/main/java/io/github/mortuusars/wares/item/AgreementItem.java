@@ -10,11 +10,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -31,14 +35,21 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class AgreementItem extends Item {
+
     public AgreementItem(Properties properties) {
         super(properties);
     }
 
     @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
+        Agreement.fromItemStack(stack)
+                .ifPresent(agreement -> tooltipComponents.add(Lang.AGREEMENT_VIEW_TOOLTIP.translate()
+                        .withStyle(Style.EMPTY.withColor(0xd6b589))));
+    }
+
+    @Override
     public boolean overrideOtherStackedOnMe(ItemStack agreementStack, @NotNull ItemStack otherStack, @NotNull Slot slot, @NotNull ClickAction action, @NotNull Player player, @NotNull SlotAccess slotAccess) {
-        // This method is called only client-side when in player inventory,
-        // but both client- and server-side when in other containers.
+        // This method is called only client-side when in creative inventory,
 
         if (agreementStack.getItem() == this && otherStack.isEmpty() && action == ClickAction.SECONDARY) {
             Agreement agreement = Agreement.fromItemStack(agreementStack).orElse(Agreement.EMPTY);
@@ -46,6 +57,13 @@ public class AgreementItem extends Item {
             if (agreement == Agreement.EMPTY){
                 Wares.LOGGER.error("Cannot read Delivery Agreement from stack nbt OR Agreement is empty. No UI will be shown.");
                 return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, slotAccess);
+            }
+
+            if (agreementStack.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
+                if (agreement.isCompleted())
+                    slot.set(convertToCompletedItem(agreementStack));
+                else if (agreement.isExpired(player.level.getGameTime()))
+                    slot.set(convertToExpiredItem(agreementStack));
             }
 
             if (player instanceof LocalPlayer) {
@@ -68,18 +86,64 @@ public class AgreementItem extends Item {
     }
 
     @Override
-    public @NotNull Component getName(@NotNull ItemStack stack) {
-        String id = this.getDescriptionId(stack);
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && stack.hasTag() && entity instanceof ServerPlayer serverPlayer
+                && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
 
-        if (Agreement.fromItemStack(stack).orElse(Agreement.EMPTY).isCompleted())
-            id = id + "_completed";
-
-        return new TranslatableComponent(id);
+            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
+            if (agreementTag.contains("expireTime")) {
+                long expireTime = agreementTag.getLong("expireTime");
+                if (expireTime > 0 && expireTime <= level.getGameTime()) {
+                    ItemStack expiredStack = convertToExpiredItem(stack);
+                    serverPlayer.getInventory().setItem(slotId, expiredStack);
+                }
+            }
+            else if (agreementTag.contains("ordered") && agreementTag.contains("remaining")) {
+                int ordered = agreementTag.getInt("ordered");
+                int remaining = agreementTag.getInt("remaining");
+                if (ordered > 0 && remaining <= 0) {
+                    ItemStack completedStack = convertToCompletedItem(stack);
+                    serverPlayer.getInventory().setItem(slotId, completedStack);
+                }
+            }
+        }
     }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
-        Agreement.fromItemStack(stack).ifPresent(agreement -> tooltipComponents.add(Lang.AGREEMENT_VIEW_TOOLTIP.translate()));
+    public static @NotNull ItemStack convertToExpiredItem(ItemStack stack) {
+        if (stack.isEmpty())
+            throw new IllegalStateException("Tried to convert an empty ItemStack to Expired Delivery Agreement.");
+        else if (stack.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get()))
+            throw new IllegalStateException("Tried to convert Completed Delivery Agreement to Expired Delivery Agreement.\n" + stack);
+        else if (stack.is(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get()))
+            return stack;
+
+        ItemStack expiredStack = new ItemStack(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
+
+        if (stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
+            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
+            expiredStack.getOrCreateTag().put("Agreement", agreementTag);
+        }
+
+        return expiredStack;
+    }
+
+    public static @NotNull ItemStack convertToCompletedItem(ItemStack stack) {
+        if (stack.isEmpty())
+            throw new IllegalStateException("Tried to convert an empty ItemStack to Completed Delivery Agreement.");
+        else if (stack.is(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get()))
+            throw new IllegalStateException("Tried to convert Expired Delivery Agreement to Completed Delivery Agreement.");
+        else if (stack.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get()))
+            return stack;
+
+        ItemStack completedStack = new ItemStack(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get());
+
+        if (stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
+            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
+            agreementTag.putInt("expireTime", -1);
+            completedStack.getOrCreateTag().put("Agreement", agreementTag);
+        }
+
+        return completedStack;
     }
 
     @Override
@@ -88,31 +152,15 @@ public class AgreementItem extends Item {
         BlockPos clickedPos = context.getClickedPos();
         Direction clickedFace = context.getClickedFace();
 
-        if (stack.is(this) && clickedFace == Direction.UP
+        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get())
+                && clickedFace == Direction.UP
                 && level.getBlockEntity(clickedPos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity
                 && deliveryTableBlockEntity.getAgreement() == Agreement.EMPTY) {
-            deliveryTableBlockEntity.setItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, stack.split(1));
+            deliveryTableBlockEntity.setAgreementItem(stack.split(1));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         return super.onItemUseFirst(stack, context);
-    }
-
-    @Override
-    public @NotNull InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getItemInHand();
-        Level level = context.getLevel();
-        BlockPos clickedPos = context.getClickedPos();
-        Direction clickedFace = context.getClickedFace();
-
-        if (stack.is(this) && clickedFace == Direction.UP
-                && level.getBlockEntity(clickedPos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity
-                && deliveryTableBlockEntity.getAgreement() == Agreement.EMPTY) {
-            deliveryTableBlockEntity.setItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, stack.split(1));
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
-
-        return super.useOn(context);
     }
 
     @Override

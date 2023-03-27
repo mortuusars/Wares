@@ -4,7 +4,7 @@ import net.minecraft.util.StringRepresentable;
 
 public enum AgreementStatus implements StringRepresentable {
     NONE("none"),
-    IN_PROGRESS("in_progress"),
+    REGULAR("regular"),
     COMPLETED("completed"),
     EXPIRED("expired");
 

@@ -6,6 +6,7 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -15,6 +16,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -49,9 +51,14 @@ public class Wares
     }
 
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-//        Player player = event.getPlayer();
-//        if (!player.isSecondaryUseActive() || player.level.isClientSide || event.getHand() == InteractionHand.OFF_HAND)
-//            return;
+        Player player = event.getPlayer();
+        if (!player.isSecondaryUseActive() || player.level.isClientSide || event.getHand() == InteractionHand.OFF_HAND) {
+            ItemStack first = player.getInventory().getItem(0);
+            ItemStack second = player.getInventory().getItem(1);
+            if (ItemStack.isSameItemSameTags(first, second))
+                player.displayClientMessage(new TextComponent("Items are the same."), true);
+        }
+            return;
     }
 
     /**
@@ -92,19 +99,23 @@ public class Wares
                 new SealedAgreementItem(new Item.Properties()
                         .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
-
         public static final RegistryObject<AgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()
                         .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
-        public static final RegistryObject<AgreementItem> DELIVERY_NOTE = ITEMS.register("delivery_note", () ->
+        public static final RegistryObject<AgreementItem> COMPLETED_DELIVERY_AGREEMENT = ITEMS.register("completed_delivery_agreement", () ->
+                new AgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
+                        .stacksTo(1)));
+
+        public static final RegistryObject<AgreementItem> EXPIRED_DELIVERY_AGREEMENT = ITEMS.register("expired_delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()
                         .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
 
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
                 new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)));
+                        .tab(CreativeModeTab.TAB_DECORATIONS)));
     }
 
     public static class Tags {

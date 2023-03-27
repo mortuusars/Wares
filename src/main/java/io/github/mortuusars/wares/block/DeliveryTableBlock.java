@@ -3,15 +3,16 @@ package io.github.mortuusars.wares.block;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
-import io.github.mortuusars.wares.client.gui.agreement.AgreementScreen;
 import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -22,6 +23,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -33,31 +36,44 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"NullableProblems", "deprecation"})
 public class DeliveryTableBlock extends BaseEntityBlock {
-    public static final EnumProperty<AgreementStatus> AGREEMENT_STATUS = EnumProperty.create("agreement_status", AgreementStatus.class);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<AgreementStatus> AGREEMENT = EnumProperty.create("agreement", AgreementStatus.class);
 
-    private static final VoxelShape TABLE_SHAPE = Shapes.box(0f, 0f, 0f, 1f, 1f, 1f);
-    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Shapes.box(0.15f, 1f, 0.15f, 0.85f, 1.07f, 0.85f));
+    private static final VoxelShape TABLE_SHAPE = Shapes.or(
+            Block.box(0, 12, 0, 16, 16, 16), // Tabletop
+            Block.box(1, 2, 1, 15, 12, 15),  // Main
+            Block.box(1, 0, 1, 4, 2, 4), // Leg Front Right
+            Block.box(12, 0, 1, 15, 2, 4), // Leg Front Left
+            Block.box(1, 0, 12, 4, 2, 15), // Leg Back Right
+            Block.box(12, 0, 12, 15, 2, 15)); // Leg Back Left
+    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Shapes.box(0.15f, 1f, 0.15f, 0.85f, 1.04f, 0.85f));
 
     public DeliveryTableBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(getStateDefinition().any().setValue(AGREEMENT_STATUS, AgreementStatus.NONE));
+        this.registerDefaultState(getStateDefinition().any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(AGREEMENT, AgreementStatus.NONE));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AGREEMENT_STATUS);
+        builder.add(FACING, AGREEMENT);
     }
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (!state.hasProperty(AGREEMENT_STATUS))
-            return TABLE_SHAPE;
-        return state.getValue(AGREEMENT_STATUS) == AgreementStatus.NONE ? TABLE_SHAPE : TABLE_WITH_AGREEMENT_SHAPE;
+        return state.getValue(AGREEMENT) == AgreementStatus.NONE ? TABLE_SHAPE : TABLE_WITH_AGREEMENT_SHAPE;
     }
 
     @Override
     public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return getStateDefinition().any().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Nullable

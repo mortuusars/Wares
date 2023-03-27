@@ -12,6 +12,8 @@ public enum Lang {
     ITEM_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get(), "Sealed Delivery Agreement", "Запечатаний Торговий Договір"),
     ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get().getDescriptionId() + "_damaged", "Damaged Sealed Delivery Agreement", "Пошкоджений Запечатаний Торговий Договір"),
     ITEM_DELIVERY_AGREEMENT(Wares.Items.DELIVERY_AGREEMENT.get(), "Delivery Agreement", "Торговий Договір"),
+    ITEM_COMPLETED_DELIVERY_AGREEMENT(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(), "Completed Delivery Agreement", "Виконаний Торговий Договір"),
+    ITEM_EXPIRED_DELIVERY_AGREEMENT(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get(), "Expired Delivery Agreement", "Прострочений Торговий Договір"),
 
     SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE("item", "sealed_delivery_agreement.damaged_error_message",
             "The letter is badly damaged, torn paper and faded ink make the contents unreadable.",
@@ -36,12 +38,26 @@ public enum Lang {
     GUI_AGREEMENT_EXPIRED("gui", "agreement.expired.tooltip", "Expired", "Минув термін дії"),
     GUI_TIME_DAYS("gui", "days.short","%sd", "%sдн"),
     GUI_TIME_HOURS("gui", "hours.short", "%sh", "%sгод"),
-    GUI_TIME_MINUTES("gui", "minutes.short", "%sm", "%sхв");
+    GUI_TIME_MINUTES("gui", "minutes.short", "%sm", "%sхв"),
 
+    COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM("commands", "agreement.complete.wrong_item",
+            "Wrong item. Expected: '%s', got: '%s'",
+            "Неправильний предмет. Очікувався: '%s', отримано: '%s'"),
+    COMMAND_AGREEMENT_COMPLETE_IS_EMPTY("commands", "agreement.complete.is_empty",
+            "Failed: Agreement is empty or not deserialized properly.",
+            "Помилка: Договір порожній або неправильно прочитаний."),
+    COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED("commands", "agreement.complete.already_completed",
+            "Failed: Agreement is already completed.",
+            "Помилка: Договір вже виконаний."),
+    COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED("commands", "agreement.complete.is_expired",
+            "Failed: Cannot complete an expired Agreement.",
+            "Помилка: Неможливо виконати Договір у якого закінчився термін дії."),
+
+    ;
+
+    public final String key;
     public final String en_us;
     public final String uk_ua;
-    public final String key;
-
 
     Lang(String category, String key, String en_us, String uk_ua) {
         this.key = category + "." + Wares.ID + "." + key;
