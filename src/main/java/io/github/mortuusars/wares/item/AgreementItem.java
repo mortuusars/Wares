@@ -85,10 +85,11 @@ public class AgreementItem extends Item {
         return super.overrideOtherStackedOnMe(agreementStack, otherStack, slot, action, player, slotAccess);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && stack.hasTag() && entity instanceof ServerPlayer serverPlayer
-                && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
+    public void inventoryTick(ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && entity instanceof ServerPlayer serverPlayer
+                && stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
 
             CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
             if (agreementTag.contains("expireTime")) {
@@ -113,16 +114,15 @@ public class AgreementItem extends Item {
         if (stack.isEmpty())
             throw new IllegalStateException("Tried to convert an empty ItemStack to Expired Delivery Agreement.");
         else if (stack.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get()))
-            throw new IllegalStateException("Tried to convert Completed Delivery Agreement to Expired Delivery Agreement.\n" + stack);
+            throw new IllegalStateException("Tried to convert Completed Delivery Agreement to Expired Delivery Agreement. Stack: '" + stack + '.');
         else if (stack.is(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get()))
             return stack;
 
         ItemStack expiredStack = new ItemStack(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
 
-        if (stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
-            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
+        CompoundTag agreementTag = stack.getTagElement("Agreement");
+        if (agreementTag != null)
             expiredStack.getOrCreateTag().put("Agreement", agreementTag);
-        }
 
         return expiredStack;
     }
@@ -131,17 +131,15 @@ public class AgreementItem extends Item {
         if (stack.isEmpty())
             throw new IllegalStateException("Tried to convert an empty ItemStack to Completed Delivery Agreement.");
         else if (stack.is(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get()))
-            throw new IllegalStateException("Tried to convert Expired Delivery Agreement to Completed Delivery Agreement.");
+            throw new IllegalStateException("Tried to convert Expired Delivery Agreement to Completed Delivery Agreement. Stack: '" + stack + '.');
         else if (stack.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get()))
             return stack;
 
         ItemStack completedStack = new ItemStack(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get());
 
-        if (stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
-            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
-            agreementTag.putInt("expireTime", -1);
+        CompoundTag agreementTag = stack.getTagElement("Agreement");
+        if (agreementTag != null)
             completedStack.getOrCreateTag().put("Agreement", agreementTag);
-        }
 
         return completedStack;
     }
