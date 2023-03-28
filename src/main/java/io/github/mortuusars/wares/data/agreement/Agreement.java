@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class Agreement {
+public class Agreement {
     public static final Codec<Agreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ComponentCodec.CODEC.optionalFieldOf("buyerName").forGetter(Agreement::getBuyerName),
                     ComponentCodec.CODEC.optionalFieldOf("buyerAddress").forGetter(Agreement::getBuyerAddress),
@@ -38,9 +38,9 @@ public final class Agreement {
             Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
             Collections.emptyList(), Collections.emptyList(), -1, -1, -1, -1, -1);
 
-    private static final String AGREEMENT_TAG = "Agreement";
+    protected static final String AGREEMENT_TAG = "Agreement";
 
-    private final Optional<Component> buyerName;
+    private final Optional<Component> buyerName; // Remove optional and default to TextComponent.EMPTY?
     private final Optional<Component> buyerAddress;
     private final Optional<Component> title;
     private final Optional<Component> message;
@@ -51,6 +51,7 @@ public final class Agreement {
     private final int deliveryTime;
     private final long expireTime;
     private int remaining;
+    // ID for quests?
 
     public Agreement(Optional<Component> buyerName, Optional<Component> buyerAddress, Optional<Component> title, Optional<Component> message,
                      List<ItemStack> requestedItems, List<ItemStack> paymentItems,

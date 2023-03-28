@@ -46,7 +46,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
             Block.box(12, 0, 1, 15, 2, 4), // Leg Front Left
             Block.box(1, 0, 12, 4, 2, 15), // Leg Back Right
             Block.box(12, 0, 12, 15, 2, 15)); // Leg Back Left
-    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Shapes.box(0.15f, 1f, 0.15f, 0.85f, 1.04f, 0.85f));
+    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Shapes.box(0.12f, 1f, 0.12f, 0.88f, 1.04f, 0.88f));
 
     public DeliveryTableBlock(Properties properties) {
         super(properties);
@@ -100,7 +100,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (hitResult.getLocation().y > pos.getY() + 1 && !agreementStack.isEmpty()) {
             if (player.isSecondaryUseActive()) {
                 if (!level.isClientSide) {
-                    ItemStack agreement = deliveryTableBlockEntity.removeItem(DeliveryTableBlockEntity.AGREEMENT_SLOT, 1);
+                    ItemStack agreement = deliveryTableBlockEntity.extractAgreementItem();
                     ItemEntity drop = player.drop(agreement, false);
                     if (drop != null)
                         drop.setPickUpDelay(0);

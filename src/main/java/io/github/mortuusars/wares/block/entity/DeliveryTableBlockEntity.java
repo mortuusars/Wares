@@ -98,12 +98,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         progress++;
 
-        if (/*!canDeliverCached && */!canDeliver()) {
+        if (!canDeliver()) {
             resetProgress();
             return;
         }
-
-//        canDeliverCached = true;
 
         if (progress >= getDeliveryTime() && tryDeliver(getBatchSize()))
             resetProgress();
@@ -132,7 +130,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return ticks;
     }
 
-    public void refreshAgreement() {
+    public void onAgreementSlotChanged() {
         resetProgress();
         agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
 
@@ -212,7 +210,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected boolean canDeliver() {
-        return agreement != Agreement.EMPTY
+        return level != null
+                && agreement != Agreement.EMPTY
                 && agreement.isNotExpired(level.getGameTime())
                 && !agreement.isCompleted()
                 && hasRequestedItems()
@@ -299,7 +298,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             @Override
             protected void onContentsChanged(int slot) {
                 if (slot == AGREEMENT_SLOT)
-                    refreshAgreement();
+                    onAgreementSlotChanged();
                 setChanged();
             }
         };
@@ -343,6 +342,14 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return getItem(AGREEMENT_SLOT);
     }
 
+    public @NotNull ItemStack extractAgreementItem() {
+        return removeItem(AGREEMENT_SLOT, 1);
+    }
+
+    public void setAgreementItem(@NotNull ItemStack stack) {
+        setItem(AGREEMENT_SLOT, stack);
+    }
+
     @Override
     public @NotNull ItemStack removeItem(int slot, int amount) {
         return inventory.extractItem(slot, amount, false);
@@ -358,10 +365,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void setItem(int slot, @NotNull ItemStack stack) {
         inventory.setStackInSlot(slot, stack);
-    }
-
-    public void setAgreementItem(@NotNull ItemStack stack) {
-        setItem(AGREEMENT_SLOT, stack);
     }
 
     @Override
@@ -423,22 +426,21 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         this.inventory.deserializeNBT(tag.getCompound("Inventory"));
-        this.progress = tag.getInt("DeliveryTime");
+        this.progress = tag.getInt("Progress");
 
-        agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
+        agreement = Agreement.fromItemStack(getAgreementItem()).orElse(Agreement.EMPTY);
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put("Inventory", this.inventory.serializeNBT());
-        tag.putInt("DeliveryTime", progress);
+        tag.putInt("Progress", progress);
     }
 
     @Override
     public void setChanged() {
         super.setChanged();
-//        canDeliverCached = false;
     }
 
     // <Updating>
