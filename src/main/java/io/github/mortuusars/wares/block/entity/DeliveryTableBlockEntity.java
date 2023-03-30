@@ -137,7 +137,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         AgreementStatus agreementStatus;
         if (agreement == Agreement.EMPTY)
             agreementStatus = AgreementStatus.NONE;
-        else if (!agreement.isInfinite() && agreement.getRemaining() < 1)
+        else if (!agreement.isInfinite() && agreement.getDelivered() < 1)
             agreementStatus = AgreementStatus.COMPLETED;
         else if (agreement.isExpired(level.getGameTime()))
             agreementStatus = AgreementStatus.EXPIRED;
@@ -182,9 +182,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             if (!agreement.isInfinite()) {
 
-                int quantity = agreement.getRemaining();
+                int quantity = agreement.getDelivered();
                 if (quantity > 0) {
-                    getAgreement().setRemaining(--quantity);
+                    getAgreement().setDelivered(--quantity);
 
                     if (quantity <= 0) {
                         completeAgreement();
@@ -212,8 +212,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected boolean canDeliver() {
         return level != null
                 && agreement != Agreement.EMPTY
-                && agreement.isNotExpired(level.getGameTime())
                 && !agreement.isCompleted()
+                && !agreement.isExpired(level.getGameTime())
                 && hasRequestedItems()
                 && hasSpaceForPayment();
     }

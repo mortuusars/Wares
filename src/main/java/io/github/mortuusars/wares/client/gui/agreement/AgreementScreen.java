@@ -157,23 +157,23 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
 
         // SEAL
 
-        Component buyerInfoTooltip = TextComponent.EMPTY;
+//        Component buyerInfoTooltip = TextComponent.EMPTY;
+//
+//        if (getAgreement().getBuyerName().isPresent()) {
+//            MutableComponent component = (MutableComponent) getAgreement().getBuyerName().get().copy();
+//            getAgreement().getBuyerAddress().ifPresent(address -> {
+//                if (font.width(address) > 0) {
+//                    component.append("\n");
+//                    component.append(address);
+//                }
+//            });
+//            buyerInfoTooltip = component;
+//        } else if (getAgreement().getBuyerAddress().isPresent())
+//            buyerInfoTooltip = getAgreement().getBuyerAddress().get();
 
-        if (getAgreement().getBuyerName().isPresent()) {
-            MutableComponent component = (MutableComponent) getAgreement().getBuyerName().get().copy();
-            getAgreement().getBuyerAddress().ifPresent(address -> {
-                if (font.width(address) > 0) {
-                    component.append("\n");
-                    component.append(address);
-                }
-            });
-            buyerInfoTooltip = component;
-        } else if (getAgreement().getBuyerAddress().isPresent())
-            buyerInfoTooltip = getAgreement().getBuyerAddress().get();
-
-        addRenderableOnly(new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2), getGuiTop() + imageHeight - 35,
-                36, 35, 200, 32, TEXTURE))
-                .setTooltip(buyerInfoTooltip);
+//        addRenderableOnly(new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2), getGuiTop() + imageHeight - 35,
+//                36, 35, 200, 32, TEXTURE))
+//                .setTooltip(buyerInfoTooltip);
     }
 
     @Override

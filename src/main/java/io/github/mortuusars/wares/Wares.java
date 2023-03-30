@@ -6,6 +6,7 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import io.github.mortuusars.wares.test.Tests;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -58,7 +59,8 @@ public class Wares
             if (ItemStack.isSameItemSameTags(first, second))
                 player.displayClientMessage(new TextComponent("Items are the same."), true);
         }
-            return;
+
+        return;
     }
 
     /**

@@ -103,26 +103,27 @@ public class AgreementMenu extends AbstractContainerMenu {
     }
 
     public MutableComponent getTitle() {
-        return ((MutableComponent) getAgreement().getTitle().orElse(Lang.GUI_AGREEMENT_TITLE.translate()));
+        return ((MutableComponent) getAgreement().getTitle()/*.orElse(Lang.GUI_AGREEMENT_TITLE.translate())*/);
     }
 
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
-        MutableComponent message = getAgreement().getMessage()
-                .orElse(Lang.GUI_AGREEMENT_MESSAGE.translate()).copy();
+        MutableComponent message = getAgreement().getMessage().copy();
 
         if (Minecraft.getInstance().font.width(message) > 0)
             message.append("\n");
+        else
+            message = Lang.GUI_AGREEMENT_MESSAGE.translate();
 
-        getAgreement().getBuyerName().ifPresent(nameComponent -> {
-            message.append("\n");
-            message.append(nameComponent);
-        });
-
-        getAgreement().getBuyerAddress().ifPresent(addressComponent -> {
-            message.append("\n");
-            message.append(addressComponent);
-        });
+//        getAgreement().getBuyerName().ifPresent(nameComponent -> {
+//            message.append("\n");
+//            message.append(nameComponent);
+//        });
+//
+//        getAgreement().getBuyerAddress().ifPresent(addressComponent -> {
+//            message.append("\n");
+//            message.append(addressComponent);
+//        });
 
         return message;
     }
@@ -135,7 +136,7 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         // Info
         boolean shouldDisplayOrderedCount = !getAgreement().isInfinite();
-        boolean shouldDisplayExpirationTime = getAgreement().canExpire() && getAgreement().isNotExpired(level.getGameTime());
+        boolean shouldDisplayExpirationTime = getAgreement().isExpired(level.getGameTime());
 
         int infoHeight = 0;
 
