@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.block.entity;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.AgreementStatus;
+import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
@@ -81,8 +81,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     protected int progress = 0;
 
-//    protected boolean canDeliverCached = false; // Store value until inventory changed
-
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
         inventory = createInventory(SLOTS);
@@ -90,21 +88,19 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public void serverTick() {
-        if (getAgreementItem().is(Wares.Items.DELIVERY_AGREEMENT.get()) && getAgreement().isExpired(level.getGameTime())) {
-            ItemStack expiredStack = AgreementItem.convertToExpiredItem(getAgreementItem());
-            setAgreementItem(expiredStack);
+        if (level == null)
             return;
-        }
 
-        progress++;
+        convertAgreementStackIfNeeded();
 
-        if (!canDeliver()) {
+        int deliveryTime = getDeliveryTime();
+        if (deliveryTime > progress)
+            progress++;
+
+        if (!canDeliver())
             resetProgress();
-            return;
-        }
-
-        if (progress >= getDeliveryTime() && tryDeliver(getBatchSize()))
-            resetProgress();
+        else if (progress >= deliveryTime)
+            deliver(getBatchSize());
 
         setChanged();
     }
@@ -118,6 +114,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected int getDeliveryTime() {
+        // TODO: Do not check for villager on every tick.
         int ticks = agreement.getDeliveryTimeOrDefault();
         List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
 
@@ -128,92 +125,57 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
 
         return ticks;
-    }
-
-    public void onAgreementSlotChanged() {
-        resetProgress();
-        agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
-
-        AgreementStatus agreementStatus;
-        if (agreement == Agreement.EMPTY)
-            agreementStatus = AgreementStatus.NONE;
-        else if (!agreement.isInfinite() && agreement.getDelivered() < 1)
-            agreementStatus = AgreementStatus.COMPLETED;
-        else if (agreement.isExpired(level.getGameTime()))
-            agreementStatus = AgreementStatus.EXPIRED;
-        else
-            agreementStatus = AgreementStatus.REGULAR;
-
-        BlockState currentBlockState = getBlockState();
-        if (currentBlockState.getValue(DeliveryTableBlock.AGREEMENT) != agreementStatus)
-            level.setBlockAndUpdate(worldPosition, currentBlockState.setValue(DeliveryTableBlock.AGREEMENT, agreementStatus));
+//        return 3;
     }
 
     protected void resetProgress() {
         progress = 0;
-//        canDeliverCached = false;
     }
 
-    //TODO: CLEANUP/REFACTOR UPDATING AGREEMENT AND ITS ITEMSTACK.
-
-    protected void syncAgreementToItemStackAndSendToClients() {
-        ItemStack agreementStack = getAgreementItem();
-        if (agreementStack.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
-            getAgreement().toItemStack(agreementStack);
-            setAgreementItem(agreementStack);
-
-            List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
-            for (ServerPlayer player : nearbyPlayers) {
-                player.connection.send(this.getUpdatePacket());
-            }
+    protected void sendUpdateToNearbyClients() {
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
+        for (ServerPlayer player : nearbyPlayers) {
+            player.connection.send(this.getUpdatePacket());
         }
     }
 
-    protected boolean tryDeliver(int count) {
+    protected boolean deliver(int count) {
         for (int i = 0; i < count; i++) {
+            // First check is just to be sure,
+            // Afterwards it is necessary to check because items have changed.
             if (!canDeliver())
                 return false;
 
             consumeFromInputSlots(agreement.getRequestedItems());
             insertCopiesToOutputSlots(agreement.getPaymentItems());
 
-            level.playSound(null, getBlockPos(), SoundEvents.FUNGUS_STEP, SoundSource.BLOCKS,
+            level.playSound(null, getBlockPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS,
                     0.25f, level.getRandom().nextFloat() * 0.1f + 0.9f);
 
-            if (!agreement.isInfinite()) {
+            agreement.onDeliver();
 
-                int quantity = agreement.getDelivered();
-                if (quantity > 0) {
-                    getAgreement().setDelivered(--quantity);
+            agreement.toItemStack(getAgreementItem());
+            sendUpdateToNearbyClients();
 
-                    if (quantity <= 0) {
-                        completeAgreement();
-                        return true; // Completed.
-                    }
-                    else
-                        syncAgreementToItemStackAndSendToClients();
-                }
+            if (agreement.isCompleted()) {
+                resetProgress();
+
+                int experience = getAgreement().getExperience();
+                if (experience > 0 && level instanceof ServerLevel serverLevel)
+                    ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()).add(0, 0.5f, 0), experience);
+
+                return true;
             }
         }
 
+        resetProgress();
         return true; // All delivered.
-    }
-
-    protected void completeAgreement() {
-        int experience = getAgreement().getExperience();
-        if (experience > 0 && level instanceof ServerLevel serverLevel)
-            ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()), experience);
-
-        ItemStack completedStack = AgreementItem.convertToCompletedItem(getAgreementItem());
-        getAgreement().toItemStack(completedStack);
-        setAgreementItem(completedStack);
     }
 
     protected boolean canDeliver() {
         return level != null
                 && agreement != Agreement.EMPTY
-                && !agreement.isCompleted()
-                && !agreement.isExpired(level.getGameTime())
+                && agreement.canDeliver(level.getGameTime())
                 && hasRequestedItems()
                 && hasSpaceForPayment();
     }
@@ -297,8 +259,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return new ItemStackHandler(slots) {
             @Override
             protected void onContentsChanged(int slot) {
-                if (slot == AGREEMENT_SLOT)
-                    onAgreementSlotChanged();
+                if (slot == AGREEMENT_SLOT) {
+                    updateBlockStateIfNeeded();
+                    agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
+                    resetProgress();
+                }
                 setChanged();
             }
         };
@@ -429,6 +394,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         this.progress = tag.getInt("Progress");
 
         agreement = Agreement.fromItemStack(getAgreementItem()).orElse(Agreement.EMPTY);
+        updateBlockStateIfNeeded();
     }
 
     @Override
@@ -445,13 +411,29 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     // <Updating>
 
+    protected void convertAgreementStackIfNeeded() {
+        if (!getAgreementItem().is(Wares.Items.DELIVERY_AGREEMENT.get()))
+            return;
+
+        if (getAgreement().isCompleted())
+            setAgreementItem(AgreementItem.convertToCompleted(getAgreementItem()));
+        else if (getAgreement().isExpired(level.getGameTime()))
+            setAgreementItem(AgreementItem.convertToExpired(getAgreementItem()));
+    }
+
+    protected void updateBlockStateIfNeeded() {
+        AgreementType type = AgreementType.fromItemStack(getAgreementItem());
+        BlockState currentBlockState = getBlockState();
+        if (level != null && currentBlockState.getValue(DeliveryTableBlock.AGREEMENT) != type)
+            level.setBlockAndUpdate(worldPosition, currentBlockState.setValue(DeliveryTableBlock.AGREEMENT, type));
+    }
+
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
         handleUpdateTag(pkt.getTag());
     }
 
-    @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);

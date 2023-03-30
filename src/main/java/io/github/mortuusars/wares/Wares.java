@@ -47,20 +47,6 @@ public class Wares
         BlockEntities.BLOCK_ENTITIES.register(modEventBus);
         MenuTypes.MENU_TYPES.register(modEventBus);
         Items.ITEMS.register(modEventBus);
-
-        MinecraftForge.EVENT_BUS.addListener(Wares::onRightClick);
-    }
-
-    public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-        Player player = event.getPlayer();
-        if (!player.isSecondaryUseActive() || player.level.isClientSide || event.getHand() == InteractionHand.OFF_HAND) {
-            ItemStack first = player.getInventory().getItem(0);
-            ItemStack second = player.getInventory().getItem(1);
-            if (ItemStack.isSameItemSameTags(first, second))
-                player.displayClientMessage(new TextComponent("Items are the same."), true);
-        }
-
-        return;
     }
 
     /**

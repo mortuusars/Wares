@@ -174,7 +174,7 @@ public class Agreement {
     public void onDeliver() {
         addDelivered(1);
 
-        if (!isCompleted())
+        if (isCompleted())
             complete();
     }
 

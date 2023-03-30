@@ -2,15 +2,11 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
-import io.github.mortuusars.wares.data.agreement.AgreementStatus;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BlockStatesAndModels extends BlockStateProvider {
 

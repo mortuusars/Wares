@@ -17,9 +17,10 @@ public class ItemTags extends ItemTagsProvider {
     @Override
     protected void addTags() {
         tag(Wares.Tags.Items.AGREEMENTS)
-                .add(Wares.Items.DELIVERY_AGREEMENT.get())
-                .add(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())
-                .add(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
+                .add(Wares.Items.SEALED_DELIVERY_AGREEMENT.get(),
+                     Wares.Items.DELIVERY_AGREEMENT.get(),
+                     Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(),
+                     Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
     }
 
     private void optionalTags(TagAppender<Item> tag, String namespace, String... items) {

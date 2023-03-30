@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.block;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
-import io.github.mortuusars.wares.data.agreement.AgreementStatus;
+import io.github.mortuusars.wares.data.agreement.AgreementType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings({"NullableProblems", "deprecation"})
 public class DeliveryTableBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final EnumProperty<AgreementStatus> AGREEMENT = EnumProperty.create("agreement", AgreementStatus.class);
+    public static final EnumProperty<AgreementType> AGREEMENT = EnumProperty.create("agreement", AgreementType.class);
 
     private static final VoxelShape TABLE_SHAPE = Shapes.or(
             Block.box(0, 12, 0, 16, 16, 16), // Tabletop
@@ -52,7 +52,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         super(properties);
         this.registerDefaultState(getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)
-                .setValue(AGREEMENT, AgreementStatus.NONE));
+                .setValue(AGREEMENT, AgreementType.NONE));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(AGREEMENT) == AgreementStatus.NONE ? TABLE_SHAPE : TABLE_WITH_AGREEMENT_SHAPE;
+        return state.getValue(AGREEMENT) == AgreementType.NONE ? TABLE_SHAPE : TABLE_WITH_AGREEMENT_SHAPE;
     }
 
     @Override

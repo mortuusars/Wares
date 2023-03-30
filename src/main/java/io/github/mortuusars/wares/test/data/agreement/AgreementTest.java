@@ -61,6 +61,21 @@ public class AgreementTest implements ITestClass {
                 assertThat(completed.isCompleted(), "Not completed when it should.");
             }),
 
+            new Test("OnDeliverCompletesAgreementAfterRequiredNumberOfTimes", player -> {
+                Agreement completed = Agreement.builder()
+                        .addRequestedItem(ItemStack.EMPTY)
+                        .ordered(10)
+                        .delivered(5)
+                        .build();
+
+                for (int i = 0; i < 5; i++) {
+                    assertThat(!completed.isCompleted(), "Completed when it shouldn't.");
+                    completed.onDeliver();
+                }
+
+                assertThat(completed.isCompleted(), "Not completed when it should.");
+            }),
+
             new Test("CompleteMethodCompletesAgreement", player -> {
                 Agreement completed = Agreement.builder()
                         .addRequestedItem(ItemStack.EMPTY)
