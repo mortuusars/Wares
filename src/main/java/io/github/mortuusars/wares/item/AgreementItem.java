@@ -43,7 +43,7 @@ public class AgreementItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
         Agreement.fromItemStack(stack)
-                .ifPresent(agreement -> tooltipComponents.add(Lang.AGREEMENT_VIEW_TOOLTIP.translate()
+                .ifPresent(agreement -> tooltipComponents.add(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP.translate()
                         .withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
 

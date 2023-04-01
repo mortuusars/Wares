@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "wares:sealed_delivery_agreement",
     "wares:delivery_agreement",
     "wares:completed_delivery_agreement",
     "wares:expired_delivery_agreement"

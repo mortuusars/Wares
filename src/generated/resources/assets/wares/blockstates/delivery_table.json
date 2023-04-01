@@ -3,6 +3,9 @@
     "agreement=none,facing=north": {
       "model": "wares:block/delivery_table_agreement_none"
     },
+    "agreement=sealed,facing=north": {
+      "model": "wares:block/delivery_table_agreement_sealed"
+    },
     "agreement=regular,facing=north": {
       "model": "wares:block/delivery_table_agreement_regular"
     },
@@ -14,6 +17,10 @@
     },
     "agreement=none,facing=south": {
       "model": "wares:block/delivery_table_agreement_none",
+      "y": 180
+    },
+    "agreement=sealed,facing=south": {
+      "model": "wares:block/delivery_table_agreement_sealed",
       "y": 180
     },
     "agreement=regular,facing=south": {
@@ -32,6 +39,10 @@
       "model": "wares:block/delivery_table_agreement_none",
       "y": 270
     },
+    "agreement=sealed,facing=west": {
+      "model": "wares:block/delivery_table_agreement_sealed",
+      "y": 270
+    },
     "agreement=regular,facing=west": {
       "model": "wares:block/delivery_table_agreement_regular",
       "y": 270
@@ -46,6 +57,10 @@
     },
     "agreement=none,facing=east": {
       "model": "wares:block/delivery_table_agreement_none",
+      "y": 90
+    },
+    "agreement=sealed,facing=east": {
+      "model": "wares:block/delivery_table_agreement_sealed",
       "y": 90
     },
     "agreement=regular,facing=east": {
