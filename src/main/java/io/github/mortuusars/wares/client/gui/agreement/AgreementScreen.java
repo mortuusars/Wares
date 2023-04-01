@@ -16,18 +16,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/agreement.png");
@@ -53,7 +49,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
 
             Vec3 pos = menu.player.position();
             menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
-                    1f, menu.level.getRandom().nextFloat() * 0.1f + 0.7f);
+                    1f, menu.level.getRandom().nextFloat() * 0.1f + 0.9f);
         }
     }
 
@@ -65,7 +61,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
 
             Vec3 pos = menu.player.position();
             menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
-                    1f, menu.level.getRandom().nextFloat() * 0.1f + 1f);
+                    1f, menu.level.getRandom().nextFloat() * 0.1f + 1.2f);
 
             return;
         }
