@@ -13,7 +13,7 @@ public class BlockTags extends BlockTagsProvider {
 
     @Override
     protected void addTags() {
-//        tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE)
-//                .add(Salt.Blocks.ROCK_SALT_ORE.get());
+        tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE)
+                .add(Wares.Blocks.DELIVERY_TABLE.get());
     }
 }

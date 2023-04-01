@@ -18,7 +18,7 @@ public class DataGeneration
         if (event.includeServer()) {
 //            generator.addProvider(new Advancements(generator, helper));
             generator.addProvider(new LootTables(generator));
-//            generator.addProvider(new Recipes(generator));
+            generator.addProvider(new Recipes(generator));
             BlockTags blockTags = new BlockTags(generator, helper);
             generator.addProvider(blockTags);
             generator.addProvider(new ItemTags(generator, blockTags, helper));

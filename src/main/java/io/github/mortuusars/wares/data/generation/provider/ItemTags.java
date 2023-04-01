@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public class ItemTags extends ItemTagsProvider {
     public ItemTags(DataGenerator generator, BlockTagsProvider blockTagsProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(generator, blockTagsProvider, Wares.ID, existingFileHelper);

@@ -7,5 +7,8 @@ f93c5c2d6a3a574ad7d8a3a8196a060c7e4978cc assets/wares/models/item/delivery_agree
 ee8dab326202888ccee225871a52d9ae6178c088 assets/wares/models/item/expired_delivery_agreement.json
 9c4f374a2ab8afeffd7df931c53d5a7a53c3730d assets/wares/models/item/sealed_delivery_agreement.json
 63e57f2e5a5410957aa944611933fe723c499297 assets/wares/sounds.json
+efb5276d93bbe8f3448046fadb12b2b0f76db5ba data/minecraft/tags/blocks/mineable/axe.json
+ac9da0de885f0bec70e4efe2b13b3c71a67bc5db data/wares/advancements/recipes/decorations/delivery_table.json
 baf05bba31982984ee4555fc2357d6c0177f17ee data/wares/loot_tables/blocks/delivery_table.json
+e45982f767d2988734e131c147d9b887103eca57 data/wares/recipes/delivery_table.json
 2dfa19bfe701caec86bf85456468c5338e16a875 data/wares/tags/items/agreements.json
