@@ -93,6 +93,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         convertAgreementStackIfNeeded();
 
+        int prevProgress = progress;
         int deliveryTime = getDeliveryTime();
         if (deliveryTime > progress)
             progress++;
@@ -102,7 +103,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         else if (progress >= deliveryTime)
             deliver(getBatchSize());
 
-        setChanged();
+        if (progress != prevProgress)
+            setChanged();
     }
 
     public Agreement getAgreement() {

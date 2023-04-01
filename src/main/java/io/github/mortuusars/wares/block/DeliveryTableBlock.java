@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -153,5 +154,33 @@ public class DeliveryTableBlock extends BaseEntityBlock {
 
             super.onRemove(state, level, pos, newState, isMoving);
         }
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState pState) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableEntity))
+            return 0;
+
+        Agreement agreement = deliveryTableEntity.getAgreement();
+
+        if (agreement == Agreement.EMPTY || agreement.isExpired(level.getGameTime()))
+            return 0;
+
+        if (agreement.isCompleted())
+            return 15;
+
+        if (!agreement.isInfinite()) {
+            float completion = Mth.clamp(agreement.getDelivered() / (float)agreement.getOrdered(), 0f, 1f);
+            int completionLevel = (int)Mth.map(completion, 0f, 1f, 1f, 15f);
+            Wares.LOGGER.info("" + completionLevel);
+            return completionLevel;
+        }
+        else
+            return 1;
     }
 }
