@@ -9,6 +9,7 @@ import io.github.mortuusars.wares.item.AgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -107,7 +108,8 @@ public class DeliveryTableBlock extends BaseEntityBlock {
                 && hitResult.getDirection() == Direction.UP
                 && deliveryTableBlockEntity.getAgreementItem().isEmpty()) {
             deliveryTableBlockEntity.setAgreementItem(stackInHand.split(1));
-            //TODO: Place sound.
+            level.playSound(player, pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f,
+                    Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 0.8f);
             return InteractionResult.SUCCESS;
         }
 
@@ -121,7 +123,8 @@ public class DeliveryTableBlock extends BaseEntityBlock {
                     Vec3 delta = Vec3.atCenterOf(pos).lerp(player.position(), 0.05D).subtract(Vec3.atCenterOf(pos));
                     item.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);
                     level.addFreshEntity(item);
-                    //TODO: Remove sound.
+                    level.playSound(null, pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f,
+                            Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 1.1f);
                 }
 
                 return InteractionResult.SUCCESS;
