@@ -1,7 +1,7 @@
 {
   "variants": {
     "agreement=none,facing=north": {
-      "model": "wares:block/delivery_table_agreement_none"
+      "model": "wares:block/delivery_table"
     },
     "agreement=sealed,facing=north": {
       "model": "wares:block/delivery_table_agreement_sealed"
@@ -16,7 +16,7 @@
       "model": "wares:block/delivery_table_agreement_expired"
     },
     "agreement=none,facing=south": {
-      "model": "wares:block/delivery_table_agreement_none",
+      "model": "wares:block/delivery_table",
       "y": 180
     },
     "agreement=sealed,facing=south": {
@@ -36,7 +36,7 @@
       "y": 180
     },
     "agreement=none,facing=west": {
-      "model": "wares:block/delivery_table_agreement_none",
+      "model": "wares:block/delivery_table",
       "y": 270
     },
     "agreement=sealed,facing=west": {
@@ -56,7 +56,7 @@
       "y": 270
     },
     "agreement=none,facing=east": {
-      "model": "wares:block/delivery_table_agreement_none",
+      "model": "wares:block/delivery_table",
       "y": 90
     },
     "agreement=sealed,facing=east": {

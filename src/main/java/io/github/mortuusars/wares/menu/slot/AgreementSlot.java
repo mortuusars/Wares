@@ -13,6 +13,6 @@ public class AgreementSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        return stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && super.mayPlace(stack);
+        return stack.is(Wares.Tags.Items.AGREEMENTS) && super.mayPlace(stack);
     }
 }

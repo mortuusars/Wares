@@ -16,7 +16,7 @@ public class ItemModels extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        withExistingParent(Wares.Items.DELIVERY_TABLE.getId().getPath(), modLoc("block/delivery_table_agreement_none"));
+        blockItem(Wares.Items.DELIVERY_TABLE.get());
         singleTextureItem(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
         singleTextureItem(Wares.Items.DELIVERY_AGREEMENT.get());
         singleTextureItem(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get());
