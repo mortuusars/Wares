@@ -1,0 +1,38 @@
+{
+  "parent": "minecraft:adventure/root",
+  "display": {
+    "icon": {
+      "item": "wares:completed_delivery_agreement"
+    },
+    "title": {
+      "translate": "advancement.wares.last_minutes.title"
+    },
+    "description": {
+      "translate": "advancement.wares.last_minutes.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "almost_expired": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "wares:completed_delivery_agreement"
+            ],
+            "nbt": "{almostExpired:1b}"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "almost_expired"
+    ]
+  ]
+}

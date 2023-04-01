@@ -15,6 +15,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -177,7 +178,6 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (!agreement.isInfinite()) {
             float completion = Mth.clamp(agreement.getDelivered() / (float)agreement.getOrdered(), 0f, 1f);
             int completionLevel = (int)Mth.map(completion, 0f, 1f, 1f, 15f);
-            Wares.LOGGER.info("" + completionLevel);
             return completionLevel;
         }
         else

@@ -155,6 +155,9 @@ public class Agreement {
     protected boolean getIsExpired() {
         return isExpired;
     }
+    public boolean canExpire() {
+        return getExpireTime() > -1L;
+    }
     public boolean isExpired(long gameTime) { return (isExpired && !isCompleted()) || (getExpireTime() >= 0 && getExpireTime() <= gameTime); }
     protected boolean getIsCompleted() { return isCompleted; }
     public boolean isCompleted() {

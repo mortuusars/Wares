@@ -66,6 +66,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_TIME_HOURS, "%sh");
         translate(Lang.GUI_TIME_MINUTES, "%sm");
 
+        translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "At The Last Minutes");
+        translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Manage to complete a Delivery Agreement just before it expires");
+
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM, "Wrong item. Expected: '%s', got: '%s'");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY,  "Failed: Agreement is empty or not deserialized properly.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED, "Failed: Agreement is already completed.");
@@ -102,6 +105,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_TIME_DAYS, "%sдн");
         translate(Lang.GUI_TIME_HOURS, "%sгод");
         translate(Lang.GUI_TIME_MINUTES, "%sхв");
+
+        translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "В Останній Момент");
+        translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Встигніть виконати Торговий Договір в останні хвилини терміну дії");
 
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM, "Неправильний предмет. Очікувався: '%s', отримано: '%s'");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY, "Помилка: Договір порожній або неправильно прочитаний.");

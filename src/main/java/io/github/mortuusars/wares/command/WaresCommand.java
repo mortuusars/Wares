@@ -111,7 +111,7 @@ public class WaresCommand {
                 .addRequestedItem(new ItemStack(Items.BAKED_POTATO, 4))
                 .addRequestedItem(new ItemStack(Items.PUMPKIN_PIE, 2))
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))
-                .ordered(32)
+                .ordered(5)
                 .experience(12)
                 .expireTime(serverPlayer.level.getGameTime() + 20 * 60 * 15)
                 .build();

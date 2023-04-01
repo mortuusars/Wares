@@ -3,8 +3,8 @@ package io.github.mortuusars.wares.block.entity;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.BlockPos;
@@ -76,6 +76,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
+
 
     protected Agreement agreement = Agreement.EMPTY;
 
@@ -154,6 +155,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             level.playSound(null, getBlockPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS,
                     0.25f, level.getRandom().nextFloat() * 0.1f + 0.9f);
 
+            // Checking before onDeliver - because when agreement completes - it erases expire time.
+            // TODO: Config almostExpired window.
+            boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 60;
+
             agreement.onDeliver();
 
             agreement.toItemStack(getAgreementItem());
@@ -161,6 +166,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             if (agreement.isCompleted()) {
                 resetProgress();
+
+                if (almostExpired)
+                    getAgreementItem().getOrCreateTag().putBoolean("almostExpired", true);
 
                 int experience = getAgreement().getExperience();
                 if (experience > 0 && level instanceof ServerLevel serverLevel)

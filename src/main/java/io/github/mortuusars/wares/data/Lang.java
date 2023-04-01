@@ -32,6 +32,9 @@ public enum Lang {
     GUI_TIME_HOURS("gui", "hours.short"),
     GUI_TIME_MINUTES("gui", "minutes.short"),
 
+    ADVANCEMENT_LAST_MINUTES_TITLE("advancement", "last_minutes.title"),
+    ADVANCEMENT_LAST_MINUTES_DESCRIPTION("advancement", "last_minutes.description"),
+
     COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM("commands", "agreement.complete.wrong_item"),
     COMMAND_AGREEMENT_COMPLETE_IS_EMPTY("commands", "agreement.complete.is_empty"),
     COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED("commands", "agreement.complete.already_completed"),
