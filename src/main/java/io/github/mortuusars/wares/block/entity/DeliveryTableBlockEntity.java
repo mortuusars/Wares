@@ -361,7 +361,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
         if (slotIndex >= 7)
             return false;
-        return slotIndex != AGREEMENT_SLOT || stack.is(Wares.Tags.Items.AGREEMENTS);
+        return slotIndex != AGREEMENT_SLOT || stack.getItem() instanceof AgreementItem;
     }
 
     @Override

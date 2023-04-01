@@ -217,6 +217,6 @@ public class AgreementMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return true;
+        return getAgreement() != Agreement.EMPTY;
     }
 }

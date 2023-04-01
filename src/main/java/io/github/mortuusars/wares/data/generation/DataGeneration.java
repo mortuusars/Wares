@@ -28,7 +28,7 @@ public class DataGeneration
             BlockStatesAndModels blockStates = new BlockStatesAndModels(generator, helper);
             generator.addProvider(blockStates);
             generator.addProvider(new ItemModels(generator, blockStates.models().existingFileHelper));
-//            generator.addProvider(new Sounds(generator, helper));
+            generator.addProvider(new Sounds(generator, helper));
             generator.addProvider(new Languages(generator, "en_us", Languages.MissingEntriesPolicy.EXCEPTION));
             generator.addProvider(new Languages(generator, "uk_ua", Languages.MissingEntriesPolicy.EXCEPTION));
         }

@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.menu.slot;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.item.AgreementItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -13,6 +14,6 @@ public class AgreementSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        return stack.is(Wares.Tags.Items.AGREEMENTS) && super.mayPlace(stack);
+        return stack.getItem() instanceof AgreementItem && super.mayPlace(stack);
     }
 }

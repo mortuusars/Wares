@@ -52,7 +52,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             minecraft.setScreen(this);
 
             Vec3 pos = menu.player.position();
-            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER,
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
                     1f, menu.level.getRandom().nextFloat() * 0.1f + 0.7f);
         }
     }
@@ -64,7 +64,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             parentScreen = null;
 
             Vec3 pos = menu.player.position();
-            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER,
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
                     1f, menu.level.getRandom().nextFloat() * 0.1f + 1f);
 
             return;

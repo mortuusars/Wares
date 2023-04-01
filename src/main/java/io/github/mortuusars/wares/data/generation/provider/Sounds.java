@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
@@ -13,9 +14,13 @@ public class Sounds extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
-//        add(Salt.Sounds.SALT_DISSOLVE.get(), definition()
-//                .subtitle(LangKeys.SUBTITLES_DISSOLVES)
-//                .with(multiple(6, "block/beehive/drip", 0.6f, 0.6f)));
+        add(Wares.SoundEvents.AGREEMENT_TEAR.get(), definition()
+                .subtitle(Lang.SUBTITLE_AGREEMENT_TEAR.key)
+                .with(multiple(3, "item/book/open_flip", 1f, 1f)));
+
+        add(Wares.SoundEvents.AGREEMENT_CRACKLE.get(), definition()
+                .subtitle(Lang.SUBTITLE_AGREEMENT_TEAR.key)
+                .with(multiple(3, "item/book/open_flip", 1.5f, 0.9f)));
     }
 
     private SoundDefinition.Sound[] multiple(int count, String name, float volume, float pitch) {

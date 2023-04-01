@@ -31,7 +31,7 @@ public class Agreement {
                     Codec.INT.optionalFieldOf("ordered", 0).forGetter(Agreement::getOrdered),
                     Codec.INT.optionalFieldOf("delivered", 0).forGetter(Agreement::getDelivered),
                     Codec.INT.optionalFieldOf("experience", 0).forGetter(Agreement::getExperience),
-                    Codec.INT.optionalFieldOf("deliveryTime", 0).forGetter(Agreement::getDeliveryTimeOrDefault),
+                    Codec.INT.optionalFieldOf("deliveryTime", 0).forGetter(Agreement::getDeliveryTime),
                     Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(Agreement::getExpireTime),
                     Codec.BOOL.optionalFieldOf("isCompleted", false).forGetter(Agreement::getIsCompleted),
                     Codec.BOOL.optionalFieldOf("isExpired", false).forGetter(Agreement::getIsExpired))

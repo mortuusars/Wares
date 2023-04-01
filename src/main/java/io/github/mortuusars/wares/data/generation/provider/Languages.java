@@ -70,6 +70,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY,  "Failed: Agreement is empty or not deserialized properly.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED, "Failed: Agreement is already completed.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED, "Failed: Cannot complete an expired Agreement.");
+
+        translate(Lang.SUBTITLE_AGREEMENT_TEAR, "Paper tears");
+        translate(Lang.SUBTITLE_AGREEMENT_CRACKLE, "Paper crackles");
     }
 
     protected void uk_ua() {
@@ -104,6 +107,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY, "Помилка: Договір порожній або неправильно прочитаний.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED, "Помилка: Договір вже виконаний.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED, "Помилка: Неможливо виконати Договір у якого закінчився термін дії.");
+
+        translate(Lang.SUBTITLE_AGREEMENT_TEAR, "Папір рветься");
+        translate(Lang.SUBTITLE_AGREEMENT_CRACKLE, "Папір мнеться");
     }
 
     protected void translate(Lang key, String translation) {

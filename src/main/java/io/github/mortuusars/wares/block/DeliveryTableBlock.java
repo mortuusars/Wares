@@ -3,7 +3,9 @@ package io.github.mortuusars.wares.block;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
+import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
+import io.github.mortuusars.wares.item.AgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -96,22 +99,36 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity))
             return InteractionResult.FAIL;
 
+        // PLACE
+        ItemStack stackInHand = player.getItemInHand(hand);
+        if (stackInHand.getItem() instanceof AgreementItem
+                && hitResult.getDirection() == Direction.UP
+                && deliveryTableBlockEntity.getAgreementItem().isEmpty()) {
+            deliveryTableBlockEntity.setAgreementItem(stackInHand.split(1));
+            //TODO: Place sound.
+            return InteractionResult.SUCCESS;
+        }
+
         ItemStack agreementStack = deliveryTableBlockEntity.getAgreementItem();
         if (hitResult.getLocation().y > pos.getY() + 1 && !agreementStack.isEmpty()) {
             if (player.isSecondaryUseActive()) {
                 if (!level.isClientSide) {
-                    ItemStack agreement = deliveryTableBlockEntity.extractAgreementItem();
-                    ItemEntity drop = player.drop(agreement, false);
-                    if (drop != null)
-                        drop.setPickUpDelay(0);
+                    agreementStack = deliveryTableBlockEntity.extractAgreementItem();
+
+                    ItemEntity item = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, agreementStack);
+                    Vec3 delta = Vec3.atCenterOf(pos).lerp(player.position(), 0.05D).subtract(Vec3.atCenterOf(pos));
+                    item.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);
+                    level.addFreshEntity(item);
+                    //TODO: Remove sound.
                 }
+
+                return InteractionResult.SUCCESS;
             }
-            else {
+            else if (deliveryTableBlockEntity.getAgreement() != Agreement.EMPTY){
                 if (level.isClientSide)
                     AgreementGUI.showAsOverlay(player, deliveryTableBlockEntity::getAgreement);
-
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (player instanceof ServerPlayer serverPlayer)

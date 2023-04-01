@@ -36,6 +36,10 @@ public enum Lang {
     COMMAND_AGREEMENT_COMPLETE_IS_EMPTY("commands", "agreement.complete.is_empty"),
     COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED("commands", "agreement.complete.already_completed"),
     COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED("commands", "agreement.complete.is_expired"),
+
+    SUBTITLE_AGREEMENT_TEAR("subtitle", "agreement.tear"),
+    SUBTITLE_AGREEMENT_CRACKLE("subtitle", "agreement.crackle"),
+
     ;
 
     public final String key;

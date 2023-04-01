@@ -4,17 +4,17 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementDescription;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +24,7 @@ import java.util.Optional;
 public class SealedAgreementItem extends Item {
 
     public static final String DAMAGED_TAG = "AgreementDamaged";
+    public static final String UNOPENABLE_TAG = "AgreementUnopenable";
 
     public SealedAgreementItem(Properties properties) {
         super(properties);
@@ -41,21 +42,41 @@ public class SealedAgreementItem extends Item {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
-        ItemStack usedItemStack = player.getItemInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
+        player.startUsingItem(hand);
+        return InteractionResultHolder.success(stack);
+    }
 
-        Optional<AgreementDescription> descriptionOptional = AgreementDescription.fromItemStack(usedItemStack);
+    @Override
+    public SoundEvent getEatingSound() {
+        return Wares.SoundEvents.AGREEMENT_TEAR.get();
+    }
+
+    @Override
+    public int getUseDuration(ItemStack pStack) {
+        return 25;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack pStack) {
+        return UseAnim.EAT;
+    }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        if (!(livingEntity instanceof Player player))
+            return stack;
+
+        Optional<AgreementDescription> descriptionOptional = AgreementDescription.fromItemStack(stack);
 
         if (descriptionOptional.isEmpty()){
             Wares.LOGGER.error("Cannot read AgreementDescription from stack nbt.");
-            if (usedItemStack.hasTag()) {
-                CompoundTag tag = usedItemStack.getTag();
-                tag.putBoolean(DAMAGED_TAG, true);
-            }
+            stack.getOrCreateTag().putBoolean(DAMAGED_TAG, true);
 
             if (level.isClientSide)
                 player.displayClientMessage(Lang.SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE.translate(), true);
 
-            return InteractionResultHolder.pass(usedItemStack);
+            return stack;
         }
 
         if (level instanceof ServerLevel serverLevel) {
@@ -64,13 +85,9 @@ public class SealedAgreementItem extends Item {
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
                 if (agreement.toItemStack(agreementStack)) {
-                    player.setItemInHand(hand, agreementStack);
-                    level.playSound(null,
-                            player.position().x,
-                            player.position().y,
-                            player.position().z,
-                            SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS,
-                            1f, level.getRandom().nextFloat() * 0.2f + 1.1f);
+                    stack.shrink(1);
+                    player.addItem(agreementStack);
+                    player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 12);
                 }
                 else
                     throw new IllegalStateException("Saving Agreement to ItemStack failed.");
@@ -78,9 +95,10 @@ public class SealedAgreementItem extends Item {
             catch (Exception e) {
                 Wares.LOGGER.error(e.toString());
                 player.displayClientMessage(Lang.SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE.translate(), true);
+                stack.getOrCreateTag().putBoolean(UNOPENABLE_TAG, true);
             }
         }
 
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
+        return stack;
     }
 }

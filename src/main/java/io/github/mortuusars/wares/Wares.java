@@ -1,30 +1,26 @@
 package io.github.mortuusars.wares;
 
+import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
+import io.github.mortuusars.wares.data.generation.provider.Sounds;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
-import io.github.mortuusars.wares.test.Tests;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -47,6 +43,7 @@ public class Wares
         BlockEntities.BLOCK_ENTITIES.register(modEventBus);
         MenuTypes.MENU_TYPES.register(modEventBus);
         Items.ITEMS.register(modEventBus);
+        SoundEvents.SOUNDS.register(modEventBus);
     }
 
     /**
@@ -104,6 +101,20 @@ public class Wares
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
                 new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()
                         .tab(CreativeModeTab.TAB_DECORATIONS)));
+    }
+
+    public static class SoundEvents {
+        private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wares.ID);
+
+        public static final RegistryObject<SoundEvent> AGREEMENT_TEAR = registerSound("item", "agreement.tear");
+        public static final RegistryObject<SoundEvent> AGREEMENT_CRACKLE = registerSound("item", "agreement.crackle");
+
+        private static RegistryObject<SoundEvent> registerSound(String category, String key) {
+            Preconditions.checkState(category != null && category.length() > 0, "'category' should not be empty.");
+            Preconditions.checkState(key != null && key.length() > 0, "'key' should not be empty.");
+            String path = category + "." + Wares.ID + "." + key;
+            return SOUNDS.register(path, () -> new SoundEvent(Wares.resource(path)));
+        }
     }
 
     public static class Tags {

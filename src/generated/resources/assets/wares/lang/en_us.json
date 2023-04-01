@@ -22,5 +22,7 @@
   "item.wares.sealed_delivery_agreement": "Sealed Delivery Agreement",
   "item.wares.sealed_delivery_agreement.damaged_error_message": "The letter is badly damaged, torn paper and faded ink make the contents unreadable.",
   "item.wares.sealed_delivery_agreement.unopenable_error_message": "The letter seems intact but sealed in a way that will damage and make the contents unreadable when opened.",
-  "item.wares.sealed_delivery_agreement_damaged": "Damaged Sealed Delivery Agreement"
+  "item.wares.sealed_delivery_agreement_damaged": "Damaged Sealed Delivery Agreement",
+  "subtitle.wares.agreement.crackle": "Paper crackles",
+  "subtitle.wares.agreement.tear": "Paper tears"
 }

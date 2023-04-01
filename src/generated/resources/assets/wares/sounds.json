@@ -1,0 +1,30 @@
+{
+  "item.wares.agreement.tear": {
+    "subtitle": "subtitle.wares.agreement.tear",
+    "sounds": [
+      "item/book/open_flip1",
+      "item/book/open_flip2",
+      "item/book/open_flip3"
+    ]
+  },
+  "item.wares.agreement.crackle": {
+    "subtitle": "subtitle.wares.agreement.tear",
+    "sounds": [
+      {
+        "name": "item/book/open_flip1",
+        "volume": 1.5,
+        "pitch": 0.9
+      },
+      {
+        "name": "item/book/open_flip2",
+        "volume": 1.5,
+        "pitch": 0.9
+      },
+      {
+        "name": "item/book/open_flip3",
+        "volume": 1.5,
+        "pitch": 0.9
+      }
+    ]
+  }
+}

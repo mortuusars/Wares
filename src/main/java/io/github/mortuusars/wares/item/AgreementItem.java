@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class AgreementItem extends Item {
@@ -88,20 +89,23 @@ public class AgreementItem extends Item {
     @SuppressWarnings("DataFlowIssue")
     @Override
     public void inventoryTick(ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && entity instanceof ServerPlayer serverPlayer
-                && stack.hasTag() && stack.getTag().contains("Agreement", Tag.TAG_COMPOUND)) {
+        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get()) && entity instanceof ServerPlayer serverPlayer && stack.hasTag()) {
 
-            CompoundTag agreementTag = stack.getTag().getCompound("Agreement");
-            if (agreementTag.contains("expireTime")) {
-                long expireTime = agreementTag.getLong("expireTime");
-                if (expireTime > 0 && expireTime <= level.getGameTime()) {
+            boolean isExpired = false;
+
+            CompoundTag tag = stack.getTag();
+            if (tag.contains("expireTime")) {
+                long expireTime = tag.getLong("expireTime");
+                if (expireTime >= 0 && expireTime <= level.getGameTime()) {
                     ItemStack expiredStack = convertToExpired(stack);
                     serverPlayer.getInventory().setItem(slotId, expiredStack);
+                    isExpired = true;
                 }
             }
-            else if (agreementTag.contains("ordered") && agreementTag.contains("remaining")) {
-                int ordered = agreementTag.getInt("ordered");
-                int remaining = agreementTag.getInt("remaining");
+
+            if (!isExpired && tag.contains("ordered") && tag.contains("remaining")) {
+                int ordered = tag.getInt("ordered");
+                int remaining = tag.getInt("remaining");
                 if (ordered > 0 && remaining <= 0) {
                     ItemStack completedStack = convertToCompleted(stack);
                     serverPlayer.getInventory().setItem(slotId, completedStack);
@@ -119,10 +123,15 @@ public class AgreementItem extends Item {
             return stack;
 
         ItemStack expiredStack = new ItemStack(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
-
         @Nullable CompoundTag stackTag = stack.getTag();
         if (stackTag != null)
             expiredStack.setTag(stackTag);
+
+        Agreement agreement = Agreement.fromItemStack(stack).orElse(Agreement.EMPTY);
+        if (agreement != Agreement.EMPTY) {
+            agreement.expire();
+            agreement.toItemStack(expiredStack);
+        }
 
         return expiredStack;
     }
@@ -136,29 +145,17 @@ public class AgreementItem extends Item {
             return stack;
 
         ItemStack completedStack = new ItemStack(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get());
-
         @Nullable CompoundTag stackTag = stack.getTag();
         if (stackTag != null)
             completedStack.setTag(stackTag);
 
-        return completedStack;
-    }
-
-    @Override
-    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos clickedPos = context.getClickedPos();
-        Direction clickedFace = context.getClickedFace();
-
-        if (stack.is(Wares.Items.DELIVERY_AGREEMENT.get())
-                && clickedFace == Direction.UP
-                && level.getBlockEntity(clickedPos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity
-                && deliveryTableBlockEntity.getAgreement() == Agreement.EMPTY) {
-            deliveryTableBlockEntity.setAgreementItem(stack.split(1));
-            return InteractionResult.sidedSuccess(level.isClientSide);
+        Agreement agreement = Agreement.fromItemStack(stack).orElse(Agreement.EMPTY);
+        if (agreement != Agreement.EMPTY) {
+            agreement.complete();
+            agreement.toItemStack(completedStack);
         }
 
-        return super.onItemUseFirst(stack, context);
+        return completedStack;
     }
 
     @Override
