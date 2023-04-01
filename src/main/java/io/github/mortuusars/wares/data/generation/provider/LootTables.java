@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.mortuusars.wares.Wares;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -25,10 +26,13 @@ import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
+@SuppressWarnings({"unused", "CommentedOutCode"})
 public class LootTables extends LootTableProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -40,7 +44,9 @@ public class LootTables extends LootTableProvider {
     }
 
     @Override
-    public void run(HashCache cache) {
+    public void run(@NotNull HashCache cache) {
+        dropsSelf(cache, Wares.Items.DELIVERY_TABLE.get());
+
 //        writeTable(cache, Salt.Blocks.SALT_CAULDRON.getId(),
 //                LootTable.lootTable()
 //                        .setParamSet(LootContextParamSets.BLOCK)
@@ -53,7 +59,7 @@ public class LootTables extends LootTableProvider {
     }
 
     private void dropsSelf(HashCache cache, BlockItem blockItem) {
-        writeTable(cache, new ResourceLocation("salt:blocks/" + blockItem.getBlock().getRegistryName().getPath()),
+        writeTable(cache, Wares.resource("blocks/" + Objects.requireNonNull(blockItem.getBlock().getRegistryName()).getPath()),
                 LootTable.lootTable()
                         .setParamSet(LootContextParamSets.BLOCK)
                         .withPool(
@@ -76,7 +82,7 @@ public class LootTables extends LootTableProvider {
 
     protected LootTable.Builder silkTouchOrDefaultTable(Block block, Item lootItem, float min, float max) {
         LootPool.Builder builder = LootPool.lootPool()
-                .name(block.getRegistryName().getPath())
+                .name(Objects.requireNonNull(block.getRegistryName()).getPath())
                 .setRolls(ConstantValue.exactly(1))
                 .add(AlternativesEntry.alternatives(
                                 LootItem.lootTableItem(block)
