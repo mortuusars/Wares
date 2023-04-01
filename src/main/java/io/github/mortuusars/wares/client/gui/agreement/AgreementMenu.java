@@ -3,9 +3,11 @@ package io.github.mortuusars.wares.client.gui.agreement;
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.AgreementBuilder;
 import io.github.mortuusars.wares.menu.slot.DisplaySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,27 +106,35 @@ public class AgreementMenu extends AbstractContainerMenu {
     }
 
     public MutableComponent getTitle() {
-        return ((MutableComponent) getAgreement().getTitle()/*.orElse(Lang.GUI_AGREEMENT_TITLE.translate())*/);
+        return ((MutableComponent) getAgreement().getTitle());
     }
 
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
         MutableComponent message = getAgreement().getMessage().copy();
 
-        if (Minecraft.getInstance().font.width(message) > 0)
-            message.append("\n");
-        else
+        if (message == TextComponent.EMPTY)
             message = Lang.GUI_AGREEMENT_MESSAGE.translate();
 
-//        getAgreement().getBuyerName().ifPresent(nameComponent -> {
-//            message.append("\n");
-//            message.append(nameComponent);
-//        });
-//
-//        getAgreement().getBuyerAddress().ifPresent(addressComponent -> {
-//            message.append("\n");
-//            message.append(addressComponent);
-//        });
+
+        // TODO: Config for appending name and address.
+
+
+        boolean hasBuyerName = Minecraft.getInstance().font.width(getAgreement().getBuyerName()) != 0;
+        boolean hasBuyerAddress = Minecraft.getInstance().font.width(getAgreement().getBuyerAddress()) != 0;
+
+        if (hasBuyerName || hasBuyerAddress)
+            message.append("\n");
+
+        if (hasBuyerName) {
+            message.append("\n");
+            message.append(getAgreement().getBuyerName());
+        }
+
+        if (hasBuyerAddress) {
+            message.append("\n");
+            message.append(getAgreement().getBuyerAddress());
+        }
 
         return message;
     }
@@ -136,7 +147,7 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         // Info
         boolean shouldDisplayOrderedCount = !getAgreement().isInfinite();
-        boolean shouldDisplayExpirationTime = getAgreement().isExpired(level.getGameTime());
+        boolean shouldDisplayExpirationTime = !getAgreement().isExpired(level.getGameTime());
 
         int infoHeight = 0;
 

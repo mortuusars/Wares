@@ -152,28 +152,24 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                 1, 27, STAMPS_TEXTURE)
                 .setTooltip(Lang.GUI_AGREEMENT_EXPIRED.translate()))
                 .setOpacity(0.75f)
-                .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted() &&
-                        getAgreement().getExpireTime() - menu.level.getGameTime() <= 0);
+                .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted() && getAgreement().isExpired(menu.level.getGameTime()));
 
         // SEAL
 
-//        Component buyerInfoTooltip = TextComponent.EMPTY;
-//
-//        if (getAgreement().getBuyerName().isPresent()) {
-//            MutableComponent component = (MutableComponent) getAgreement().getBuyerName().get().copy();
-//            getAgreement().getBuyerAddress().ifPresent(address -> {
-//                if (font.width(address) > 0) {
-//                    component.append("\n");
-//                    component.append(address);
-//                }
-//            });
-//            buyerInfoTooltip = component;
-//        } else if (getAgreement().getBuyerAddress().isPresent())
-//            buyerInfoTooltip = getAgreement().getBuyerAddress().get();
+        MutableComponent buyerInfoTooltip = new TextComponent("");
 
-//        addRenderableOnly(new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2), getGuiTop() + imageHeight - 35,
-//                36, 35, 200, 32, TEXTURE))
-//                .setTooltip(buyerInfoTooltip);
+        if (getAgreement().getBuyerName() != TextComponent.EMPTY)
+            buyerInfoTooltip.append(getAgreement().getBuyerName());
+
+        if (getAgreement().getBuyerAddress() != TextComponent.EMPTY) {
+            if (getAgreement().getBuyerName() != TextComponent.EMPTY)
+                buyerInfoTooltip.append("\n");
+            buyerInfoTooltip.append(getAgreement().getBuyerAddress());
+        }
+
+        addRenderableOnly(new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2), getGuiTop() + imageHeight - 35,
+                36, 35, 200, 32, TEXTURE))
+                .setTooltip(buyerInfoTooltip);
     }
 
     @Override
