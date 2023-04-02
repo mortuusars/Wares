@@ -104,6 +104,8 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity))
             return InteractionResult.FAIL;
 
+        player.awardStat(Wares.Stats.INTERACT_WITH_DELIVERY_TABLE);
+
         // PLACE
         ItemStack stackInHand = player.getItemInHand(hand);
         if (stackInHand.getItem() instanceof AgreementItem

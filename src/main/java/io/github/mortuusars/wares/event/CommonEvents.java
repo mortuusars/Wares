@@ -13,6 +13,7 @@ public class CommonEvents {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
+                Wares.Stats.register();
 //                ModPackets.register();
             });
         }

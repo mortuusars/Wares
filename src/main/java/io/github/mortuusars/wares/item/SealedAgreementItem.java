@@ -88,6 +88,7 @@ public class SealedAgreementItem extends Item {
                     stack.shrink(1);
                     player.addItem(agreementStack);
                     player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 12);
+                    player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                 }
                 else
                     throw new IllegalStateException("Saving Agreement to ItemStack failed.");

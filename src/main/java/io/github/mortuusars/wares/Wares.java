@@ -7,8 +7,10 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
@@ -24,11 +26,21 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Mod(Wares.ID)
 public class Wares
@@ -118,6 +130,26 @@ public class Wares
             Preconditions.checkState(key != null && key.length() > 0, "'key' should not be empty.");
             String path = category + "." + Wares.ID + "." + key;
             return SOUNDS.register(path, () -> new SoundEvent(Wares.resource(path)));
+        }
+    }
+
+    public static class Stats {
+
+        private static Map<ResourceLocation, StatFormatter> STATS = new HashMap<>();
+
+        public static final ResourceLocation SEALED_LETTERS_OPENED = register(Wares.resource("sealed_letters_opened"), StatFormatter.DEFAULT);
+        public static final ResourceLocation INTERACT_WITH_DELIVERY_TABLE = register(Wares.resource("interact_with_delivery_table"), StatFormatter.DEFAULT);
+
+        private static ResourceLocation register(ResourceLocation location, StatFormatter formatter) {
+            STATS.put(location, formatter);
+            return location;
+        }
+
+        public static void register() {
+            STATS.forEach((location, formatter) -> {
+                Registry.register(Registry.CUSTOM_STAT, location, location);
+                net.minecraft.stats.Stats.CUSTOM.get(location, formatter);
+            });
         }
     }
 
