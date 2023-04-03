@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block;
 
 public enum Lang {
     BLOCK_DELIVERY_TABLE(Wares.Blocks.DELIVERY_TABLE.get()),
+    BLOCK_DELIVERY_PACKAGE(Wares.Blocks.DELIVERY_PACKAGE.get()),
 
     ITEM_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get()),
     ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get().getDescriptionId() + "_damaged"),
@@ -43,8 +44,9 @@ public enum Lang {
     COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED("commands", "agreement.complete.already_completed"),
     COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED("commands", "agreement.complete.is_expired"),
 
-    SUBTITLE_AGREEMENT_TEAR("subtitle", "agreement.tear"),
-    SUBTITLE_AGREEMENT_CRACKLE("subtitle", "agreement.crackle"),
+    SUBTITLE_PAPER_CRACKLE("subtitle", "paper.crackle"),
+    SUBTITLE_PAPER_TEAR("subtitle", "paper.tear"),
+    SUBTITLE_WRITING("subtitle", "writing"),
 
     ;
 

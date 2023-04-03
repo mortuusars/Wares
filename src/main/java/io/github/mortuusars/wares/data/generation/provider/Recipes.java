@@ -29,5 +29,12 @@ public class Recipes extends RecipeProvider {
                 .define('F', Tags.Items.FEATHERS)
                 .define('W', ItemTags.PLANKS)
                 .save(recipeConsumer);
+
+        ShapedRecipeBuilder.shaped(Wares.Items.DELIVERY_PACKAGE.get(), 2)
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .pattern("PP ")
+                .pattern("PP ")
+                .define('P', Items.PAPER)
+                .save(recipeConsumer);
     }
 }

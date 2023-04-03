@@ -13,11 +13,11 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,17 +26,17 @@ import java.util.function.Consumer;
 
 public class Advancements extends AdvancementProvider {
     private final Path PATH;
-    private ExistingFileHelper existingFileHelper;
+    private final ExistingFileHelper existingFileHelper;
     public static final Logger LOGGER = LogManager.getLogger();
 
     public Advancements(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper) {
-        super(dataGenerator);
+        super(dataGenerator, existingFileHelper);
         PATH = dataGenerator.getOutputFolder();
         this.existingFileHelper = existingFileHelper;
     }
 
     @Override
-    public void run(HashCache cache) {
+    public void run(@NotNull HashCache cache) {
         Consumer<Advancement> consumer = getOutput(cache);
 
         CompoundTag almostExpiredTag = new CompoundTag();

@@ -39,6 +39,7 @@ public class Languages extends LanguageProvider {
 
     protected void en_us() {
         translate(Lang.BLOCK_DELIVERY_TABLE, "Delivery Table");
+        translate(Lang.BLOCK_DELIVERY_PACKAGE, "Delivery Package");
 
         translate(Lang.ITEM_SEALED_DELIVERY_AGREEMENT, "Sealed Delivery Agreement");
         translate(Lang.ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT, "Damaged Sealed Delivery Agreement");
@@ -77,12 +78,14 @@ public class Languages extends LanguageProvider {
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED, "Failed: Agreement is already completed.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED, "Failed: Cannot complete an expired Agreement.");
 
-        translate(Lang.SUBTITLE_AGREEMENT_TEAR, "Paper tears");
-        translate(Lang.SUBTITLE_AGREEMENT_CRACKLE, "Paper crackles");
+        translate(Lang.SUBTITLE_PAPER_CRACKLE, "Paper crackles");
+        translate(Lang.SUBTITLE_PAPER_TEAR, "Paper tears");
+        translate(Lang.SUBTITLE_WRITING, "Quill writes on paper");
     }
 
     protected void uk_ua() {
         translate(Lang.BLOCK_DELIVERY_TABLE, "Торговий Стіл");
+        translate(Lang.BLOCK_DELIVERY_PACKAGE, "Пакунок");
 
         translate(Lang.ITEM_SEALED_DELIVERY_AGREEMENT, "Запечатаний Торговий Договір");
         translate(Lang.ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT, "Пошкоджений Запечатаний Торговий Договір");
@@ -120,8 +123,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED, "Помилка: Договір вже виконаний.");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED, "Помилка: Неможливо виконати Договір у якого закінчився термін дії.");
 
-        translate(Lang.SUBTITLE_AGREEMENT_TEAR, "Папір рветься");
-        translate(Lang.SUBTITLE_AGREEMENT_CRACKLE, "Папір мнеться");
+        translate(Lang.SUBTITLE_PAPER_CRACKLE, "Папір мнеться");
+        translate(Lang.SUBTITLE_PAPER_TEAR, "Папір рветься");
+        translate(Lang.SUBTITLE_WRITING, "Перо пише на папері");
     }
 
     protected void translate(Lang key, String translation) {

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,packages=1": {
+      "model": "wares:block/delivery_package_one"
+    },
+    "facing=south,packages=1": {
+      "model": "wares:block/delivery_package_one",
+      "y": 180
+    },
+    "facing=west,packages=1": {
+      "model": "wares:block/delivery_package_one",
+      "y": 270
+    },
+    "facing=east,packages=1": {
+      "model": "wares:block/delivery_package_one",
+      "y": 90
+    },
+    "facing=north,packages=2": {
+      "model": "wares:block/delivery_package_two"
+    },
+    "facing=south,packages=2": {
+      "model": "wares:block/delivery_package_two",
+      "y": 180
+    },
+    "facing=west,packages=2": {
+      "model": "wares:block/delivery_package_two",
+      "y": 270
+    },
+    "facing=east,packages=2": {
+      "model": "wares:block/delivery_package_two",
+      "y": 90
+    },
+    "facing=north,packages=3": {
+      "model": "wares:block/delivery_package_three"
+    },
+    "facing=south,packages=3": {
+      "model": "wares:block/delivery_package_three",
+      "y": 180
+    },
+    "facing=west,packages=3": {
+      "model": "wares:block/delivery_package_three",
+      "y": 270
+    },
+    "facing=east,packages=3": {
+      "model": "wares:block/delivery_package_three",
+      "y": 90
+    },
+    "facing=north,packages=4": {
+      "model": "wares:block/delivery_package_four"
+    },
+    "facing=south,packages=4": {
+      "model": "wares:block/delivery_package_four",
+      "y": 180
+    },
+    "facing=west,packages=4": {
+      "model": "wares:block/delivery_package_four",
+      "y": 270
+    },
+    "facing=east,packages=4": {
+      "model": "wares:block/delivery_package_four",
+      "y": 90
+    }
+  }
+}

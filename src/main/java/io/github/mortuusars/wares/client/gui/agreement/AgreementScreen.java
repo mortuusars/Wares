@@ -48,7 +48,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             minecraft.setScreen(this);
 
             Vec3 pos = menu.player.position();
-            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.PAPER_CRACKLE.get(), SoundSource.MASTER,
                     1f, menu.level.getRandom().nextFloat() * 0.1f + 0.9f);
         }
     }
@@ -60,7 +60,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             parentScreen = null;
 
             Vec3 pos = menu.player.position();
-            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.MASTER,
+            menu.level.playSound(menu.player, pos.x, pos.y, pos.z, Wares.SoundEvents.PAPER_CRACKLE.get(), SoundSource.MASTER,
                     1f, menu.level.getRandom().nextFloat() * 0.1f + 1.2f);
 
             return;
@@ -207,7 +207,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (pButton == 1) {
-            // TODO: config
+            // TODO: Config if should close with mouse right
             onClose();
             return true;
         }

@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.block.entity;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.block.DeliveryPackageBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
@@ -17,8 +18,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.npc.Villager;
@@ -101,8 +102,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         if (!canDeliver())
             resetProgress();
-        else if (progress >= deliveryTime)
-            deliver(getBatchSize());
+        else if (progress >= deliveryTime) {
+            if (deliver(getBatchSize()) > 0) {
+                level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.BLOCKS,
+                        0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+                if (!getAgreement().isInfinite())
+                    level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,
+                            0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+            }
+        }
 
         if (progress != prevProgress)
             setChanged();
@@ -113,22 +121,12 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public int getBatchSize() {
+        //TODO: Packager villager level determines batch size.
         return 1;
     }
 
     protected int getDeliveryTime() {
-        // TODO: Do not check for villager on every tick.
-        int ticks = agreement.getDeliveryTimeOrDefault();
-        List<Villager> villagers = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(1));
-
-        //TODO: Packager profession
-
-        if (!villagers.isEmpty()) {
-            ticks = Math.max(5, (int) (ticks * 0.25f));
-        }
-
-        return ticks;
-//        return 3;
+        return agreement.getDeliveryTimeOrDefault();
     }
 
     protected void resetProgress() {
@@ -142,18 +140,17 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
     }
 
-    protected boolean deliver(int count) {
+    protected int deliver(int count) {
+        int deliveredCount = 0;
         for (int i = 0; i < count; i++) {
             // First check is just to be sure,
             // Afterwards it is necessary to check because items have changed.
             if (!canDeliver())
-                return false;
+                return deliveredCount;
 
             consumeFromInputSlots(agreement.getRequestedItems());
             insertCopiesToOutputSlots(agreement.getPaymentItems());
-
-            level.playSound(null, getBlockPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS,
-                    0.25f, level.getRandom().nextFloat() * 0.1f + 0.9f);
+            deliveredCount++;
 
             // Checking before onDeliver - because when agreement completes - it erases expire time.
             // TODO: Config almostExpired window.
@@ -174,12 +171,12 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 if (experience > 0 && level instanceof ServerLevel serverLevel)
                     ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()).add(0, 0.5f, 0), experience);
 
-                return true;
+                return deliveredCount;
             }
         }
 
         resetProgress();
-        return true; // All delivered.
+        return deliveredCount;
     }
 
     protected boolean canDeliver() {
@@ -220,15 +217,23 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
-    protected boolean hasSpaceForPayment() {
-        for (ItemStack stack : getAgreement().getPaymentItems()) {
-            for (int slotIndex : OUTPUT_SLOTS) {
-                stack = inventory.insertItem(slotIndex, stack, true);
-                if (stack.isEmpty())
-                    break;
-            }
+    /**
+     * This inventory is used to check if paymentItems would fit in the output slots by fake adding items to it.
+     * There probably exists a simpler way.
+     */
+    private final SimpleContainer outputSpaceCheckContainer = new SimpleContainer(6);
 
-            if (!stack.isEmpty())
+    protected boolean hasSpaceForPayment() {
+        outputSpaceCheckContainer.clearContent();
+
+        int i = 0;
+        for (int slotIndex : OUTPUT_SLOTS) {
+            outputSpaceCheckContainer.setItem(i, inventory.getStackInSlot(slotIndex).copy());
+            i++;
+        }
+
+        for (ItemStack stack : getAgreement().getPaymentItems()) {
+            if (!outputSpaceCheckContainer.addItem(stack.copy()).isEmpty())
                 return false;
         }
 

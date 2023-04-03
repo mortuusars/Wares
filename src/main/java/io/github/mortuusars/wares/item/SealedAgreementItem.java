@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,7 +50,7 @@ public class SealedAgreementItem extends Item {
 
     @Override
     public SoundEvent getEatingSound() {
-        return Wares.SoundEvents.AGREEMENT_TEAR.get();
+        return Wares.SoundEvents.PAPER_TEAR.get();
     }
 
     @Override
@@ -89,6 +90,11 @@ public class SealedAgreementItem extends Item {
                     player.addItem(agreementStack);
                     player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 12);
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
+                    level.playSound(null,
+                            player.position().x,
+                            player.position().y,
+                            player.position().z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
+                            1f, level.getRandom().nextFloat() * 0.1f + 0.95f);
                 }
                 else
                     throw new IllegalStateException("Saving Agreement to ItemStack failed.");

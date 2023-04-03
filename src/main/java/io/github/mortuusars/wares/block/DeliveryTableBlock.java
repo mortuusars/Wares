@@ -15,7 +15,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,7 +53,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
             Block.box(12, 0, 1, 15, 2, 4), // Leg Front Left
             Block.box(1, 0, 12, 4, 2, 15), // Leg Back Right
             Block.box(12, 0, 12, 15, 2, 15)); // Leg Back Left
-    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Shapes.box(0.12f, 1f, 0.12f, 0.88f, 1.04f, 0.88f));
+    private static final VoxelShape TABLE_WITH_AGREEMENT_SHAPE = Shapes.or(TABLE_SHAPE, Block.box(2, 16, 2, 14, 17, 14));
 
     public DeliveryTableBlock(Properties properties) {
         super(properties);
@@ -113,7 +112,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
                 && deliveryTableBlockEntity.getAgreementItem().isEmpty()) {
             deliveryTableBlockEntity.setAgreementItem(stackInHand.split(1));
             level.playSound(player, pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f,
-                    Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 0.8f);
+                    Wares.SoundEvents.PAPER_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 0.8f);
             return InteractionResult.SUCCESS;
         }
 
@@ -128,7 +127,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
                     item.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);
                     level.addFreshEntity(item);
                     level.playSound(null, pos.getX() + 0.5f, pos.getY() + 1f, pos.getZ() + 0.5f,
-                            Wares.SoundEvents.AGREEMENT_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 1.1f);
+                            Wares.SoundEvents.PAPER_CRACKLE.get(), SoundSource.PLAYERS, 1f, level.getRandom().nextFloat() * 0.1f + 1.1f);
                 }
 
                 return InteractionResult.SUCCESS;
