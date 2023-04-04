@@ -1,8 +1,8 @@
 package io.github.mortuusars.wares.block.entity;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.block.DeliveryPackageBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
@@ -22,7 +22,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -44,12 +43,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"SameParameterValue", "BooleanMethodIsAlwaysInverted"})
 public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
-    public static final int SLOTS = 13;
+    public static final int SLOTS = 14;
     public static final int AGREEMENT_SLOT = 0;
-    public static final int[] INPUT_PLUS_AGREEMENT_SLOTS = new int[] {0,1,2,3,4,5,6};
-    public static final int[] INPUT_SLOTS = new int[] {1,2,3,4,5,6};
-    public static final int[] OUTPUT_SLOTS = new int[] {7,8,9,10,11,12};
+    public static final int PACKAGES_SLOT = 1;
+    public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1,2,3,4,5,6,7};
+    public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
+    public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
+    public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
 
     public static final int CONTAINER_DATA_PROGRESS = 0;
     public static final int CONTAINER_DATA_DURATION = 1;
@@ -67,7 +69,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             if (id == 0) {
                 DeliveryTableBlockEntity.this.progress = value;
             }
-
         }
 
         public int getCount() {
@@ -78,9 +79,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
 
-
     protected Agreement agreement = Agreement.EMPTY;
-
     protected int progress = 0;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
@@ -92,6 +91,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public void serverTick() {
         if (level == null)
             return;
+
+        //TODO: Measure performance and optimize
 
         convertAgreementStackIfNeeded();
 
@@ -122,6 +123,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     public int getBatchSize() {
         //TODO: Packager villager level determines batch size.
+        //Math.min(packages, villagerLevel)
         return 1;
     }
 
@@ -134,7 +136,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected void sendUpdateToNearbyClients() {
-        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(16));
+        assert level != null;
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(32));
         for (ServerPlayer player : nearbyPlayers) {
             player.connection.send(this.getUpdatePacket());
         }
@@ -148,12 +151,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             if (!canDeliver())
                 return deliveredCount;
 
+            consumePackage();
             consumeFromInputSlots(agreement.getRequestedItems());
             insertCopiesToOutputSlots(agreement.getPaymentItems());
             deliveredCount++;
 
+            assert level != null;
+
             // Checking before onDeliver - because when agreement completes - it erases expire time.
-            // TODO: Config almostExpired window.
+            // TODO: Config almostExpired time.
             boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 60;
 
             agreement.onDeliver();
@@ -179,12 +185,22 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return deliveredCount;
     }
 
+    private void consumePackage() {
+        if (Config.DELIVERIES_REQUIRE_PACKAGES.get())
+            removeItem(PACKAGES_SLOT, 1);
+    }
+
     protected boolean canDeliver() {
         return level != null
                 && agreement != Agreement.EMPTY
                 && agreement.canDeliver(level.getGameTime())
+                && hasPackage()
                 && hasRequestedItems()
                 && hasSpaceForPayment();
+    }
+
+    protected boolean hasPackage() {
+        return !getItem(PACKAGES_SLOT).isEmpty() || !Config.DELIVERIES_REQUIRE_PACKAGES.get();
     }
 
     protected boolean hasRequestedItems() {
@@ -273,6 +289,23 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected @NotNull ItemStackHandler createInventory(int slots) {
         return new ItemStackHandler(slots) {
             @Override
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+                if (slot == AGREEMENT_SLOT)
+                    return stack.getItem() instanceof AgreementItem;
+                else if (slot == PACKAGES_SLOT)
+                    return Config.DELIVERIES_REQUIRE_PACKAGES.get() && stack.is(Wares.Tags.Items.PACKAGES);
+                return super.isItemValid(slot, stack);
+            }
+
+            @NotNull
+            @Override
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+                if (slot == PACKAGES_SLOT && !Config.DELIVERIES_REQUIRE_PACKAGES.get())
+                    return stack;
+                return super.insertItem(slot, stack, simulate);
+            }
+
+            @Override
             protected void onContentsChanged(int slot) {
                 if (slot == AGREEMENT_SLOT) {
                     updateBlockStateIfNeeded();
@@ -351,8 +384,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
-            case UP -> INPUT_PLUS_AGREEMENT_SLOTS;
-            case NORTH, SOUTH, WEST, EAST -> INPUT_SLOTS;
+            case UP -> INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS;
+            case NORTH, SOUTH, WEST, EAST -> INPUT_PLUS_PACKAGES_SLOTS;
         };
     }
 
@@ -374,13 +407,14 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
-        if (slotIndex >= 7)
+        if (slotIndex == AGREEMENT_SLOT && !(stack.getItem() instanceof AgreementItem))
             return false;
-        return slotIndex != AGREEMENT_SLOT || stack.getItem() instanceof AgreementItem;
+        return slotIndex < OUTPUT_SLOTS[0];
     }
 
     @Override
     public boolean stillValid(@NotNull Player pPlayer) {
+        assert this.level != null;
         if (this.level.getBlockEntity(this.worldPosition) != this)
             return false;
         else
@@ -432,8 +466,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         if (getAgreement().isCompleted())
             setAgreementItem(AgreementItem.convertToCompleted(getAgreementItem()));
-        else if (getAgreement().isExpired(level.getGameTime()))
-            setAgreementItem(AgreementItem.convertToExpired(getAgreementItem()));
+        else {
+            assert level != null;
+            if (getAgreement().isExpired(level.getGameTime()))
+                setAgreementItem(AgreementItem.convertToExpired(getAgreementItem()));
+        }
     }
 
     protected void updateBlockStateIfNeeded() {
@@ -450,7 +487,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
+    public @NotNull Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 

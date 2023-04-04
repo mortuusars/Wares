@@ -12,11 +12,11 @@ import java.util.List;
 public class Languages extends LanguageProvider {
     public enum MissingEntriesPolicy {
         EXCEPTION,
-        WARNING;
+        WARNING
     }
 
     private final String locale;
-    private MissingEntriesPolicy policy;
+    private final MissingEntriesPolicy policy;
 
     protected final List<String> translatedKeys = new ArrayList<>();
 
@@ -56,6 +56,9 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.GUI_AGREEMENT_TITLE, "Delivery Agreement");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "I have some wares that I believe might interest you. Would you be open to trading your goods for mine?");
+
+        translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Place a Delivery Agreement to start a delivery");
+        translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Packages are required for delivery");
 
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME, "Expire time");
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME_TOOLTIP, "Expires in: %s");
@@ -99,6 +102,9 @@ public class Languages extends LanguageProvider {
                 "що відкрити його без пошкодження вмісту, що зробить його нечитабельним, неможливо.");
 
         translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "ПКМ щоб переглянути");
+
+        translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Покладіть сюди Торговий Договір щоб почати доставку");
+        translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Для доставки товарів потрібні пакунки");
 
         translate(Lang.GUI_AGREEMENT_TITLE, "Торговий Договір");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "У мене є товари, які, можливо, будуть Вам цікаві. Згодні на торгівлю?");

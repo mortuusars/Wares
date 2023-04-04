@@ -22,6 +22,9 @@ public class ItemTags extends ItemTagsProvider {
                      Wares.Items.DELIVERY_AGREEMENT.get(),
                      Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(),
                      Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
+
+        tag(Wares.Tags.Items.PACKAGES)
+                .add(Wares.Items.DELIVERY_PACKAGE.get());
     }
 
     private void optionalTags(TagAppender<Item> tag, String namespace, String... items) {

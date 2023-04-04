@@ -21,6 +21,9 @@ public enum Lang {
 
     ITEM_AGREEMENT_VIEW_TOOLTIP("item", "agreement.view.tooltip"),
 
+    GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP("gui", "delivery_table.no_agreement.tooltip"),
+    GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP("gui", "delivery_table.no_packages.tooltip"),
+
     GUI_AGREEMENT_TITLE("gui", "agreement.title"),
     GUI_AGREEMENT_MESSAGE("gui", "agreement.message"),
     GUI_AGREEMENT_EXPIRE_TIME("gui", "agreement.expire_time"),

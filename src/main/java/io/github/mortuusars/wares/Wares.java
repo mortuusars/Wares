@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import io.github.mortuusars.wares.block.DeliveryPackageBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
@@ -45,6 +46,8 @@ public class Wares
 
     public Wares()
     {
+        Config.init();
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         Blocks.BLOCKS.register(modEventBus);
@@ -171,6 +174,7 @@ public class Wares
     public static class Tags {
         public static class Items {
             public static final TagKey<Item> AGREEMENTS = ItemTags.create(Wares.resource("agreements"));
+            public static final TagKey<Item> PACKAGES = ItemTags.create(Wares.resource("packages"));
         }
     }
 }

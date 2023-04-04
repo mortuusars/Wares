@@ -3,8 +3,6 @@ package io.github.mortuusars.wares.client.gui.agreement;
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.data.agreement.AgreementBuilder;
-import io.github.mortuusars.wares.menu.slot.DisplaySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -15,8 +13,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -214,7 +212,17 @@ public class AgreementMenu extends AbstractContainerMenu {
             int y = count <= 3 && centeredY ? startY + 9 : startY;
 
             for (int column = 0; column < slots; column++) {
-                this.addSlot(new DisplaySlot(container, startIndex + index, x + column * 18, y + row * 18));
+                this.addSlot(new Slot(container, startIndex + index, x + column * 18, y + row * 18) {
+                    @Override
+                    public boolean mayPlace(@NotNull ItemStack stack) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean mayPickup(@NotNull Player player) {
+                        return false;
+                    }
+                });
                 index++;
             }
         }
