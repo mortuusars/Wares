@@ -49,22 +49,22 @@ public class SealedAgreementItem extends Item {
     }
 
     @Override
-    public SoundEvent getEatingSound() {
-        return Wares.SoundEvents.PAPER_TEAR.get();
+    public @NotNull SoundEvent getEatingSound() {
+        return Wares.SoundEvents.PAPER_CRACKLE.get();
     }
 
     @Override
-    public int getUseDuration(ItemStack pStack) {
+    public int getUseDuration(@NotNull ItemStack pStack) {
         return 25;
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack pStack) {
         return UseAnim.EAT;
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity livingEntity) {
         if (!(livingEntity instanceof Player player))
             return stack;
 
@@ -86,9 +86,17 @@ public class SealedAgreementItem extends Item {
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
                 if (agreement.toItemStack(agreementStack)) {
+
+                    int slotIndex = player.getInventory().findSlotMatchingItem(stack);
+
                     stack.shrink(1);
-                    player.addItem(agreementStack);
-                    player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 12);
+
+                    if (slotIndex > -1)
+                        player.getInventory().setItem(slotIndex, agreementStack);
+                    else
+                        player.addItem(agreementStack);
+
+                    player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 10);
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                     level.playSound(null,
                             player.position().x,
