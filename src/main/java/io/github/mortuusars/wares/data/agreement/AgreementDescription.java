@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -20,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
+@SuppressWarnings("UnusedReturnValue")
 public record AgreementDescription(String id,
                                    TextProvider buyerName,
                                    TextProvider buyerAddress,
@@ -84,31 +85,38 @@ public record AgreementDescription(String id,
         int expiresIn = expiresInSeconds.map(integer -> integer, steppedInt -> steppedInt.sample(random));
         long expireTime = level.getGameTime() + expiresIn * 20L;
 
-        Agreement agreement = Agreement.builder().id(id)
+        return Agreement.builder().id(id)
                 .buyerName(buyerName.get(random))
                 .buyerAddress(buyerAddress.get(random))
                 .title(title.get(random))
                 .message(message.get(random))
-                .requestedItems(getStacks(requested, level))
-                .paymentItems(getStacks(payment, level))
+                .requestedItems(getStacks(requested, level, Agreement.MAX_REQUESTED_STACKS))
+                .paymentItems(getStacks(payment, level, Agreement.MAX_PAYMENT_STACKS))
                 .ordered(quantity)
                 .experience(experience.map(integer -> integer, steppedInt -> steppedInt.sample(random)))
                 .deliveryTime(deliveryTime.map(integer -> integer, steppedInt -> steppedInt.sample(random)))
                 .expireTime(expireTime)
                 .build();
-
-        return agreement;
     }
 
-    private List<ItemStack> getStacks(Either<ResourceLocation, List<ItemStack>> tableOrItems, ServerLevel level) {
-        return tableOrItems.map(tableLocation -> fromLootTable(tableLocation, level), list -> list);
+    private List<ItemStack> getStacks(Either<ResourceLocation, List<ItemStack>> lootTableOrItems, ServerLevel level, int stackLimit) {
+        List<ItemStack> items = lootTableOrItems.map(tableLocation -> unpackLootTable(tableLocation, level), list -> list);
+        return compressAndLimitStacks(items, stackLimit);
     }
 
-    private List<ItemStack> fromLootTable(ResourceLocation lootTablePath, ServerLevel level) {
+    private List<ItemStack> unpackLootTable(ResourceLocation lootTablePath, ServerLevel level) {
         LootTable lootTable = level.getServer().getLootTables().get(lootTablePath);
         LootContext.Builder lootContextBuilder = new LootContext.Builder(level);
-        List<ItemStack> items = lootTable.getRandomItems(lootContextBuilder.create(LootContextParamSets.EMPTY))
-                .stream().limit(6).collect(Collectors.toList());
-        return items;
+        return lootTable.getRandomItems(lootContextBuilder.create(LootContextParamSets.EMPTY));
+    }
+
+    private List<ItemStack> compressAndLimitStacks(List<ItemStack> stacks, int stackLimit) {
+        SimpleContainer container = new SimpleContainer(stackLimit);
+
+        for (ItemStack item : stacks) {
+            container.addItem(item);
+        }
+
+        return container.removeAllItems();
     }
 }

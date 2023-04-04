@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public class Agreement {
     public static final Codec<Agreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.optionalFieldOf("id", "").forGetter(Agreement::getId),
@@ -36,6 +37,9 @@ public class Agreement {
                     Codec.BOOL.optionalFieldOf("isCompleted", false).forGetter(Agreement::getIsCompleted),
                     Codec.BOOL.optionalFieldOf("isExpired", false).forGetter(Agreement::getIsExpired))
             .apply(instance, Agreement::new));
+
+    public static final int MAX_REQUESTED_STACKS = 6;
+    public static final int MAX_PAYMENT_STACKS = 6;
 
     public static final Agreement EMPTY = new AgreementBuilder()
             .addRequestedItem(ItemStack.EMPTY)
@@ -76,10 +80,6 @@ public class Agreement {
         this.expireTime = expireTime;
         this.isCompleted = isCompleted;
         this.isExpired = isExpired;
-
-//        if (requestedItems.size() == 0 && paymentItems.size() == 0)
-//            throw new IllegalArgumentException("Agreement can't have both requestedItems and paymentItems empty. " +
-//                    "At least one of them must be defined. " + this + ".");
     }
 
     public static AgreementBuilder builder() {
@@ -207,7 +207,7 @@ public class Agreement {
                 && isCompleted == agreement.isCompleted && isExpired == agreement.isExpired && id.equals(agreement.id)
                 && buyerName.equals(agreement.buyerName) && buyerAddress.equals(agreement.buyerAddress) && title.equals(agreement.title)
                 && message.equals(agreement.message)
-                && requestedItems.stream().equals(agreement.requestedItems) && paymentItems.equals(agreement.paymentItems);
+                && requestedItems.equals(agreement.requestedItems) && paymentItems.equals(agreement.paymentItems);
     }
 
     @Override
