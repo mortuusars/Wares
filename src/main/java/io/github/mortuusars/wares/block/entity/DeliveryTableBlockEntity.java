@@ -8,7 +8,6 @@ import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -32,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -59,7 +59,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
     public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
 
-    public static final int PACKAGER_WORK_RADIUS = 4;
+    public static final int PACKAGER_WORK_RADIUS = 2;
     public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
 
     public static final int CONTAINER_DATA_PROGRESS = 0;
@@ -88,10 +88,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
     protected int progress = 0;
-    protected DeliveryTableStatus status = DeliveryTableStatus.IDLE;
 
     protected Agreement agreement = Agreement.EMPTY;
-    protected boolean isBeingWorkedOn = false;
+//    protected boolean isBeingWorkedOn = false;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -103,51 +102,39 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         if (level == null)
             return;
 
-        //TODO: Measure performance and optimize
-
         convertAgreementStackIfNeeded();
 
-
-        DeliveryTableStatus status = DeliveryTableStatus.IDLE;
-        boolean hasChanged = false;
-
-        if (!isPackagerWorkingAtTable()) {
-            setStatus(DeliveryTableStatus.NO_WORKER);
+        if (!getAgreementItem().is(Wares.Items.DELIVERY_AGREEMENT.get())) {
+            if (progress > 0){
+                resetProgress();
+                setChanged();
+            }
             return;
         }
 
+        //TODO: Measure performance and optimize
 
-        int deliveryTime = getDeliveryTime();
-        if (deliveryTime > progress) {
+        if (!isPackagerWorkingAtTable())
+            return;
+
+        int prevProgress = progress;
+        Deliverability deliverability = getDeliverability();
+
+        Wares.LOGGER.info(deliverability.toString());
+
+        if (deliverability == Deliverability.CAN_DELIVER)
             progress++;
-            hasChanged = true;
-        }
-
-        if (!canDeliver())
+        else if (deliverability != Deliverability.NO_SPACE_FOR_OUTPUT)
             resetProgress();
-        else if (progress >= deliveryTime) {
+
+        if (progress >= getDeliveryTime()) {
             int deliveredPackages = deliver(getBatchSize());
             if (deliveredPackages > 0)
                 onBatchDelivered(deliveredPackages);
         }
 
-        if (hasChanged)
+        if (prevProgress != progress)
             setChanged();
-    }
-
-//    protected boolean isBeingWorkedOn() {
-//        if (level.getGameTime() % 20 == 0)
-//            isBeingWorkedOn = isPackagerWorkingAtTable();
-//
-//        if (!isBeingWorkedOn) {
-//            setStatus(DeliveryTableStatus.NO_WORKER);
-//            return;
-//        }
-//    }
-
-    protected void setStatus(DeliveryTableStatus status) {
-        if (this.status != status)
-            this.status = status;
     }
 
     private void onBatchDelivered(final int deliveredBatches) {
@@ -238,7 +225,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         for (int i = 0; i < batchCount; i++) {
             // First check is just to be sure,
             // Afterwards it is necessary to check because items have changed.
-            if (!canDeliver())
+            if (getDeliverability() != Deliverability.CAN_DELIVER)
                 return deliveredCount;
 
             consumePackage();
@@ -250,25 +237,20 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             // Checking before onDeliver - because when agreement completes - it erases expire time.
             // TODO: Config almostExpired time.
-            boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 60;
+            boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 120; // 2 min
 
             agreement.onDeliver();
 
             agreement.toItemStack(getAgreementItem());
             sendUpdateToNearbyClients();
 
-
             if (agreement.isCompleted()) {
-                resetProgress();
-
                 if (almostExpired)
                     getAgreementItem().getOrCreateTag().putBoolean("almostExpired", true);
-
                 int experience = getAgreement().getExperience();
                 if (experience > 0 && level instanceof ServerLevel serverLevel)
                     ExperienceOrb.award(serverLevel, Vec3.atCenterOf(getBlockPos()).add(0, 0.5f, 0), experience);
-
-                return deliveredCount;
+                break;
             }
         }
 
@@ -281,13 +263,17 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             removeItem(PACKAGES_SLOT, 1);
     }
 
-    protected boolean canDeliver() {
-        return level != null
-                && agreement != Agreement.EMPTY
-                && agreement.canDeliver(level.getGameTime())
-                && hasPackage()
-                && hasRequestedItems()
-                && hasSpaceForPayment();
+    protected Deliverability getDeliverability() {
+        if (agreement.isEmpty() || !agreement.canDeliver(getLevelOrThrow().getGameTime()))
+            return Deliverability.AGREEMENT_INVALID;
+        if (!hasPackage())
+            return Deliverability.NO_PACKAGES;
+        if (!hasRequestedItems())
+            return Deliverability.NO_INPUT;
+        if (!hasSpaceForPayment())
+            return Deliverability.NO_SPACE_FOR_OUTPUT;
+
+        return Deliverability.CAN_DELIVER;
     }
 
     protected boolean hasPackage() {
@@ -547,6 +533,13 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void setChanged() {
         super.setChanged();
+    }
+
+    // We need to be sure about the level. And shut up Intellij about it possibly be null.
+    private Level getLevelOrThrow() {
+        if (level == null)
+            throw new IllegalStateException("Level was null. Unacceptable.");
+        return level;
     }
 
     // <Updating>

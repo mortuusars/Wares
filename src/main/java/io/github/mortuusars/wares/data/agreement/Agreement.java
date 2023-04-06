@@ -197,6 +197,10 @@ public class Agreement {
         this.isExpired = true;
     }
 
+    public boolean isEmpty() {
+        return this == EMPTY;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
