@@ -13,7 +13,6 @@ import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -50,9 +49,11 @@ public class Wares
 
     public Wares()
     {
-        Config.init();
-
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        Config.init();
+        modEventBus.addListener(Config::onConfigLoad);
+        modEventBus.addListener(Config::onConfigReload);
 
         Blocks.BLOCKS.register(modEventBus);
         BlockEntities.BLOCK_ENTITIES.register(modEventBus);

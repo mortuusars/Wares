@@ -9,6 +9,7 @@ import io.github.mortuusars.mpfui.renderable.TextBlockRenderable;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.element.StampRenderable;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.util.TextUtil;
@@ -163,9 +164,12 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             buyerInfoTooltip.append(getAgreement().getBuyerAddress());
         }
 
-        addRenderableOnly(new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2), getGuiTop() + imageHeight - 35,
-                36, 35, 200, 32, TEXTURE))
-                .setTooltip(buyerInfoTooltip);
+        TextureRenderable sealRenderable = new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2),
+                getGuiTop() + imageHeight - 35, 36, 35, 200, 32, TEXTURE);
+        if (font.width(buyerInfoTooltip) > 0)
+            sealRenderable.setTooltip(buyerInfoTooltip);
+
+        addRenderableOnly(sealRenderable);
     }
 
     @Override
@@ -195,19 +199,8 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
-    protected void renderTooltip(@NotNull PoseStack pPoseStack, int pX, int pY) {
-        super.renderTooltip(pPoseStack, pX, pY);
-    }
-
-    @Override
-    protected void renderLabels(@NotNull PoseStack poseStack, int mouseX, int mouseY) {
-        super.renderLabels(poseStack, mouseX, mouseY);
-    }
-
-    @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-        if (pButton == 1) {
-            // TODO: Config if should close with mouse right
+        if (Config.AGREEMENT_CLOSE_WITH_RMB.get() && pButton == 1) {
             onClose();
             return true;
         }

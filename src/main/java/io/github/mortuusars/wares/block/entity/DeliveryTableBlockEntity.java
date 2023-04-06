@@ -26,12 +26,12 @@ import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -59,7 +59,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
     public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
 
-    public static final int PACKAGER_WORK_RADIUS = 2;
+    public static final int PACKAGER_WORK_RADIUS = 3;
     public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
 
     public static final int CONTAINER_DATA_PROGRESS = 0;
@@ -111,7 +111,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return;
         }
 
-        if (!isPackagerWorkingAtTable())
+        if (Config.PACKAGER_REQUIRED.get() && !isPackagerWorkingAtTable())
             return;
 
         int prevProgress = progress;
@@ -143,10 +143,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         Optional<Villager> worker = getPackagerWorker(16);
         if (worker.isPresent()) {
             Villager packager = worker.get();
-            int xp = packager.getVillagerXp() + deliveredBatches * 1; //TODO Config for xp per delivery and level modifiers
+            int xp = packager.getVillagerXp() + deliveredBatches;
             packager.setVillagerXp(xp);
 
-            if (packager.shouldIncreaseLevel()) {
+            int villagerLevel = packager.getVillagerData().getLevel();
+            if (VillagerData.canLevelUp(villagerLevel) && xp >= Config.getMaxXpPerLevel(villagerLevel)) {
                 level.playSound(null, packager, SoundEvents.PLAYER_LEVELUP, SoundSource.NEUTRAL, 0.75f, 1);
                 packager.increaseProfessionLevelOnUpdate = true;
                 packager.updateMerchantTimer = 30;
@@ -196,7 +197,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
         int packages = getItem(PACKAGES_SLOT).getCount();
         int villagerLevel = worker.map(villager -> villager.getVillagerData().getLevel()).orElse(1);
-        return Math.min(packages, villagerLevel);
+        return Math.min(packages, Config.getBatchSizeForLevel(villagerLevel));
     }
 
     protected int getDeliveryTime() {
@@ -248,7 +249,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected Deliverability getDeliverability() {
-        if (agreement.isEmpty() || !agreement.canDeliver(getLevelOrThrow().getGameTime()))
+        if (agreement.isEmpty() || !agreement.canDeliver(level != null ? level.getGameTime() : 0))
             return Deliverability.AGREEMENT_INVALID;
         if (!hasPackage())
             return Deliverability.NO_PACKAGES;
@@ -517,13 +518,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void setChanged() {
         super.setChanged();
-    }
-
-    // We need to be sure about the level. And shut up Intellij about it possibly be null.
-    private Level getLevelOrThrow() {
-        if (level == null)
-            throw new IllegalStateException("Level was null. Unacceptable.");
-        return level;
     }
 
     // <Updating>

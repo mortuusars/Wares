@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.serialization.ComponentCodec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -57,7 +58,7 @@ public class Agreement {
     private final int experience;
     private final int deliveryTime;
 
-    private long expireTime;
+    private final long expireTime;
     private int delivered;
     private boolean isCompleted;
     private boolean isExpired;
@@ -147,7 +148,7 @@ public class Agreement {
     }
     public int getDeliveryTime() { return deliveryTime; }
     public int getDeliveryTimeOrDefault() {
-        return deliveryTime > 0 ? deliveryTime : 40; // TODO: config duration
+        return deliveryTime > 0 ? deliveryTime : Config.DEFAULT_DELIVERY_TIME.get();
     }
     public long getExpireTime() {
         return expireTime;

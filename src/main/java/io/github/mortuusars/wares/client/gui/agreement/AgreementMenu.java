@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.client.gui.agreement;
 
 import io.github.mortuusars.mpfui.component.Rectangle;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import net.minecraft.client.Minecraft;
@@ -110,28 +111,25 @@ public class AgreementMenu extends AbstractContainerMenu {
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
         MutableComponent message = getAgreement().getMessage().copy();
-
         if (message == TextComponent.EMPTY)
             message = Lang.GUI_AGREEMENT_MESSAGE.translate();
 
+        if (Config.AGREEMENT_APPEND_BUYER_INFO_TO_MESSAGE.get()) {
+            boolean hasBuyerName = Minecraft.getInstance().font.width(getAgreement().getBuyerName()) != 0;
+            boolean hasBuyerAddress = Minecraft.getInstance().font.width(getAgreement().getBuyerAddress()) != 0;
 
-        // TODO: Config for appending name and address.
+            if (hasBuyerName || hasBuyerAddress)
+                message.append("\n");
 
+            if (hasBuyerName) {
+                message.append("\n");
+                message.append(getAgreement().getBuyerName());
+            }
 
-        boolean hasBuyerName = Minecraft.getInstance().font.width(getAgreement().getBuyerName()) != 0;
-        boolean hasBuyerAddress = Minecraft.getInstance().font.width(getAgreement().getBuyerAddress()) != 0;
-
-        if (hasBuyerName || hasBuyerAddress)
-            message.append("\n");
-
-        if (hasBuyerName) {
-            message.append("\n");
-            message.append(getAgreement().getBuyerName());
-        }
-
-        if (hasBuyerAddress) {
-            message.append("\n");
-            message.append(getAgreement().getBuyerAddress());
+            if (hasBuyerAddress) {
+                message.append("\n");
+                message.append(getAgreement().getBuyerAddress());
+            }
         }
 
         return message;
