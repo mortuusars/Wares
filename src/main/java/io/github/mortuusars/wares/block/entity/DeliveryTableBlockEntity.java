@@ -90,7 +90,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected int progress = 0;
 
     protected Agreement agreement = Agreement.EMPTY;
-//    protected boolean isBeingWorkedOn = false;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -112,15 +111,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return;
         }
 
-        //TODO: Measure performance and optimize
-
         if (!isPackagerWorkingAtTable())
             return;
 
         int prevProgress = progress;
         Deliverability deliverability = getDeliverability();
-
-        Wares.LOGGER.info(deliverability.toString());
 
         if (deliverability == Deliverability.CAN_DELIVER)
             progress++;
@@ -212,14 +207,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         progress = 0;
     }
 
-    protected void sendUpdateToNearbyClients() {
-        assert level != null;
-        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(32));
-        for (ServerPlayer player : nearbyPlayers) {
-            player.connection.send(this.getUpdatePacket());
-        }
-    }
-
     protected int deliver(final int batchCount) {
         int deliveredCount = 0;
         for (int i = 0; i < batchCount; i++) {
@@ -235,16 +222,13 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             assert level != null;
 
-            // Checking before onDeliver - because when agreement completes - it erases expire time.
-            // TODO: Config almostExpired time.
-            boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 120; // 2 min
-
             agreement.onDeliver();
 
             agreement.toItemStack(getAgreementItem());
             sendUpdateToNearbyClients();
 
             if (agreement.isCompleted()) {
+                boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 60; // 1 min
                 if (almostExpired)
                     getAgreementItem().getOrCreateTag().putBoolean("almostExpired", true);
                 int experience = getAgreement().getExperience();
@@ -562,6 +546,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         BlockState currentBlockState = getBlockState();
         if (level != null && currentBlockState.getValue(DeliveryTableBlock.AGREEMENT) != type)
             level.setBlockAndUpdate(worldPosition, currentBlockState.setValue(DeliveryTableBlock.AGREEMENT, type));
+    }
+
+
+    protected void sendUpdateToNearbyClients() {
+        assert level != null;
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, new AABB(getBlockPos()).inflate(32));
+        for (ServerPlayer player : nearbyPlayers) {
+            player.connection.send(this.getUpdatePacket());
+        }
     }
 
     @Override

@@ -158,7 +158,12 @@ public class Agreement {
     public boolean canExpire() {
         return getExpireTime() > -1L;
     }
-    public boolean isExpired(long gameTime) { return (isExpired && !isCompleted()) || (getExpireTime() >= 0 && getExpireTime() <= gameTime); }
+    public boolean isExpired(long gameTime) {
+        if (isCompleted())
+            return false;
+
+        return isExpired || (getExpireTime() >= 0 && getExpireTime() <= gameTime);
+    }
     protected boolean getIsCompleted() { return isCompleted; }
     public boolean isCompleted() {
         return isCompleted || (getOrdered() > 0 && getDelivered() == getOrdered());
@@ -187,7 +192,7 @@ public class Agreement {
 
     public void complete() {
         this.isCompleted = true;
-        this.expireTime = -1;
+//        this.expireTime = -1;
 
         if (getDelivered() < getOrdered())
             this.delivered = getOrdered();
