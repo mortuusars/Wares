@@ -54,6 +54,8 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "Right-click to view");
 
+        translate(Lang.VILLAGER_PACKAGER, "Packager");
+
         translate(Lang.GUI_AGREEMENT_TITLE, "Delivery Agreement");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "I have some wares that I believe might interest you. Would you be open to trading your goods for mine?");
 
@@ -84,6 +86,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.SUBTITLE_PAPER_CRACKLE, "Paper crackles");
         translate(Lang.SUBTITLE_PAPER_TEAR, "Paper tears");
         translate(Lang.SUBTITLE_WRITING, "Quill writes on paper");
+        translate(Lang.SUBTITLE_PACKAGER_WORKS, "Packager works");
     }
 
     protected void uk_ua() {
@@ -102,6 +105,8 @@ public class Languages extends LanguageProvider {
                 "що відкрити його без пошкодження вмісту, що зробить його нечитабельним, неможливо.");
 
         translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "ПКМ щоб переглянути");
+
+        translate(Lang.VILLAGER_PACKAGER, "Пакувальник");
 
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Покладіть сюди Торговий Договір щоб почати доставку");
         translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Для доставки товарів потрібні пакунки");
@@ -132,6 +137,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.SUBTITLE_PAPER_CRACKLE, "Папір мнеться");
         translate(Lang.SUBTITLE_PAPER_TEAR, "Папір рветься");
         translate(Lang.SUBTITLE_WRITING, "Перо пише на папері");
+        translate(Lang.SUBTITLE_PACKAGER_WORKS, "Пакувальник працює");
     }
 
     protected void translate(Lang key, String translation) {

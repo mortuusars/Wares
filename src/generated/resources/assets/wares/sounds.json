@@ -224,5 +224,14 @@
         "pitch": 0.65
       }
     ]
+  },
+  "entity.villager.work_packager": {
+    "subtitle": "subtitles.entity.villager.work_packager",
+    "sounds": [
+      "wares:block/cardboard/hit1",
+      "wares:block/cardboard/hit2",
+      "wares:block/cardboard/hit3",
+      "wares:block/cardboard/hit4"
+    ]
   }
 }

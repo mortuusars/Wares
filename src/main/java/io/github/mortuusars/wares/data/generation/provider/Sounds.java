@@ -41,6 +41,10 @@ public class Sounds extends SoundDefinitionsProvider {
                 .with(multiple(7, "step/scaffold", 0.5f, 0.7f)));
         add(Wares.SoundEvents.CARDBOARD_FALL.get(), definition()
                 .with(multiple(7, "step/scaffold", 0.65f, 0.65f)));
+
+        add(Wares.SoundEvents.VILLAGER_WORK_PACKAGER.get(), definition()
+                .subtitle(Lang.SUBTITLE_PACKAGER_WORKS.key)
+                .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));
     }
 
     private SoundDefinition.Sound[] multiple(int count, String name, float volume, float pitch) {

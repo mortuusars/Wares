@@ -21,6 +21,8 @@ public enum Lang {
 
     ITEM_AGREEMENT_VIEW_TOOLTIP("item", "agreement.view.tooltip"),
 
+    VILLAGER_PACKAGER("entity.minecraft.villager", "packager"),
+
     GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP("gui", "delivery_table.no_agreement.tooltip"),
     GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP("gui", "delivery_table.no_packages.tooltip"),
 
@@ -50,7 +52,7 @@ public enum Lang {
     SUBTITLE_PAPER_CRACKLE("subtitle", "paper.crackle"),
     SUBTITLE_PAPER_TEAR("subtitle", "paper.tear"),
     SUBTITLE_WRITING("subtitle", "writing"),
-
+    SUBTITLE_PACKAGER_WORKS("subtitles.entity.villager.work_packager")
     ;
 
     public final String key;

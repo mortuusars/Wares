@@ -7,6 +7,7 @@
   "commands.wares.agreement.complete.is_empty": "Failed: Agreement is empty or not deserialized properly.",
   "commands.wares.agreement.complete.is_expired": "Failed: Cannot complete an expired Agreement.",
   "commands.wares.agreement.complete.wrong_item": "Wrong item. Expected: '%s', got: '%s'",
+  "entity.minecraft.villager.wares.packager": "Packager",
   "gui.wares.agreement.completed.tooltip": "Completed",
   "gui.wares.agreement.deliveries": "Ordered deliveries",
   "gui.wares.agreement.deliveries.tooltip": "%s / %s",
@@ -32,5 +33,6 @@
   "stat.wares.sealed_letters_opened": "Opened Sealed Delivery Agreements",
   "subtitle.wares.paper.crackle": "Paper crackles",
   "subtitle.wares.paper.tear": "Paper tears",
-  "subtitle.wares.writing": "Quill writes on paper"
+  "subtitle.wares.writing": "Quill writes on paper",
+  "subtitles.entity.villager.work_packager": "Packager works"
 }

@@ -8,8 +8,10 @@ import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.item.AgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -18,10 +20,13 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -42,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings({"SameParameterValue", "BooleanMethodIsAlwaysInverted"})
 public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
@@ -52,6 +58,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
     public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
     public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
+
+    public static final int PACKAGER_WORK_RADIUS = 4;
+    public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
 
     public static final int CONTAINER_DATA_PROGRESS = 0;
     public static final int CONTAINER_DATA_DURATION = 1;
@@ -78,9 +87,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
+    protected int progress = 0;
+    protected DeliveryTableStatus status = DeliveryTableStatus.IDLE;
 
     protected Agreement agreement = Agreement.EMPTY;
-    protected int progress = 0;
+    protected boolean isBeingWorkedOn = false;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -96,25 +107,103 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         convertAgreementStackIfNeeded();
 
-        int prevProgress = progress;
+
+        DeliveryTableStatus status = DeliveryTableStatus.IDLE;
+        boolean hasChanged = false;
+
+        if (!isPackagerWorkingAtTable()) {
+            setStatus(DeliveryTableStatus.NO_WORKER);
+            return;
+        }
+
+
         int deliveryTime = getDeliveryTime();
-        if (deliveryTime > progress)
+        if (deliveryTime > progress) {
             progress++;
+            hasChanged = true;
+        }
 
         if (!canDeliver())
             resetProgress();
         else if (progress >= deliveryTime) {
-            if (deliver(getBatchSize()) > 0) {
-                level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.BLOCKS,
-                        0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
-                if (!getAgreement().isInfinite())
-                    level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,
-                            0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+            int deliveredPackages = deliver(getBatchSize());
+            if (deliveredPackages > 0)
+                onBatchDelivered(deliveredPackages);
+        }
+
+        if (hasChanged)
+            setChanged();
+    }
+
+//    protected boolean isBeingWorkedOn() {
+//        if (level.getGameTime() % 20 == 0)
+//            isBeingWorkedOn = isPackagerWorkingAtTable();
+//
+//        if (!isBeingWorkedOn) {
+//            setStatus(DeliveryTableStatus.NO_WORKER);
+//            return;
+//        }
+//    }
+
+    protected void setStatus(DeliveryTableStatus status) {
+        if (this.status != status)
+            this.status = status;
+    }
+
+    private void onBatchDelivered(final int deliveredBatches) {
+        assert level != null;
+        level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.BLOCKS,
+                0.85f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+        if (!getAgreement().isInfinite())
+            level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,
+                    0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+
+        Optional<Villager> worker = getPackagerWorker(16);
+        if (worker.isPresent()) {
+            Villager packager = worker.get();
+            int xp = packager.getVillagerXp() + deliveredBatches * 1; //TODO Config for xp per delivery and level modifiers
+            packager.setVillagerXp(xp);
+
+            if (packager.shouldIncreaseLevel()) {
+                level.playSound(null, packager, SoundEvents.PLAYER_LEVELUP, SoundSource.NEUTRAL, 0.75f, 1);
+                packager.increaseProfessionLevelOnUpdate = true;
+                packager.updateMerchantTimer = 30;
+            }
+        }
+    }
+
+    protected boolean isPackagerWorkingAtTable() {
+        Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
+        if (worker.isEmpty())
+            return false;
+
+        Villager packager = worker.get();
+        final long lastWorkedAt = packager.getBrain().getMemory(MemoryModuleType.LAST_WORKED_AT_POI).orElse(-1L);
+
+        if (lastWorkedAt < 0L)
+            return false;
+
+        assert level != null;
+        final int timeSinceLastWork = (int)(level.getGameTime() - lastWorkedAt);
+        return timeSinceLastWork < PACKAGER_LAST_WORK_THRESHOLD;
+    }
+
+    public Optional<Villager> getPackagerWorker(final int radius) {
+        assert level != null;
+        if (level.isClientSide)
+            throw new IllegalStateException("Should not be called client-side. Only server has info about villager job site.");
+
+        List<Villager> villagersInRadius = level.getEntitiesOfClass(Villager.class, new AABB(getBlockPos()).inflate(radius));
+
+        for (Villager villager : villagersInRadius) {
+            if (villager.getVillagerData().getProfession() == Wares.Villagers.PACKAGER.get()) {
+                Optional<GlobalPos> jobSiteMemory = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
+                if (jobSiteMemory.isPresent() && jobSiteMemory.get().pos().equals(getBlockPos()))
+                    return Optional.of(villager);
             }
         }
 
-        if (progress != prevProgress)
-            setChanged();
+        return Optional.empty();
     }
 
     public Agreement getAgreement() {
@@ -122,9 +211,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public int getBatchSize() {
-        //TODO: Packager villager level determines batch size.
-        //Math.min(packages, villagerLevel)
-        return 1;
+        Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
+        int packages = getItem(PACKAGES_SLOT).getCount();
+        int villagerLevel = worker.map(villager -> villager.getVillagerData().getLevel()).orElse(1);
+        return Math.min(packages, villagerLevel);
     }
 
     protected int getDeliveryTime() {
@@ -143,9 +233,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
     }
 
-    protected int deliver(int count) {
+    protected int deliver(final int batchCount) {
         int deliveredCount = 0;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < batchCount; i++) {
             // First check is just to be sure,
             // Afterwards it is necessary to check because items have changed.
             if (!canDeliver())
@@ -166,6 +256,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             agreement.toItemStack(getAgreementItem());
             sendUpdateToNearbyClients();
+
 
             if (agreement.isCompleted()) {
                 resetProgress();

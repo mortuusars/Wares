@@ -9,6 +9,7 @@ import io.github.mortuusars.wares.item.AgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
@@ -16,6 +17,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -40,6 +42,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 @SuppressWarnings({"NullableProblems", "deprecation"})
 public class DeliveryTableBlock extends BaseEntityBlock {
@@ -102,6 +106,21 @@ public class DeliveryTableBlock extends BaseEntityBlock {
     public InteractionResult use(BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity))
             return InteractionResult.FAIL;
+
+        if (player.isSecondaryUseActive() && !level.isClientSide) {
+            Optional<Villager> packagerWorker = deliveryTableBlockEntity.getPackagerWorker(3);
+            if (packagerWorker.isPresent()) {
+                Villager packager = packagerWorker.get();
+                int xp = packager.getVillagerXp() + 2;
+                packager.setVillagerXp(xp);
+
+                if (packager.shouldIncreaseLevel()) {
+                    level.playSound(null, packager, SoundEvents.PLAYER_LEVELUP, SoundSource.NEUTRAL, 1, 1);
+                    packager.increaseProfessionLevelOnUpdate = true;
+                    packager.updateMerchantTimer = 20;
+                }
+            }
+        }
 
         player.awardStat(Wares.Stats.INTERACT_WITH_DELIVERY_TABLE);
 

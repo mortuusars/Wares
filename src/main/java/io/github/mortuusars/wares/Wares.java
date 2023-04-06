@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.wares.block.DeliveryPackageBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
@@ -12,9 +13,12 @@ import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -54,6 +58,8 @@ public class Wares
         BlockEntities.BLOCK_ENTITIES.register(modEventBus);
         MenuTypes.MENU_TYPES.register(modEventBus);
         Items.ITEMS.register(modEventBus);
+        Villagers.POI_TYPES.register(modEventBus);
+        Villagers.PROFESSIONS.register(modEventBus);
         SoundEvents.SOUNDS.register(modEventBus);
     }
 
@@ -125,6 +131,18 @@ public class Wares
                         .tab(CreativeModeTab.TAB_DECORATIONS)));
     }
 
+    public static class Villagers {
+        public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(ForgeRegistries.POI_TYPES, Wares.ID);
+        public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, Wares.ID);
+
+        public static final RegistryObject<PoiType> DELIVERY_TABLE_POI = POI_TYPES.register(Blocks.DELIVERY_TABLE.getId().getPath(),
+                () -> new PoiType(Blocks.DELIVERY_TABLE.getId().getPath(), PoiType.getBlockStates(Blocks.DELIVERY_TABLE.get()), 1, 1));
+
+        public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
+                () -> new VillagerProfession("packager", DELIVERY_TABLE_POI.get(),
+                        ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_PACKAGER.get()));
+    }
+
     public static class SoundEvents {
         private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wares.ID);
 
@@ -139,10 +157,12 @@ public class Wares
         public static final RegistryObject<SoundEvent> CARDBOARD_FALL = registerSound("block", "cardboard.fall");
         public static final RegistryObject<SoundEvent> CARDBOARD_STEP = registerSound("block", "cardboard.step");
 
+        public static final RegistryObject<SoundEvent> VILLAGER_WORK_PACKAGER = registerSound("entity", "villager.work_packager");
+
         private static RegistryObject<SoundEvent> registerSound(String category, String key) {
             Preconditions.checkState(category != null && category.length() > 0, "'category' should not be empty.");
             Preconditions.checkState(key != null && key.length() > 0, "'key' should not be empty.");
-            String path = category + "." /*+ Wares.ID + "."*/ + key;
+            String path = category + "." + key;
             return SOUNDS.register(path, () -> new SoundEvent(Wares.resource(path)));
         }
     }
