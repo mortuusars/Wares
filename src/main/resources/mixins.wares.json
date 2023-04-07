@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.mortuusars.wares.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "mixins.wares.refmap.json",
+  "mixins": [
+    "ShowTradesToPlayerMixin",
+    "VillagerGoalPackagesMixin"
+  ],
+  "injectors": {
+    "defaultRequire": -1
+  }
+}

@@ -141,7 +141,7 @@ public class Wares
 
         public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
                 () -> new VillagerProfession("packager", DELIVERY_TABLE_POI.get(),
-                        ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_PACKAGER.get()));
+                        ImmutableSet.of(), ImmutableSet.of(), null));
     }
 
     public static class SoundEvents {
