@@ -20,6 +20,7 @@ public enum Lang {
     SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE("item", "sealed_delivery_agreement.unopenable_error_message"),
 
     ITEM_AGREEMENT_VIEW_TOOLTIP("item", "agreement.view.tooltip"),
+    ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP("item", "sealed_agreement.view.tooltip"),
 
     VILLAGER_PACKAGER("entity.minecraft.villager", "packager"),
 

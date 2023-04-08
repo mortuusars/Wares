@@ -52,7 +52,8 @@ public class Languages extends LanguageProvider {
         translate(Lang.SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE, "The letter seems intact but sealed in a way that will " +
                 "damage and make the contents unreadable when opened.");
 
-        translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "Right-click to view");
+        translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "Right click to view");
+        translate(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP, "Right click to inspect");
 
         translate(Lang.VILLAGER_PACKAGER, "Packager");
 
@@ -105,6 +106,7 @@ public class Languages extends LanguageProvider {
                 "що відкрити його без пошкодження вмісту, що зробить його нечитабельним, неможливо.");
 
         translate(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP, "ПКМ щоб переглянути");
+        translate(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP, "ПКМ щоб оглянути");
 
         translate(Lang.VILLAGER_PACKAGER, "Пакувальник");
 

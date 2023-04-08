@@ -1,10 +1,12 @@
 package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.client.gui.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.AgreementDescription;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -12,13 +14,19 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("DataFlowIssue")
@@ -32,6 +40,12 @@ public class SealedAgreementItem extends Item {
     }
 
     @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
+        tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
+                .withStyle(Style.EMPTY.withColor(0xb78358)));
+    }
+
+    @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
         String id = this.getDescriptionId(stack);
 
@@ -39,6 +53,21 @@ public class SealedAgreementItem extends Item {
             id = id + "_damaged";
 
         return new TranslatableComponent(id);
+    }
+
+    @Override
+    public boolean overrideOtherStackedOnMe(@NotNull ItemStack agreementStack, @NotNull ItemStack otherStack, @NotNull Slot slot, @NotNull ClickAction action, @NotNull Player player, @NotNull SlotAccess slotAccess) {
+        if (!otherStack.isEmpty() || action == ClickAction.PRIMARY)
+            return false;
+
+//        Component name = TextComponent.EMPTY;
+//        Component address = TextComponent.EMPTY;
+
+        if (player.level.isClientSide) {
+            new SealedAgreementScreen(/*name, address*/).showAsOverlay();
+        }
+
+        return true;
     }
 
     @Override
