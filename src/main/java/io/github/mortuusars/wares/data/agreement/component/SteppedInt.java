@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.agreement;
+package io.github.mortuusars.wares.data.agreement.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Random;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public record SteppedInt(int min, int max, int step) {
     public static final Codec<SteppedInt> CODEC = codec();
 

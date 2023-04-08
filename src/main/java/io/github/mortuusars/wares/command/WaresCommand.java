@@ -8,6 +8,9 @@ import io.github.mortuusars.mpfui.helper.LoremIpsum;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.*;
+import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
+import io.github.mortuusars.wares.data.agreement.component.TextProvider;
+import io.github.mortuusars.wares.data.agreement.component.WeightedComponent;
 import io.github.mortuusars.wares.test.Tests;
 import io.github.mortuusars.wares.test.framework.TestingResult;
 import net.minecraft.ChatFormatting;
@@ -76,13 +79,15 @@ public class WaresCommand {
     private static int giveExampleSealedAgreement(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 
-        AgreementDescription description = new AgreementDescription("example_agreement_sealed",
+        SealedAgreement sealedAgreement = new SealedAgreement("example_agreement_sealed",
                 TextProvider.of(
                         WeightedComponent.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY)),
                         WeightedComponent.of(new TextComponent("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED))),
                 TextProvider.of(new TextComponent("59 Side Road, Vibrant Plains Village")),
                 TextProvider.of(new TextComponent("Example Agreement")),
                 TextProvider.of(new TextComponent(LoremIpsum.words(20))),
+                new TextComponent("Wares Inc."),
+                new TextComponent(LoremIpsum.words(45)),
                 Either.left(new ResourceLocation("minecraft:chests/village/village_butcher")),
                 Either.left(new ResourceLocation("minecraft:chests/buried_treasure")),
                 Either.right(new SteppedInt(12, 64, 8)),
@@ -91,7 +96,7 @@ public class WaresCommand {
                 Either.left(5 * 60));
 
         ItemStack sealedAgreementStack = new ItemStack(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
-        description.toItemStack(sealedAgreementStack);
+        sealedAgreement.toItemStack(sealedAgreementStack);
 
         if (!serverPlayer.addItem(sealedAgreementStack))
             serverPlayer.drop(sealedAgreementStack, false);

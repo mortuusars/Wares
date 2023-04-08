@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.agreement;
+package io.github.mortuusars.wares.data.agreement.component;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -16,9 +16,8 @@ public record WeightedComponent(Component component, Weight weight) {
     public static final Codec<Either<Component, WeightedComponent>> REGULAR_OR_WEIGHTED_CODEC = Codec.either(ComponentCodec.CODEC, WEIGHTED_CODEC);
 
     public static final Codec<WeightedComponent> CODEC = REGULAR_OR_WEIGHTED_CODEC.flatXmap(
-            regularOrWeighted -> DataResult.success(regularOrWeighted.map(component -> WeightedComponent.of(component), weightedComponent -> weightedComponent)),
+            regularOrWeighted -> DataResult.success(regularOrWeighted.map(WeightedComponent::of, weightedComponent -> weightedComponent)),
             weightedComponent -> DataResult.success(Either.right(weightedComponent)));
-
 
     public static WeightedComponent of(Component component) {
         return new WeightedComponent(component, Weight.of(1));

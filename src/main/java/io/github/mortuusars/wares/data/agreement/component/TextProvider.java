@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.data.agreement;
+package io.github.mortuusars.wares.data.agreement.component;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -44,10 +44,9 @@ public record TextProvider(Either<Component, List<WeightedComponent>> provider) 
         }
 
         Optional<Component> randomValue = weightedList.build().getRandomValue(random);
-        if (!randomValue.isPresent()) {
+        if (randomValue.isEmpty()) {
             throw new IllegalStateException("No result from Weighted List. Something must be wrong. List: [" +
-                    String.join(",", weightedComponents.stream().map(c -> c.toString()).collect(Collectors.toList())));
-
+                    weightedComponents.stream().map(Record::toString).collect(Collectors.joining(",")));
         }
 
         return randomValue.get();

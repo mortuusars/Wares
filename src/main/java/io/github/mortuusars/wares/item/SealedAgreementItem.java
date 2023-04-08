@@ -4,7 +4,7 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.data.agreement.AgreementDescription;
+import io.github.mortuusars.wares.data.agreement.SealedAgreement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -60,21 +60,30 @@ public class SealedAgreementItem extends Item {
         if (!otherStack.isEmpty() || action == ClickAction.PRIMARY)
             return false;
 
-//        Component name = TextComponent.EMPTY;
-//        Component address = TextComponent.EMPTY;
-
-        if (player.level.isClientSide) {
-            new SealedAgreementScreen(/*name, address*/).showAsOverlay();
-        }
-
-        return true;
+        return inspect(agreementStack, player);
     }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        player.startUsingItem(hand);
+
+        if (player.isSecondaryUseActive())
+            inspect(stack, player);
+        else
+            player.startUsingItem(hand);
+
         return InteractionResultHolder.success(stack);
+    }
+
+    public boolean inspect(ItemStack sealedAgreementStack, Player player) {
+        Optional<SealedAgreement> sealed = SealedAgreement.fromItemStack(sealedAgreementStack);
+        if (sealed.isEmpty())
+            return false;
+
+        if (player.level.isClientSide)
+            new SealedAgreementScreen(sealed.get().sealTooltip(), sealed.get().backsideMessage()).showAsOverlay();
+
+        return true;
     }
 
     @Override
@@ -97,7 +106,7 @@ public class SealedAgreementItem extends Item {
         if (!(livingEntity instanceof Player player))
             return stack;
 
-        Optional<AgreementDescription> descriptionOptional = AgreementDescription.fromItemStack(stack);
+        Optional<SealedAgreement> descriptionOptional = SealedAgreement.fromItemStack(stack);
 
         if (descriptionOptional.isEmpty()){
             Wares.LOGGER.error("Cannot read AgreementDescription from stack nbt.");
