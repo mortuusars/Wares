@@ -81,7 +81,7 @@ public class SealedAgreementItem extends Item {
             return false;
 
         if (player.level.isClientSide)
-            new SealedAgreementScreen(sealed.get().sealTooltip(), sealed.get().backsideMessage()).showAsOverlay();
+            new SealedAgreementScreen(sealed.get().seal(), sealed.get().sealTooltip(), sealed.get().backsideMessage()).showAsOverlay();
 
         return true;
     }

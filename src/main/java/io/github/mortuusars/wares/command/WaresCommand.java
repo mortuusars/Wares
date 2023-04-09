@@ -86,6 +86,7 @@ public class WaresCommand {
                 TextProvider.of(new TextComponent("59 Side Road, Vibrant Plains Village")),
                 TextProvider.of(new TextComponent("Example Agreement")),
                 TextProvider.of(new TextComponent(LoremIpsum.words(20))),
+                "default",
                 new TextComponent("Wares Inc."),
                 new TextComponent(LoremIpsum.words(45)),
                 Either.left(new ResourceLocation("minecraft:chests/village/village_butcher")),

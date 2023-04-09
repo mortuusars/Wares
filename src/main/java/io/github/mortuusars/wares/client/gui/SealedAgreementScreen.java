@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.config.Config;
+import io.github.mortuusars.wares.data.agreement.Seal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -24,11 +25,13 @@ public class SealedAgreementScreen extends Screen {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/sealed_agreement.png");
     private static final int IMAGE_WIDTH = 196;
     private static final int IMAGE_HEIGHT = 120;
+    private static final float SCALE = 1.25f;
     private static final int MAX_ROTATION_HORIZONTAL = 200;
     private static final int MAX_ROTATION_VERTICAL = 45;
     private static final int BACKSIDE_HORIZONTAL_MARGIN = 16;
     private static final int BACKSIDE_VERTICAL_MARGIN = 16;
 
+    private final Seal seal;
     private final Component sealTooltip;
     private final Component backsideMessage;
 
@@ -37,10 +40,13 @@ public class SealedAgreementScreen extends Screen {
     private int backsideVisibleLines = 0;
     private boolean isFlipped = false;
 
-    public SealedAgreementScreen(Component sealTooltip, Component backsideMessage) {
+    public SealedAgreementScreen(String seal, Component sealTooltip, Component backsideMessage) {
         super(TextComponent.EMPTY);
+
+        this.seal = new Seal(seal);
         this.sealTooltip = sealTooltip;
         this.backsideMessage = backsideMessage;
+
         this.minecraft = Minecraft.getInstance();
     }
 
@@ -126,59 +132,37 @@ public class SealedAgreementScreen extends Screen {
         float rotY = (fromCenterY + height / 2f) / (height / 2f) * MAX_ROTATION_VERTICAL;
         rotY -= MAX_ROTATION_VERTICAL;
 
-        float yBright = ((-rotY + 60) / 90f) * -0.2f;
-        float brightness = 1 - (0.2f + yBright);
-
-        float r = brightness;
-        float g = brightness;
-        float b = brightness /*+ (1 - yBright * 2) * 0.1f*/;
+        float yBright = ((-rotY + 45) / 90f) * -0.3f;
+        float brightness = 1 - (0.15f + yBright);
 
         float xRotatedBy = (rotX + 90) % 360;
         boolean flipped = xRotatedBy > 180 || xRotatedBy < 0;
         flip(flipped);
 
         if (flipped) {
-            rotX += 180;
+            rotX -= 180;
             rotX *= -1;
         }
 
         poseStack.mulPose(Vector3f.YP.rotationDegrees(rotX * -1));
         poseStack.mulPose(Vector3f.XP.rotationDegrees(rotY));
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(rotY * 0.05f));
-        poseStack.scale(1.25f, 1.25f, 1.25f);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(rotX * rotY * 0.001f));
+        poseStack.scale(SCALE, SCALE, SCALE);
 
         // Shift letter to the center
         poseStack.translate(-(IMAGE_WIDTH / 2f), -(IMAGE_HEIGHT / 2f), 0);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(r, g, b, 1F);
+        RenderSystem.setShaderColor(brightness, brightness, brightness, 1F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        float x = rotX * 0.2f;
-        float y = rotY * 0.2f;
-
         this.blit(poseStack, 0, 0, 0,  isFlipped ? 122 : 0, 196, 120);
-        poseStack.translate(x * 0.05f, y * 0.05f, 0);
-        this.blit(poseStack, 2, 2, 2, isFlipped ? 124 : 2, 192, 116);
 
         if (!isFlipped) {
-            // SHADOW
-            RenderSystem.enableBlend();
-            RenderSystem.setShaderColor(r, g, b, Mth.map(Math.abs(yBright), 0f, 0.2f, 0f, 0.75f));
-            renderSealWithParallax(poseStack, 0, x * 0.02f, (Math.abs(rotY - 45)) * 0.01f, 0);
-            RenderSystem.disableBlend();
-            RenderSystem.setShaderColor(r, g, b, 1F);
-
-            // STRING
-            renderSealWithParallax(poseStack, 48, x * 0.5f, y * 0.5f, 0);
-
-            // BASE
-            renderSealWithParallax(poseStack, 96, x * 0.25f, y * 0.25f, 0);
-
-            // LOGO
-            renderSealWithParallax(poseStack, 144, x * 0.15f, y * 0.15f, 0);
+            renderSeal(poseStack, rotX, rotY, brightness);
         }
         else if (backsideVisibleLines > 0) {
+            // MESSAGE ON THE BACK SIDE:
             int messageHeight = backsideVisibleLines * font.lineHeight;
             int lineStart = (IMAGE_HEIGHT - messageHeight) / 2;
 
@@ -189,6 +173,7 @@ public class SealedAgreementScreen extends Screen {
 
         poseStack.popPose();
 
+        // SEAL TOOLTIP
         if (Math.abs(fromCenterX) < 20 && Math.abs(fromCenterY) < 20) {
             if (!isFlipped) {
                 if (!sealTooltip.equals(TextComponent.EMPTY))
@@ -196,13 +181,11 @@ public class SealedAgreementScreen extends Screen {
             }
         }
 
+        // BACK MESSAGE TOOLTIP
         if (isFlipped && Screen.hasShiftDown() &&
                 !backsideMessage.equals(TextComponent.EMPTY) && backsideVisibleLines < backsideMessageLines.size()) {
             renderTooltip(poseStack, font.split(backsideMessage, 320), mouseX, mouseY);
         }
-
-//        font.draw(poseStack, "RotX" + rotX  , 5, 5, 0xFFFFFF);
-//        font.draw(poseStack, x + "", 5, 5 + 9, 0xFFFFFF);
     }
 
     private void flip(final boolean value) {
@@ -210,16 +193,54 @@ public class SealedAgreementScreen extends Screen {
             isFlipped = value;
 
             assert Minecraft.getInstance().level != null;
+            assert Minecraft.getInstance().player != null;
             Random random = Minecraft.getInstance().level.random;
             float pitch = random.nextFloat() * 0.2f + (isFlipped ? 1.1f : 1.5f);
-            assert Minecraft.getInstance().player != null;
             Minecraft.getInstance().player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 0.65f, pitch);
         }
     }
 
-    private void renderSealWithParallax(PoseStack poseStack, final int vOffset, final float x, final float y, final float z) {
-        poseStack.translate(x, y, z);
-        this.blit(poseStack, IMAGE_WIDTH / 2 - 24, IMAGE_HEIGHT / 2 - 24, 196, vOffset, 48, 48);
-        poseStack.translate(-x, -y, -z);
+    private void renderSeal(@NotNull PoseStack poseStack, float rotX, float rotY, float brightness) {
+        RenderSystem.setShaderTexture(0, seal.getTexturePath());
+
+        final int sealX = IMAGE_WIDTH / 2 - Seal.WIDTH / 2;
+        final int sealY = IMAGE_HEIGHT / 2 - Seal.HEIGHT / 2;
+
+        float x = rotX * 0.2f;
+        float y = rotY * 0.2f;
+
+        // SHADOW
+        float shadowAlpha = Mth.map(Math.max((rotY * -1), 0), -10, MAX_ROTATION_VERTICAL, 0.1f, 0.65f) + 0.1f;
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(brightness, brightness, brightness, shadowAlpha);
+        renderSealElementWithParallax(poseStack, sealX, sealY, 0, shadowAlpha * 3f, 0, Seal.Element.SHADOW);
+        RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(brightness, brightness, brightness, 1F);
+
+        // STRING
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.45f, y * 0.45f, -0.05f, Seal.Element.STRING);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.50f, y * 0.50f, -0.1f, Seal.Element.STRING);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.55f, y * 0.55f, -0.15f, Seal.Element.STRING);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.60f, y * 0.60f, -0.2f, Seal.Element.STRING);
+
+        // BASE
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.BASE);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.20f, y * 0.20f, -0.2f, Seal.Element.BASE);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.25f, y * 0.25f, -0.3f, Seal.Element.BASE);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.30f, y * 0.30f, -0.4f, Seal.Element.BASE);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.35f, y * 0.35f, -0.5f, Seal.Element.BASE);
+
+        // LOGO
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.1f, y * 0.1f, -0.05f, Seal.Element.LOGO);
+        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.LOGO);
+
+        RenderSystem.setShaderTexture(0, TEXTURE);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void renderSealElementWithParallax(PoseStack poseStack, int x, int y, float pX, float pY, float pZ, Seal.Element element) {
+        poseStack.translate(pX, pY, pZ);
+        this.blit(poseStack, x, y, 0, element.getVOffset(), Seal.WIDTH, Seal.HEIGHT);
+        poseStack.translate(-pX, -pY, -pZ);
     }
 }

@@ -28,6 +28,7 @@ public class Agreement {
                     ComponentCodec.CODEC.optionalFieldOf("buyerAddress", TextComponent.EMPTY).forGetter(Agreement::getBuyerAddress),
                     ComponentCodec.CODEC.optionalFieldOf("title", TextComponent.EMPTY).forGetter(Agreement::getTitle),
                     ComponentCodec.CODEC.optionalFieldOf("message", TextComponent.EMPTY).forGetter(Agreement::getMessage),
+                    Codec.STRING.optionalFieldOf("seal", "default").forGetter(Agreement::getSeal),
                     Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(Agreement::getRequestedItems),
                     Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(Agreement::getPaymentItems),
                     Codec.INT.optionalFieldOf("ordered", 0).forGetter(Agreement::getOrdered),
@@ -52,6 +53,7 @@ public class Agreement {
     private final @NotNull Component buyerAddress;
     private final @NotNull Component title;
     private final @NotNull Component message;
+    private final @NotNull String seal;
     private final List<ItemStack> requestedItems;
     private final List<ItemStack> paymentItems;
     private final int ordered;
@@ -63,7 +65,7 @@ public class Agreement {
     private boolean isCompleted;
     private boolean isExpired;
 
-    public Agreement(@NotNull String id, @NotNull Component buyerName, @NotNull Component buyerAddress, @NotNull Component title, @NotNull Component message,
+    public Agreement(@NotNull String id, @NotNull Component buyerName, @NotNull Component buyerAddress, @NotNull Component title, @NotNull Component message, @NotNull String seal,
                      List<ItemStack> requestedItems, List<ItemStack> paymentItems,
                      int orderedQuantity, int delivered, int experience, int deliveryTime, long expireTime,
                      boolean isCompleted, boolean isExpired) {
@@ -72,6 +74,7 @@ public class Agreement {
         this.buyerAddress = buyerAddress;
         this.title = title;
         this.message = message;
+        this.seal = seal;
         this.requestedItems = requestedItems;
         this.paymentItems = paymentItems;
         this.ordered = orderedQuantity;
@@ -129,6 +132,9 @@ public class Agreement {
     }
     public @NotNull Component getMessage() {
         return message;
+    }
+    public @NotNull String getSeal() {
+        return seal;
     }
     public List<ItemStack> getRequestedItems() {
         return requestedItems;

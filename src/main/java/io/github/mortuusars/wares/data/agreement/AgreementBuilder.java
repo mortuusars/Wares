@@ -7,12 +7,14 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class AgreementBuilder {
     private String id = "";
     private Component buyerName = TextComponent.EMPTY;
     private Component buyerAddress = TextComponent.EMPTY;
     private Component title = TextComponent.EMPTY;
     private Component message = TextComponent.EMPTY;
+    private String seal = "default";
     private List<ItemStack> requestedItems = new ArrayList<>();
     private List<ItemStack> paymentItems = new ArrayList<>();
     private int orderedQuantity = 0;
@@ -43,6 +45,11 @@ public class AgreementBuilder {
 
     public AgreementBuilder message(Component message) {
         this.message = message;
+        return this;
+    }
+
+    public AgreementBuilder seal(String seal) {
+        this.seal = seal;
         return this;
     }
 
@@ -92,7 +99,7 @@ public class AgreementBuilder {
     }
 
     public Agreement build() {
-        return new Agreement(id, buyerName, buyerAddress, title, message, requestedItems, paymentItems,
+        return new Agreement(id, buyerName, buyerAddress, title, message, seal, requestedItems, paymentItems,
                 orderedQuantity, delivered, experience, deliveryTime, expireTime, false, false);
     }
 }
