@@ -113,7 +113,7 @@ public class WaresCommand {
                 .buyerName(new TextComponent("Greg the Blacksmith").withStyle(Style.EMPTY.withColor(0x333333)))
                 .buyerAddress(new TextComponent("12 Side Road, Vibrant Plains Village").withStyle(ChatFormatting.OBFUSCATED))
                 .title(new TextComponent("Example Agreement").withStyle(Style.EMPTY.withColor(0x922706)))
-                .message(new TextComponent(LoremIpsum.words(10)))
+                .message(new TextComponent(LoremIpsum.words(50)))
                 .addRequestedItem(new ItemStack(Items.BAKED_POTATO, 4))
                 .addRequestedItem(new ItemStack(Items.PUMPKIN_PIE, 2))
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))

@@ -1,7 +1,7 @@
 package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.client.gui.SealedAgreementScreen;
+import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.SealedAgreement;

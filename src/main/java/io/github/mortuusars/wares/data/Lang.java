@@ -39,6 +39,8 @@ public enum Lang {
     GUI_TIME_HOURS("gui", "hours.short"),
     GUI_TIME_MINUTES("gui", "minutes.short"),
 
+    GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE("gui", "sealed_agreement.show_remaining_text_message"),
+
     ADVANCEMENT_LAST_MINUTES_TITLE("advancement", "last_minutes.title"),
     ADVANCEMENT_LAST_MINUTES_DESCRIPTION("advancement", "last_minutes.description"),
 

@@ -8,10 +8,12 @@ import io.github.mortuusars.mpfui.component.TooltipBehavior;
 import io.github.mortuusars.mpfui.renderable.TextBlockRenderable;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.client.gui.agreement.element.SealRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.element.StampRenderable;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.Seal;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,7 +33,6 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation STAMPS_TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/stamps.png");
     private static final int FONT_COLOR = 0xff886447;
     private Screen parentScreen;
-
     public AgreementScreen(AgreementMenu menu) {
         super(menu, menu.playerInventory, TextComponent.EMPTY);
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
@@ -164,8 +165,8 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
             buyerInfoTooltip.append(getAgreement().getBuyerAddress());
         }
 
-        TextureRenderable sealRenderable = new TextureRenderable(getGuiLeft() + (imageWidth / 2) - (36 / 2),
-                getGuiTop() + imageHeight - 35, 36, 35, 200, 32, TEXTURE);
+        SealRenderable sealRenderable = new SealRenderable(getGuiLeft() + (imageWidth / 2) - (Seal.WIDTH / 2),
+                getGuiTop() + imageHeight - 42, new Seal(getAgreement().getSeal()), 28);
         if (font.width(buyerInfoTooltip) > 0)
             sealRenderable.setTooltip(buyerInfoTooltip);
 

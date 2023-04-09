@@ -73,6 +73,8 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_TIME_HOURS, "%sh");
         translate(Lang.GUI_TIME_MINUTES, "%sm");
 
+        translate(Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE, "Hold Shift to show remaining text");
+
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "At The Last Minutes");
         translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Manage to complete a Delivery Agreement just before it expires");
 
@@ -124,6 +126,8 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_TIME_DAYS, "%sдн");
         translate(Lang.GUI_TIME_HOURS, "%sгод");
         translate(Lang.GUI_TIME_MINUTES, "%sхв");
+
+        translate(Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE, "Утримуйте Shift для показу залишку тексту");
 
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "В Останній Момент");
         translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Встигніть виконати Торговий Договір в останні хвилини терміну дії");

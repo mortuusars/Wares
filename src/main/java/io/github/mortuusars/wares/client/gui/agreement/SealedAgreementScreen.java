@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.client.gui;
+package io.github.mortuusars.wares.client.gui.agreement;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.config.Config;
+import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Seal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -17,6 +18,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -30,15 +32,24 @@ public class SealedAgreementScreen extends Screen {
     private static final int MAX_ROTATION_VERTICAL = 45;
     private static final int BACKSIDE_HORIZONTAL_MARGIN = 16;
     private static final int BACKSIDE_VERTICAL_MARGIN = 16;
+    private static final int FONT_COLOR = 0xff886447;
 
     private final Seal seal;
     private final Component sealTooltip;
     private final Component backsideMessage;
+    private final Component showRemainingTextMessage;
 
     private Screen parentScreen;
-    private List<FormattedCharSequence> backsideMessageLines = Collections.emptyList();
-    private int backsideVisibleLines = 0;
+    private List<FormattedCharSequence> backsideMessageVisibleLines = Collections.emptyList();
+    private List<FormattedCharSequence> backsideMessageLeftoverLines = Collections.emptyList();
     private boolean isFlipped = false;
+    private int messagePosY;
+
+    private long flippedAt = 0;
+    private boolean shouldDrawShowRemainingTextMessage = true;
+    private int showRemainingTextMessageOpacity = 19;
+
+    private long prevGameTime = 0;
 
     public SealedAgreementScreen(String seal, Component sealTooltip, Component backsideMessage) {
         super(TextComponent.EMPTY);
@@ -46,6 +57,7 @@ public class SealedAgreementScreen extends Screen {
         this.seal = new Seal(seal);
         this.sealTooltip = sealTooltip;
         this.backsideMessage = backsideMessage;
+        this.showRemainingTextMessage = Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE.translate();
 
         this.minecraft = Minecraft.getInstance();
     }
@@ -110,8 +122,19 @@ public class SealedAgreementScreen extends Screen {
         super.init();
 
         if (!backsideMessage.equals(TextComponent.EMPTY)) {
-            backsideMessageLines = font.split(backsideMessage, IMAGE_WIDTH - BACKSIDE_HORIZONTAL_MARGIN * 2);
-            backsideVisibleLines = Math.min(backsideMessageLines.size(), (IMAGE_HEIGHT - BACKSIDE_VERTICAL_MARGIN * 2) / font.lineHeight);
+            List<FormattedCharSequence> messageLines = new ArrayList<>(font.split(backsideMessage, IMAGE_WIDTH - BACKSIDE_HORIZONTAL_MARGIN * 2));
+            backsideMessageVisibleLines = messageLines.subList(0, Math.min(messageLines.size(), (IMAGE_HEIGHT - BACKSIDE_VERTICAL_MARGIN * 2) / font.lineHeight));
+            messagePosY = (IMAGE_HEIGHT - backsideMessageVisibleLines.size() * font.lineHeight) / 2;
+
+            if (messageLines.size() > backsideMessageVisibleLines.size()) {
+                final int lastLineIndex = backsideMessageVisibleLines.size() - 1;
+                FormattedCharSequence lastLine = backsideMessageVisibleLines.get(lastLineIndex);
+                lastLine = FormattedCharSequence.composite(lastLine, FormattedCharSequence.forward("...", backsideMessage.getStyle()));
+                backsideMessageVisibleLines.set(lastLineIndex, lastLine);
+
+                backsideMessageLeftoverLines = messageLines.subList(backsideMessageVisibleLines.size(), messageLines.size());
+                backsideMessageLeftoverLines.set(0, FormattedCharSequence.composite(FormattedCharSequence.forward("...", backsideMessage.getStyle()), backsideMessageLeftoverLines.get(0)));
+            }
         }
     }
 
@@ -156,18 +179,16 @@ public class SealedAgreementScreen extends Screen {
         RenderSystem.setShaderColor(brightness, brightness, brightness, 1F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        this.blit(poseStack, 0, 0, 0,  isFlipped ? 122 : 0, 196, 120);
+        this.blit(poseStack, 0, 0, 0,  isFlipped ? 121 : 0, 196, 120);
 
         if (!isFlipped) {
             renderSeal(poseStack, rotX, rotY, brightness);
         }
-        else if (backsideVisibleLines > 0) {
-            // MESSAGE ON THE BACK SIDE:
-            int messageHeight = backsideVisibleLines * font.lineHeight;
-            int lineStart = (IMAGE_HEIGHT - messageHeight) / 2;
-
-            for (int i = 0; i < backsideVisibleLines; i++) {
-                font.draw(poseStack, backsideMessageLines.get(i), 16, lineStart + font.lineHeight * i, 0xff886447);
+        else if (!backsideMessageVisibleLines.isEmpty()) {
+            for (int i = 0; i < backsideMessageVisibleLines.size(); i++) {
+                FormattedCharSequence line = backsideMessageVisibleLines.get(i);
+                int mX = IMAGE_WIDTH / 2 - font.width(line) / 2;
+                font.draw(poseStack, line, mX, messagePosY + font.lineHeight * i, FONT_COLOR);
             }
         }
 
@@ -183,14 +204,49 @@ public class SealedAgreementScreen extends Screen {
 
         // BACK MESSAGE TOOLTIP
         if (isFlipped && Screen.hasShiftDown() &&
-                !backsideMessage.equals(TextComponent.EMPTY) && backsideVisibleLines < backsideMessageLines.size()) {
-            renderTooltip(poseStack, font.split(backsideMessage, 320), mouseX, mouseY);
+                !backsideMessage.equals(TextComponent.EMPTY) && !backsideMessageLeftoverLines.isEmpty()) {
+            renderTooltip(poseStack, backsideMessageLeftoverLines, mouseX, mouseY);
         }
+
+        if (Screen.hasShiftDown())
+            shouldDrawShowRemainingTextMessage = false;
+
+        if (!backsideMessageLeftoverLines.isEmpty()) {
+            drawShowRemainingTextMessage(poseStack);
+        }
+
+        assert Minecraft.getInstance().level != null;
+        prevGameTime = Minecraft.getInstance().level.getGameTime();
+    }
+
+    private void drawShowRemainingTextMessage(@NotNull PoseStack poseStack) {
+        assert Minecraft.getInstance().level != null;
+        long gameTime = Minecraft.getInstance().level.getGameTime();
+
+        float fadeIn = 60;
+
+        if (shouldDrawShowRemainingTextMessage && isFlipped && gameTime - flippedAt > 20) {
+            assert minecraft != null;
+            double time = gameTime  + minecraft.getFrameTime() - flippedAt - 20;
+            double range = Mth.clamp(time / fadeIn, 0.001f, 1f);
+            double rangeEaseInOut = range < 0.5 ? 4 * range * range * range : 1 - Math.pow(-2 * range + 2, 3) / 2;
+            showRemainingTextMessageOpacity = Math.max((int)Math.floor((rangeEaseInOut * 255f)), 20);
+        }
+        else if (showRemainingTextMessageOpacity > 20 && gameTime != prevGameTime)
+            showRemainingTextMessageOpacity -= 16;
+
+        if (showRemainingTextMessageOpacity > 19)
+            font.draw(poseStack, showRemainingTextMessage, width / 2f - font.width(showRemainingTextMessage) / 2f, height - 50, 0x555555 | showRemainingTextMessageOpacity << 24);
     }
 
     private void flip(final boolean value) {
         if (this.isFlipped != value) {
             isFlipped = value;
+
+            assert Minecraft.getInstance().level != null;
+            flippedAt = Minecraft.getInstance().level.getGameTime();
+
+            shouldDrawShowRemainingTextMessage = true;
 
             assert Minecraft.getInstance().level != null;
             assert Minecraft.getInstance().player != null;
