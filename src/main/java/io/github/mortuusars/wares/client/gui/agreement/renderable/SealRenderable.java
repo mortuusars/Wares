@@ -1,9 +1,9 @@
-package io.github.mortuusars.wares.client.gui.agreement.element;
+package io.github.mortuusars.wares.client.gui.agreement.renderable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
-import io.github.mortuusars.wares.data.agreement.Seal;
+import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;

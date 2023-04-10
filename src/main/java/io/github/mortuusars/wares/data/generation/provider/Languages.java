@@ -75,6 +75,8 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE, "Hold Shift to show remaining text");
 
+        translate(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE, "Seal texture '%s' not found at '%s'. Make sure the name is correct and ResourcePack with the texture is loaded.");
+
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "At The Last Minutes");
         translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Manage to complete a Delivery Agreement just before it expires");
 
@@ -128,6 +130,8 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_TIME_MINUTES, "%sхв");
 
         translate(Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE, "Утримуйте Shift для показу залишку тексту");
+
+        translate(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE, "Текстуру печатки '%s' не знайдено в '%s'. Переконайтеся, що назва печатки правильна та Пакет Ресурсів з цією текстурою увімкнено.");
 
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "В Останній Момент");
         translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Встигніть виконати Торговий Договір в останні хвилини терміну дії");

@@ -115,7 +115,7 @@ public class AgreementTest implements ITestClass {
                         decodedAgreement.getOrdered() == agreement.getOrdered() &&
                         decodedAgreement.getDelivered() == agreement.getDelivered() &&
                         decodedAgreement.getExperience() == agreement.getExperience() &&
-                        decodedAgreement.getExpireTime() == agreement.getExpireTime();
+                        decodedAgreement.getExpireTimestamp() == agreement.getExpireTimestamp();
 
                 assertThat(agreementsMatch, "Not matching.");
             })

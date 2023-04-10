@@ -35,7 +35,7 @@ public class Agreement {
                     Codec.INT.optionalFieldOf("delivered", 0).forGetter(Agreement::getDelivered),
                     Codec.INT.optionalFieldOf("experience", 0).forGetter(Agreement::getExperience),
                     Codec.INT.optionalFieldOf("deliveryTime", 0).forGetter(Agreement::getDeliveryTime),
-                    Codec.LONG.optionalFieldOf("expireTime", -1L).forGetter(Agreement::getExpireTime),
+                    Codec.LONG.optionalFieldOf("expireTimestamp", -1L).forGetter(Agreement::getExpireTimestamp),
                     Codec.BOOL.optionalFieldOf("isCompleted", false).forGetter(Agreement::getIsCompleted),
                     Codec.BOOL.optionalFieldOf("isExpired", false).forGetter(Agreement::getIsExpired))
             .apply(instance, Agreement::new));
@@ -59,15 +59,15 @@ public class Agreement {
     private final int ordered;
     private final int experience;
     private final int deliveryTime;
+    private final long expireTimestamp;
 
-    private final long expireTime;
     private int delivered;
     private boolean isCompleted;
     private boolean isExpired;
 
     public Agreement(@NotNull String id, @NotNull Component buyerName, @NotNull Component buyerAddress, @NotNull Component title, @NotNull Component message, @NotNull String seal,
                      List<ItemStack> requestedItems, List<ItemStack> paymentItems,
-                     int orderedQuantity, int delivered, int experience, int deliveryTime, long expireTime,
+                     int orderedQuantity, int delivered, int experience, int deliveryTime, long expireTimestamp,
                      boolean isCompleted, boolean isExpired) {
         this.id = id;
         this.buyerName = buyerName;
@@ -81,7 +81,7 @@ public class Agreement {
         this.delivered = delivered;
         this.experience = experience;
         this.deliveryTime = deliveryTime;
-        this.expireTime = expireTime;
+        this.expireTimestamp = expireTimestamp;
         this.isCompleted = isCompleted;
         this.isExpired = isExpired;
     }
@@ -156,20 +156,20 @@ public class Agreement {
     public int getDeliveryTimeOrDefault() {
         return deliveryTime > 0 ? deliveryTime : Config.DEFAULT_DELIVERY_TIME.get();
     }
-    public long getExpireTime() {
-        return expireTime;
+    public long getExpireTimestamp() {
+        return expireTimestamp;
     }
     protected boolean getIsExpired() {
         return isExpired;
     }
     public boolean canExpire() {
-        return getExpireTime() > -1L;
+        return getExpireTimestamp() > -1L;
     }
     public boolean isExpired(long gameTime) {
         if (isCompleted())
             return false;
 
-        return isExpired || (getExpireTime() >= 0 && getExpireTime() <= gameTime);
+        return isExpired || (getExpireTimestamp() >= 0 && getExpireTimestamp() <= gameTime);
     }
     protected boolean getIsCompleted() { return isCompleted; }
     public boolean isCompleted() {
@@ -199,7 +199,6 @@ public class Agreement {
 
     public void complete() {
         this.isCompleted = true;
-//        this.expireTime = -1;
 
         if (getDelivered() < getOrdered())
             this.delivered = getOrdered();
@@ -219,7 +218,7 @@ public class Agreement {
         if (o == null || getClass() != o.getClass()) return false;
         Agreement agreement = (Agreement) o;
         return ordered == agreement.ordered && experience == agreement.experience && deliveryTime == agreement.deliveryTime
-                && expireTime == agreement.expireTime && delivered == agreement.delivered
+                && expireTimestamp == agreement.expireTimestamp && delivered == agreement.delivered
                 && isCompleted == agreement.isCompleted && isExpired == agreement.isExpired && id.equals(agreement.id)
                 && buyerName.equals(agreement.buyerName) && buyerAddress.equals(agreement.buyerAddress) && title.equals(agreement.title)
                 && message.equals(agreement.message)
@@ -228,7 +227,7 @@ public class Agreement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, buyerName, buyerAddress, title, message, requestedItems, paymentItems, ordered, experience, deliveryTime, expireTime, delivered, isCompleted, isExpired);
+        return Objects.hash(id, buyerName, buyerAddress, title, message, requestedItems, paymentItems, ordered, experience, deliveryTime, expireTimestamp, delivered, isCompleted, isExpired);
     }
 
     @Override
@@ -239,12 +238,13 @@ public class Agreement {
                 ", buyerAddress=" + buyerAddress +
                 ", title=" + title +
                 ", message=" + message +
+                ", seal='" + seal + '\'' +
                 ", requestedItems=" + requestedItems +
                 ", paymentItems=" + paymentItems +
                 ", ordered=" + ordered +
                 ", experience=" + experience +
                 ", deliveryTime=" + deliveryTime +
-                ", expireTime=" + expireTime +
+                ", expireTimestamp=" + expireTimestamp +
                 ", delivered=" + delivered +
                 ", isCompleted=" + isCompleted +
                 ", isExpired=" + isExpired +

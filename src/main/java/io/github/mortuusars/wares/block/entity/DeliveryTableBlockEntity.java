@@ -230,7 +230,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             sendUpdateToNearbyClients();
 
             if (agreement.isCompleted()) {
-                boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTime() - level.getGameTime() < 20 * 60; // 1 min
+                boolean almostExpired = getAgreement().canExpire() && getAgreement().getExpireTimestamp() - level.getGameTime() < 20 * 60; // 1 min
                 if (almostExpired)
                     getAgreementItem().getOrCreateTag().putBoolean("almostExpired", true);
                 int experience = getAgreement().getExperience();

@@ -1,6 +1,7 @@
-package io.github.mortuusars.wares.data.agreement;
+package io.github.mortuusars.wares.client.gui.agreement.element;
 
 import io.github.mortuusars.wares.Wares;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
 public class Seal {
@@ -38,5 +39,9 @@ public class Seal {
 
     public ResourceLocation getTexturePath() {
         return path;
+    }
+
+    public boolean isTextureValid() {
+        return Minecraft.getInstance().getResourceManager().hasResource(getTexturePath());
     }
 }

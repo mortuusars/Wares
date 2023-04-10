@@ -41,6 +41,8 @@ public enum Lang {
 
     GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE("gui", "sealed_agreement.show_remaining_text_message"),
 
+    GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE("gui", "seal_texture_not_found"),
+
     ADVANCEMENT_LAST_MINUTES_TITLE("advancement", "last_minutes.title"),
     ADVANCEMENT_LAST_MINUTES_DESCRIPTION("advancement", "last_minutes.description"),
 

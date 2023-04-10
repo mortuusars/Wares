@@ -7,7 +7,8 @@ import com.mojang.math.Vector3f;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Seal;
+import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -60,6 +61,11 @@ public class SealedAgreementScreen extends Screen {
         this.showRemainingTextMessage = Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE.translate();
 
         this.minecraft = Minecraft.getInstance();
+
+        if (!this.seal.isTextureValid()) {
+            assert minecraft.player != null;
+            minecraft.player.displayClientMessage(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE.translate(this.seal.getName(), this.seal.getTexturePath()).withStyle(ChatFormatting.RED), false);
+        }
     }
 
     public boolean isOpen() {

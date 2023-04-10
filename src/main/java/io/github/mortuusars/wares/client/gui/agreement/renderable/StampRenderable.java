@@ -1,4 +1,4 @@
-package io.github.mortuusars.wares.client.gui.agreement.element;
+package io.github.mortuusars.wares.client.gui.agreement.renderable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
