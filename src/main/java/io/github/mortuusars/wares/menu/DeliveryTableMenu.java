@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class DeliveryTableMenu extends AbstractContainerMenu {
+    public static final int MANUAL_DELIVERY_BUTTON_ID = 0;
+
     public final DeliveryTableBlockEntity blockEntity;
     private final ContainerData data;
 
@@ -75,13 +77,18 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
     }
 
     public static DeliveryTableMenu fromBuffer(int containerID, Inventory playerInventory, FriendlyByteBuf buffer) {
-        return new DeliveryTableMenu(containerID, playerInventory, getBlockEntity(playerInventory, buffer), new SimpleContainerData(2));
+        return new DeliveryTableMenu(containerID, playerInventory, getBlockEntity(playerInventory, buffer),
+                new SimpleContainerData(DeliveryTableBlockEntity.CONTAINER_DATA_SIZE));
     }
 
     public float getDeliveryProgress() {
         int progress = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_PROGRESS);
         int duration = data.get(DeliveryTableBlockEntity.CONTAINER_DATA_DURATION);
         return progress != 0 && duration != 0 ? progress / (float)duration : 0;
+    }
+
+    public boolean canDeliverManually() {
+        return data.get(DeliveryTableBlockEntity.CONTAINER_DATA_CAN_DELIVER_MANUALLY) == 1;
     }
 
     @Override
@@ -105,6 +112,16 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
         }
 
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean clickMenuButton(@NotNull Player player, int buttonId) {
+        if (buttonId == MANUAL_DELIVERY_BUTTON_ID) {
+            blockEntity.startManualDelivery();
+            return true;
+        }
+
+        return false;
     }
 
     @Override

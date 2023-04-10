@@ -54,6 +54,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int SLOTS = 14;
     public static final int AGREEMENT_SLOT = 0;
     public static final int PACKAGES_SLOT = 1;
+    public static final int[] AGREEMENT_SLOTS = new int[] {0};
     public static final int[] AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1};
     public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1,2,3,4,5,6,7};
     public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
@@ -63,32 +64,38 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int PACKAGER_WORK_RADIUS = 3;
     public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
 
+    public static final int CONTAINER_DATA_SIZE = 3;
     public static final int CONTAINER_DATA_PROGRESS = 0;
     public static final int CONTAINER_DATA_DURATION = 1;
+    public static final int CONTAINER_DATA_CAN_DELIVER_MANUALLY = 2;
 
     protected final ContainerData containerData = new ContainerData() {
         public int get(int id) {
             return switch (id) {
                 case CONTAINER_DATA_PROGRESS -> DeliveryTableBlockEntity.this.progress;
                 case CONTAINER_DATA_DURATION -> DeliveryTableBlockEntity.this.getDeliveryTime();
+                case CONTAINER_DATA_CAN_DELIVER_MANUALLY -> Config.MANUAL_DELIVERY_ALLOWED.get() && DeliveryTableBlockEntity.this.canDeliverManually ? 1 : 0;
                 default -> 0;
             };
         }
 
         public void set(int id, int value) {
-            if (id == 0) {
+            if (id == CONTAINER_DATA_PROGRESS)
                 DeliveryTableBlockEntity.this.progress = value;
-            }
+            else if (id == CONTAINER_DATA_CAN_DELIVER_MANUALLY)
+                DeliveryTableBlockEntity.this.canDeliverManually = Config.MANUAL_DELIVERY_ALLOWED.get() && value == 1;
         }
 
         public int getCount() {
-            return 2;
+            return CONTAINER_DATA_SIZE;
         }
     };
 
     protected final ItemStackHandler inventory;
     protected LazyOptional<IItemHandlerModifiable>[] inventoryHandlers;
     protected int progress = 0;
+    protected boolean canDeliverManually = false;
+    protected boolean deliveringManually = false;
 
     protected Agreement agreement = Agreement.EMPTY;
 
@@ -112,14 +119,28 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return;
         }
 
-        if (Config.PACKAGER_REQUIRED.get() && !isPackagerWorkingAtTable())
-            return;
-
         int prevProgress = progress;
         Deliverability deliverability = getDeliverability();
 
-        if (deliverability == Deliverability.CAN_DELIVER)
+        if (deliverability == Deliverability.CAN_DELIVER) {
+            boolean packagerWorkingAtTable = isPackagerWorkingAtTable();
+            if (!deliveringManually && Config.PACKAGER_REQUIRED.get() && !packagerWorkingAtTable) {
+                canDeliverManually = Config.MANUAL_DELIVERY_ALLOWED.get();
+                return;
+            }
+            else
+                canDeliverManually = false;
+
+            if (deliveringManually && packagerWorkingAtTable) {
+                // Adjusting progress to not complete instantly when worker arrives.
+                double completion = (progress / (double)getDeliveryTime());
+                progress = Math.round((float) (agreement.getDeliveryTimeOrDefault() * completion));
+
+                deliveringManually = false;
+            }
+
             progress++;
+        }
         else if (deliverability != Deliverability.NO_SPACE_FOR_OUTPUT)
             resetProgress();
 
@@ -134,6 +155,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     private void onBatchDelivered(final int deliveredBatches) {
+        deliveringManually = false;
         assert level != null;
         level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.BLOCKS,
                 0.85f, level.getRandom().nextFloat() * 0.1f + 0.95f);
@@ -160,6 +182,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
         if (worker.isEmpty())
             return false;
+
+        if (!Config.PACKAGER_SHOULD_BE_WORKING.get())
+            return true;
 
         Villager packager = worker.get();
         final long lastWorkedAt = packager.getBrain().getMemory(MemoryModuleType.LAST_WORKED_AT_POI).orElse(-1L);
@@ -202,18 +227,33 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected int getDeliveryTime() {
-        return agreement.getDeliveryTimeOrDefault();
+        int time = agreement.getDeliveryTimeOrDefault();
+        return deliveringManually ? Math.round(time * Config.MANUAL_DELIVERY_TIME_MODIFIER.get().floatValue()) : time;
     }
 
     protected void resetProgress() {
         progress = 0;
+        deliveringManually = false;
+        canDeliverManually = false;
+    }
+
+    public void startManualDelivery() {
+        if (Config.MANUAL_DELIVERY_ALLOWED.get() && canDeliverManually && !deliveringManually && !isPackagerWorkingAtTable() && getDeliverability() == Deliverability.CAN_DELIVER) {
+            deliveringManually = true;
+            canDeliverManually = false;
+
+            // Adjusting progress to manual delivery time modifier:
+            int duration = agreement.getDeliveryTimeOrDefault();
+            double completion = progress / (double)duration;
+            progress = (int) Math.round(getDeliveryTime() * completion);
+        }
     }
 
     protected int deliver(final int batchCount) {
         int deliveredCount = 0;
         for (int i = 0; i < batchCount; i++) {
             // First check is just to be sure,
-            // Afterwards it is necessary to check because items have changed.
+            // Afterward it is necessary to check because items have changed.
             if (getDeliverability() != Deliverability.CAN_DELIVER)
                 return deliveredCount;
 
@@ -356,7 +396,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 if (slot == AGREEMENT_SLOT)
                     return stack.getItem() instanceof AgreementItem;
                 else if (slot == PACKAGES_SLOT)
-                    return Config.DELIVERIES_REQUIRE_PACKAGES.get() && stack.is(Wares.Tags.Items.PACKAGES);
+                    return Config.DELIVERIES_REQUIRE_PACKAGES.get() && stack.is(Wares.Tags.Items.DELIVERY_BOXES);
                 return super.isItemValid(slot, stack);
             }
 
@@ -447,7 +487,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
-            case UP -> AGREEMENT_PLUS_PACKAGES_SLOTS;
+            case UP -> Config.DELIVERIES_REQUIRE_PACKAGES.get() ? AGREEMENT_PLUS_PACKAGES_SLOTS : AGREEMENT_SLOTS;
             case NORTH, SOUTH, WEST, EAST -> INPUT_SLOTS;
         };
     }
@@ -471,7 +511,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
         return (slotIndex == AGREEMENT_SLOT && stack.getItem() instanceof AgreementItem)
-                || (slotIndex == PACKAGES_SLOT && stack.is(Wares.Tags.Items.PACKAGES))
+                || (slotIndex == PACKAGES_SLOT && stack.is(Wares.Tags.Items.DELIVERY_BOXES))
                 || (slotIndex >= INPUT_SLOTS[0] && slotIndex < OUTPUT_SLOTS[0]);
     }
 
@@ -504,6 +544,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         super.load(tag);
         this.inventory.deserializeNBT(tag.getCompound("Inventory"));
         this.progress = tag.getInt("Progress");
+        this.deliveringManually = tag.getBoolean("DeliveringManually");
 
         agreement = Agreement.fromItemStack(getAgreementItem()).orElse(Agreement.EMPTY);
         updateBlockStateIfNeeded();
@@ -514,6 +555,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         super.saveAdditional(tag);
         tag.put("Inventory", this.inventory.serializeNBT());
         tag.putInt("Progress", progress);
+        tag.putBoolean("DeliveringManually", deliveringManually);
     }
 
     @Override

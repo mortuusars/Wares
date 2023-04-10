@@ -23,7 +23,7 @@ public class ItemTags extends ItemTagsProvider {
                      Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(),
                      Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
 
-        tag(Wares.Tags.Items.PACKAGES)
+        tag(Wares.Tags.Items.DELIVERY_BOXES)
                 .add(Wares.Items.DELIVERY_PACKAGE.get());
     }
 

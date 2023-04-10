@@ -175,8 +175,10 @@ public class Wares
     public static class Stats {
         private static final Map<ResourceLocation, StatFormatter> STATS = new HashMap<>();
 
-        public static final ResourceLocation SEALED_LETTERS_OPENED = register(Wares.resource("sealed_letters_opened"), StatFormatter.DEFAULT);
-        public static final ResourceLocation INTERACT_WITH_DELIVERY_TABLE = register(Wares.resource("interact_with_delivery_table"), StatFormatter.DEFAULT);
+        public static final ResourceLocation SEALED_LETTERS_OPENED =
+                register(Wares.resource("sealed_letters_opened"), StatFormatter.DEFAULT);
+        public static final ResourceLocation INTERACT_WITH_DELIVERY_TABLE =
+                register(Wares.resource("interact_with_delivery_table"), StatFormatter.DEFAULT);
 
         @SuppressWarnings("SameParameterValue")
         private static ResourceLocation register(ResourceLocation location, StatFormatter formatter) {
@@ -195,7 +197,7 @@ public class Wares
     public static class Tags {
         public static class Items {
             public static final TagKey<Item> AGREEMENTS = ItemTags.create(Wares.resource("agreements"));
-            public static final TagKey<Item> PACKAGES = ItemTags.create(Wares.resource("packages"));
+            public static final TagKey<Item> DELIVERY_BOXES = ItemTags.create(Wares.resource("delivery_boxes"));
         }
     }
 }

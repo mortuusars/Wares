@@ -62,6 +62,9 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Place a Delivery Agreement to start a delivery");
         translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Packages are required for delivery");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Deliver Manually");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Deliver Manually");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "%sx longer");
 
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME, "Expire time");
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME_TOOLTIP, "Expires in: %s");
@@ -116,6 +119,9 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Покладіть сюди Торговий Договір щоб почати доставку");
         translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Для доставки товарів потрібні пакунки");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Відправити вручну");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Відправити вручну");
+        translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "Займе у %s раз(и) більше часу");
 
         translate(Lang.GUI_AGREEMENT_TITLE, "Торговий Договір");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "У мене є товари, які, можливо, будуть Вам цікаві. Згодні на торгівлю?");
