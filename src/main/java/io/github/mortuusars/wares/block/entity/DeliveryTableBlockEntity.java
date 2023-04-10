@@ -49,11 +49,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings({"SameParameterValue", "BooleanMethodIsAlwaysInverted"})
+@SuppressWarnings({"SameParameterValue", "BooleanMethodIsAlwaysInverted", "unused"})
 public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     public static final int SLOTS = 14;
     public static final int AGREEMENT_SLOT = 0;
     public static final int PACKAGES_SLOT = 1;
+    public static final int[] AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1};
     public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1,2,3,4,5,6,7};
     public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
     public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
@@ -446,8 +447,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
-            case UP -> INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS;
-            case NORTH, SOUTH, WEST, EAST -> INPUT_PLUS_PACKAGES_SLOTS;
+            case UP -> AGREEMENT_PLUS_PACKAGES_SLOTS;
+            case NORTH, SOUTH, WEST, EAST -> INPUT_SLOTS;
         };
     }
 
@@ -458,7 +459,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     @Override
     public boolean canTakeItemThroughFace(int index, @NotNull ItemStack pStack, @NotNull Direction direction) {
-        return index >= 7;
+        return index >= OUTPUT_SLOTS[0];
     }
 
     @Override
@@ -469,9 +470,9 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
-        if (slotIndex == AGREEMENT_SLOT && !(stack.getItem() instanceof AgreementItem))
-            return false;
-        return slotIndex < OUTPUT_SLOTS[0];
+        return (slotIndex == AGREEMENT_SLOT && stack.getItem() instanceof AgreementItem)
+                || (slotIndex == PACKAGES_SLOT && stack.is(Wares.Tags.Items.PACKAGES))
+                || (slotIndex >= INPUT_SLOTS[0] && slotIndex < OUTPUT_SLOTS[0]);
     }
 
     @Override
