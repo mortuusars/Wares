@@ -8,14 +8,13 @@ import io.github.mortuusars.mpfui.component.TooltipBehavior;
 import io.github.mortuusars.mpfui.renderable.TextBlockRenderable;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.SealRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.StampRenderable;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.util.TextUtil;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -34,17 +33,13 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation STAMPS_TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/stamps.png");
     private static final int FONT_COLOR = 0xff886447;
     private Screen parentScreen;
-    private Seal seal;
+    private final Seal seal;
 
     public AgreementScreen(AgreementMenu menu) {
         super(menu, menu.playerInventory, TextComponent.EMPTY);
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
 
-        seal = new Seal(getAgreement().getSeal());
-
-        if (!seal.isTextureValid()) {
-            menu.player.displayClientMessage(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE.translate(seal.getName(), seal.getTexturePath()).withStyle(ChatFormatting.RED), false);
-        }
+        seal = new Seal(getAgreement().getSeal()).printErrorAndFallbackToDefaultIfNotFound();
     }
 
     public boolean isOpen() {

@@ -21,7 +21,7 @@
   "gui.wares.delivery_table.no_packages.tooltip": "Packages are required for delivery",
   "gui.wares.hours.short": "%sh",
   "gui.wares.minutes.short": "%sm",
-  "gui.wares.seal_texture_not_found": "Seal texture '%s' not found at '%s'. Make sure the name is correct and that the ResourcePack with a texture is loaded.",
+  "gui.wares.seal_texture_not_found": "Seal texture '%s' not found at '%s'. Make sure the name is correct and ResourcePack with the texture is loaded. Default seal will be used instead.",
   "gui.wares.sealed_agreement.show_remaining_text_message": "Hold Shift to show remaining text",
   "item.wares.agreement.view.tooltip": "Right click to view",
   "item.wares.completed_delivery_agreement": "Completed Delivery Agreement",

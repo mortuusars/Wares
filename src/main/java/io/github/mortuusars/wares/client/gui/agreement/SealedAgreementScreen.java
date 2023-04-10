@@ -55,17 +55,12 @@ public class SealedAgreementScreen extends Screen {
     public SealedAgreementScreen(String seal, Component sealTooltip, Component backsideMessage) {
         super(TextComponent.EMPTY);
 
-        this.seal = new Seal(seal);
+        this.seal = new Seal(seal).printErrorAndFallbackToDefaultIfNotFound();
         this.sealTooltip = sealTooltip;
         this.backsideMessage = backsideMessage;
         this.showRemainingTextMessage = Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE.translate();
 
         this.minecraft = Minecraft.getInstance();
-
-        if (!this.seal.isTextureValid()) {
-            assert minecraft.player != null;
-            minecraft.player.displayClientMessage(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE.translate(this.seal.getName(), this.seal.getTexturePath()).withStyle(ChatFormatting.RED), false);
-        }
     }
 
     public boolean isOpen() {
