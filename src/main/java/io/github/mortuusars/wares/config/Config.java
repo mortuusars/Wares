@@ -54,7 +54,7 @@ public class Config {
                         "This works the same as with regular villagers. ",
                         "Villager XP points do not reset to 0 on level up - so each consecutive value should be larger than previous.",
                         "Default: [0, 30, 90, 200, 400]")
-                .defineList("PackagerXpPerLevel", List.of(0, 30, 90, 200, 400), value -> ((int) value) >= 0);
+                .defineList("PackagerXpPerLevel", List.of(0, 40, 110, 250, 500), value -> ((int) value) >= 0);
 
         MANUAL_DELIVERY_ALLOWED = builder
                 .comment("Players can manually deliver a package if Packager is not currently working at table.",
