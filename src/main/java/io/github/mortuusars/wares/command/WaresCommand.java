@@ -99,7 +99,9 @@ public class WaresCommand {
         ItemStack sealedAgreementStack = new ItemStack(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
         sealedAgreement.toItemStack(sealedAgreementStack);
 
-        if (!serverPlayer.addItem(sealedAgreementStack))
+        if (serverPlayer.getMainHandItem().isEmpty())
+            serverPlayer.setItemInHand(InteractionHand.MAIN_HAND, sealedAgreementStack);
+        else if (!serverPlayer.addItem(sealedAgreementStack))
             serverPlayer.drop(sealedAgreementStack, false);
 
         return 0;
@@ -125,7 +127,9 @@ public class WaresCommand {
         ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
         agreement.toItemStack(agreementStack);
 
-        if (!serverPlayer.addItem(agreementStack))
+        if (serverPlayer.getMainHandItem().isEmpty())
+            serverPlayer.setItemInHand(InteractionHand.MAIN_HAND, agreementStack);
+        else if (!serverPlayer.addItem(agreementStack))
             serverPlayer.drop(agreementStack, false);
 
         return 0;

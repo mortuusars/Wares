@@ -84,8 +84,8 @@ public class Wares
         public static final RegistryObject<DeliveryPackageBlock> DELIVERY_PACKAGE = BLOCKS.register("delivery_package",
                 () -> new DeliveryPackageBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .sound(SoundTypes.CARDBOARD)
-                        .color(MaterialColor.COLOR_LIGHT_GRAY)
-                        .strength(0.6f)));
+                        .color(MaterialColor.COLOR_BROWN)
+                        .strength(0.5f)));
     }
 
     public static class BlockEntities {
