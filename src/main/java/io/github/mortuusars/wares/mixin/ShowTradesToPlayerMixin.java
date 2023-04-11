@@ -18,7 +18,7 @@ public abstract class ShowTradesToPlayerMixin {
      */
     @Inject(method = "clearHeldItem", cancellable = true, at = @At("HEAD"))
     private static void clearHeldItem(Villager villager, CallbackInfo ci) {
-        if (villager.getItemInHand(InteractionHand.MAIN_HAND).is(Wares.Items.DELIVERY_PACKAGE.get()))
+        if (villager.getItemInHand(InteractionHand.MAIN_HAND).is(Wares.Items.CARDBOARD_BOX.get()))
             ci.cancel();
     }
 }

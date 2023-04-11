@@ -1,7 +1,7 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.block.DeliveryPackageBlock;
+import io.github.mortuusars.wares.block.CardboardBoxBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -33,17 +33,19 @@ public class BlockStatesAndModels extends BlockStateProvider {
                     .build();
         });
 
-        getVariantBuilder(Wares.Blocks.DELIVERY_PACKAGE.get()).forAllStates(state -> {
+        getVariantBuilder(Wares.Blocks.CARDBOARD_BOX.get()).forAllStates(state -> {
             Int2ObjectMap<String> PACKAGES = new Int2ObjectOpenHashMap<>(
                     new int[]{1, 2, 3, 4},
                     new String[]{"one", "two", "three", "four"});
             ModelFile.ExistingModelFile model = models().getExistingFile(
-                    modLoc("block/" + Wares.Blocks.DELIVERY_PACKAGE.getId()
-                            .getPath() + "_" + PACKAGES.get(state.getValue(DeliveryPackageBlock.PACKAGES))));
+                    modLoc("block/" + Wares.Blocks.CARDBOARD_BOX.getId()
+                            .getPath() + "_" + PACKAGES.get(state.getValue(CardboardBoxBlock.PACKAGES).intValue())));
             return ConfiguredModel.builder()
                     .modelFile(model)
                     .rotationY((int) state.getValue(DeliveryTableBlock.FACING).getOpposite().toYRot())
                     .build();
         });
+
+        horizontalBlock(Wares.Blocks.PACKAGE.get(), models().getExistingFile(modLoc("block/" + Wares.Blocks.PACKAGE.getId().getPath())));
     }
 }

@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.Block;
 
 public enum Lang {
     BLOCK_DELIVERY_TABLE(Wares.Blocks.DELIVERY_TABLE.get()),
-    BLOCK_DELIVERY_PACKAGE(Wares.Blocks.DELIVERY_PACKAGE.get()),
+    BLOCK_CARDBOARD_BOX(Wares.Blocks.CARDBOARD_BOX.get()),
+    BLOCK_PACKAGE(Wares.Blocks.PACKAGE.get()),
 
     ITEM_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get()),
     ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT(Wares.Items.SEALED_DELIVERY_AGREEMENT.get().getDescriptionId() + "_damaged"),

@@ -2,14 +2,8 @@
   "item.paper.tear": {
     "subtitle": "subtitle.wares.paper.tear",
     "sounds": [
-      {
-        "name": "wares:item/paper_tear1",
-        "volume": 0.75
-      },
-      {
-        "name": "wares:item/paper_tear2",
-        "volume": 0.75
-      }
+      "wares:item/paper_tear1",
+      "wares:item/paper_tear2"
     ]
   },
   "item.paper.crackle": {

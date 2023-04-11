@@ -24,7 +24,7 @@ public class ItemTags extends ItemTagsProvider {
                      Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get());
 
         tag(Wares.Tags.Items.DELIVERY_BOXES)
-                .add(Wares.Items.DELIVERY_PACKAGE.get());
+                .add(Wares.Items.CARDBOARD_BOX.get());
     }
 
     private void optionalTags(TagAppender<Item> tag, String namespace, String... items) {

@@ -39,7 +39,8 @@ public class Languages extends LanguageProvider {
 
     protected void en_us() {
         translate(Lang.BLOCK_DELIVERY_TABLE, "Delivery Table");
-        translate(Lang.BLOCK_DELIVERY_PACKAGE, "Delivery Package");
+        translate(Lang.BLOCK_CARDBOARD_BOX, "Cardboard Box");
+        translate(Lang.BLOCK_PACKAGE, "Package");
 
         translate(Lang.ITEM_SEALED_DELIVERY_AGREEMENT, "Sealed Delivery Agreement");
         translate(Lang.ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT, "Damaged Sealed Delivery Agreement");
@@ -98,14 +99,15 @@ public class Languages extends LanguageProvider {
     }
 
     protected void uk_ua() {
-        translate(Lang.BLOCK_DELIVERY_TABLE, "Торговий Стіл");
-        translate(Lang.BLOCK_DELIVERY_PACKAGE, "Пакунок");
+        translate(Lang.BLOCK_DELIVERY_TABLE, "Торговий стіл");
+        translate(Lang.BLOCK_CARDBOARD_BOX, "Картонна коробка");
+        translate(Lang.BLOCK_PACKAGE, "Пакунок");
 
-        translate(Lang.ITEM_SEALED_DELIVERY_AGREEMENT, "Запечатаний Торговий Договір");
-        translate(Lang.ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT, "Пошкоджений Запечатаний Торговий Договір");
-        translate(Lang.ITEM_DELIVERY_AGREEMENT, "Торговий Договір");
-        translate(Lang.ITEM_COMPLETED_DELIVERY_AGREEMENT, "Виконаний Торговий Договір");
-        translate(Lang.ITEM_EXPIRED_DELIVERY_AGREEMENT, "Прострочений Торговий Договір");
+        translate(Lang.ITEM_SEALED_DELIVERY_AGREEMENT, "Запечатаний торговий договір");
+        translate(Lang.ITEM_DAMAGED_SEALED_DELIVERY_AGREEMENT, "Пошкоджений запечатаний торговий договір");
+        translate(Lang.ITEM_DELIVERY_AGREEMENT, "Торговий договір");
+        translate(Lang.ITEM_COMPLETED_DELIVERY_AGREEMENT, "Виконаний торговий договір");
+        translate(Lang.ITEM_EXPIRED_DELIVERY_AGREEMENT, "Прострочений торговий договір");
 
         translate(Lang.SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE, "Лист сильно пошкоджений, надриви та вицвіле чорнило " +
                 "роблять його нечитабельним.");
@@ -123,7 +125,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Відправити вручну");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "Займе у %s раз(и) більше часу");
 
-        translate(Lang.GUI_AGREEMENT_TITLE, "Торговий Договір");
+        translate(Lang.GUI_AGREEMENT_TITLE, "Торговий договір");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "У мене є товари, які, можливо, будуть Вам цікаві. Згодні на торгівлю?");
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME, "Термін дії");
         translate(Lang.GUI_AGREEMENT_EXPIRE_TIME_TOOLTIP, "Термін дії закінчується через: %s");

@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.data.generation.provider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.block.DeliveryPackageBlock;
+import io.github.mortuusars.wares.block.CardboardBoxBlock;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -15,9 +15,9 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
@@ -52,26 +52,31 @@ public class LootTables extends LootTableProvider {
     public void run(@NotNull HashCache cache) {
         dropsSelf(cache, Wares.Items.DELIVERY_TABLE.get());
 
-        // Package
+        writeTable(cache, Wares.resource("gameplay/empty_package"), LootTable.lootTable()
+                .setParamSet(LootContextParamSets.CHEST)
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(Items.PAPER)))
+                .build());
 
-        DeliveryPackageBlock packageBlock = Wares.Blocks.DELIVERY_PACKAGE.get();
-        writeTable(cache, Wares.resource("blocks/" + Wares.Blocks.DELIVERY_PACKAGE.getId().getPath()), LootTable.lootTable()
+        CardboardBoxBlock cardboardBoxBlock = Wares.Blocks.CARDBOARD_BOX.get();
+        writeTable(cache, Wares.resource("blocks/" + Wares.Blocks.CARDBOARD_BOX.getId().getPath()), LootTable.lootTable()
                 .setParamSet(LootContextParamSets.BLOCK)
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(packageBlock)
+                        .add(LootItem.lootTableItem(cardboardBoxBlock)
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))
-                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(packageBlock)
+                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(DeliveryPackageBlock.PACKAGES, 2))))
+                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 2))))
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(3.0F))
-                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(packageBlock)
+                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(DeliveryPackageBlock.PACKAGES, 3))))
+                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 3))))
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))
-                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(packageBlock)
+                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(DeliveryPackageBlock.PACKAGES, 4))))))
+                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 4))))))
                 .build());
     }
 

@@ -1,8 +1,9 @@
 {
   "advancement.wares.last_minutes.description": "Manage to complete a Delivery Agreement just before it expires",
   "advancement.wares.last_minutes.title": "At The Last Minutes",
-  "block.wares.delivery_package": "Delivery Package",
+  "block.wares.cardboard_box": "Cardboard Box",
   "block.wares.delivery_table": "Delivery Table",
+  "block.wares.package": "Package",
   "commands.wares.agreement.complete.already_completed": "Failed: Agreement is already completed.",
   "commands.wares.agreement.complete.is_empty": "Failed: Agreement is empty or not deserialized properly.",
   "commands.wares.agreement.complete.is_expired": "Failed: Cannot complete an expired Agreement.",

@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/block",
 	"textures": {
-		"particle": "wares:block/delivery_package",
-		"texture": "wares:block/delivery_package"
+		"particle": "wares:block/cardboard_box",
+		"texture": "wares:block/cardboard_box"
 	},
 	"elements": [
 		{

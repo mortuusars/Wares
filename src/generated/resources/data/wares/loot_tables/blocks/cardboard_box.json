@@ -13,7 +13,7 @@
               "conditions": [
                 {
                   "condition": "minecraft:block_state_property",
-                  "block": "wares:delivery_package",
+                  "block": "wares:cardboard_box",
                   "properties": {
                     "packages": "2"
                   }
@@ -27,7 +27,7 @@
               "conditions": [
                 {
                   "condition": "minecraft:block_state_property",
-                  "block": "wares:delivery_package",
+                  "block": "wares:cardboard_box",
                   "properties": {
                     "packages": "3"
                   }
@@ -41,7 +41,7 @@
               "conditions": [
                 {
                   "condition": "minecraft:block_state_property",
-                  "block": "wares:delivery_package",
+                  "block": "wares:cardboard_box",
                   "properties": {
                     "packages": "4"
                   }
@@ -51,7 +51,7 @@
               "add": false
             }
           ],
-          "name": "wares:delivery_package"
+          "name": "wares:cardboard_box"
         }
       ]
     }

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class DeliveryPackageBlock extends Block {
+public class CardboardBoxBlock extends Block {
 
     public static final IntegerProperty PACKAGES = IntegerProperty.create("packages", 1, 4);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -35,7 +35,7 @@ public class DeliveryPackageBlock extends Block {
     private static final VoxelShape THREE_AABB = TWO_AABB;
     private static final VoxelShape FOUR_AABB = Shapes.or(THREE_AABB, Block.box(3, 6, 3, 13, 12, 13));
 
-    public DeliveryPackageBlock(Properties properties) {
+    public CardboardBoxBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wares:item/delivery_package"
+    "layer0": "wares:item/package"
   }
 }

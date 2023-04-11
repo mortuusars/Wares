@@ -30,7 +30,7 @@ public class Recipes extends RecipeProvider {
                 .define('W', ItemTags.PLANKS)
                 .save(recipeConsumer);
 
-        ShapedRecipeBuilder.shaped(Wares.Items.DELIVERY_PACKAGE.get(), 2)
+        ShapedRecipeBuilder.shaped(Wares.Items.CARDBOARD_BOX.get(), 2)
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .pattern("PP ")
                 .pattern("PP ")

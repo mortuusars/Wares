@@ -16,7 +16,8 @@ public class Sounds extends SoundDefinitionsProvider {
     public void registerSounds() {
         add(Wares.SoundEvents.PAPER_TEAR.get(), definition()
                 .subtitle(Lang.SUBTITLE_PAPER_TEAR.key)
-                .with(multiple(2, Wares.ID + ":item/paper_tear", 0.75f, 1)));
+                .with(multiple(2, Wares.ID + ":item/paper_tear", 1f, 1)));
+
         add(Wares.SoundEvents.PAPER_CRACKLE.get(), definition()
                 .subtitle(Lang.SUBTITLE_PAPER_CRACKLE.key)
                 .with(multiple(3, "item/book/open_flip", 1.1f, 1f))

@@ -3,11 +3,14 @@ package io.github.mortuusars.wares;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.logging.LogUtils;
-import io.github.mortuusars.wares.block.DeliveryPackageBlock;
+import io.github.mortuusars.wares.block.CardboardBoxBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
+import io.github.mortuusars.wares.block.PackageBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
+import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.item.PackageItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.Registry;
@@ -81,8 +84,14 @@ public class Wares
                         .color(MaterialColor.COLOR_BROWN)
                         .strength(2f)));
 
-        public static final RegistryObject<DeliveryPackageBlock> DELIVERY_PACKAGE = BLOCKS.register("delivery_package",
-                () -> new DeliveryPackageBlock(BlockBehaviour.Properties.of(Material.DECORATION)
+        public static final RegistryObject<CardboardBoxBlock> CARDBOARD_BOX = BLOCKS.register("cardboard_box",
+                () -> new CardboardBoxBlock(BlockBehaviour.Properties.of(Material.DECORATION)
+                        .sound(SoundTypes.CARDBOARD)
+                        .color(MaterialColor.COLOR_BROWN)
+                        .strength(0.5f)));
+
+        public static final RegistryObject<PackageBlock> PACKAGE = BLOCKS.register("package",
+                () -> new PackageBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .sound(SoundTypes.CARDBOARD)
                         .color(MaterialColor.COLOR_BROWN)
                         .strength(0.5f)));
@@ -95,6 +104,10 @@ public class Wares
         public static final RegistryObject<BlockEntityType<DeliveryTableBlockEntity>> DELIVERY_TABLE =
                 BLOCK_ENTITIES.register("delivery_table",
                         () -> BlockEntityType.Builder.of(DeliveryTableBlockEntity::new, Blocks.DELIVERY_TABLE.get()).build(null));
+
+        public static final RegistryObject<BlockEntityType<PackageBlockEntity>> PACKAGE =
+                BLOCK_ENTITIES.register("package",
+                        () -> BlockEntityType.Builder.of(PackageBlockEntity::new, Blocks.PACKAGE.get()).build(null));
     }
 
     public static class MenuTypes {
@@ -127,8 +140,13 @@ public class Wares
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
                 new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()
                         .tab(CreativeModeTab.TAB_DECORATIONS)));
-        public static final RegistryObject<BlockItem> DELIVERY_PACKAGE = ITEMS.register("delivery_package", () ->
-                new BlockItem(Blocks.DELIVERY_PACKAGE.get(), new Item.Properties()
+        public static final RegistryObject<BlockItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () ->
+                new BlockItem(Blocks.CARDBOARD_BOX.get(), new Item.Properties()
+                        .tab(CreativeModeTab.TAB_DECORATIONS)));
+
+        public static final RegistryObject<PackageItem> PACKAGE = ITEMS.register("package", () ->
+                new PackageItem(Blocks.PACKAGE.get(), new Item.Properties()
+                        .stacksTo(1)
                         .tab(CreativeModeTab.TAB_DECORATIONS)));
     }
 
