@@ -84,8 +84,9 @@ public class Languages extends LanguageProvider {
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "At The Last Minutes");
         translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Manage to complete a Delivery Agreement just before it expires");
 
+        translate(Lang.STATS_SEALED_AGREEMENTS_OPENED, "Sealed Delivery Agreements Opened");
+        translate(Lang.STATS_PACKAGES_OPENED, "Packages Opened");
         translate(Lang.STATS_INTERACT_WITH_DELIVERY_TABLE, "Interactions with Delivery Table");
-        translate(Lang.STATS_SEALED_AGREEMENTS_OPENED, "Opened Sealed Delivery Agreements");
 
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM, "Wrong item. Expected: '%s', got: '%s'");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY,  "Failed: Agreement is empty or not deserialized properly.");
@@ -142,10 +143,11 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_SEAL_TEXTURE_NOT_FOUND_MESSAGE, "Текстуру печатки '%s' не знайдено в '%s'. Переконайтеся, що назва печатки правильна та Пакет Ресурсів з цією текстурою увімкнено. Буде використана печатка за замовчуванням");
 
         translate(Lang.ADVANCEMENT_LAST_MINUTES_TITLE, "В Останній Момент");
-        translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Встигніть виконати Торговий Договір в останні хвилини терміну дії");
+        translate(Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION, "Встигніть виконати Торговий договір в останні хвилини терміну дії");
 
-        translate(Lang.STATS_INTERACT_WITH_DELIVERY_TABLE, "Взаємодії з Торговим Столом");
-        translate(Lang.STATS_SEALED_AGREEMENTS_OPENED, "Відкрито Запечатаних Торгових Договорів");
+        translate(Lang.STATS_SEALED_AGREEMENTS_OPENED, "Відкрито Запечатаних торгових договорів");
+        translate(Lang.STATS_PACKAGES_OPENED, "Пакунків відкрито");
+        translate(Lang.STATS_INTERACT_WITH_DELIVERY_TABLE, "Взаємодії з Торговим столом");
 
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM, "Неправильний предмет. Очікувався: '%s', отримано: '%s'");
         translate(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY, "Помилка: Договір порожній або неправильно прочитаний.");

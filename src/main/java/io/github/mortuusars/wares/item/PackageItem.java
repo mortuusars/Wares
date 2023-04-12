@@ -5,6 +5,7 @@ import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.data.Package;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -23,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class PackageItem extends BlockItem {
     public PackageItem(Block block, Properties properties) {
@@ -44,9 +47,9 @@ public class PackageItem extends BlockItem {
         return UseAnim.EAT;
     }
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         if (!context.isSecondaryUseActive()) {
-            context.getPlayer().startUsingItem(context.getHand());
+            Objects.requireNonNull(context.getPlayer()).startUsingItem(context.getHand());
             return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
         }
 
@@ -74,13 +77,16 @@ public class PackageItem extends BlockItem {
             }
             level.playSound(null, pos.x, pos.y, pos.z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
                     1f, level.getRandom().nextFloat() * 0.2f + 0.9f);
+
+            if (livingEntity instanceof ServerPlayer serverPlayer)
+                serverPlayer.awardStat(Wares.Stats.PACKAGES_OPENED);
         }
 
         return ItemStack.EMPTY;
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+    protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, Level level, @Nullable Player player, @NotNull ItemStack stack, @NotNull BlockState state) {
         if (level.getBlockEntity(pos) instanceof PackageBlockEntity packageBlockEntity)
             packageBlockEntity.setPackage(Package.fromItemStack(stack).orElse(Package.DEFAULT));
 

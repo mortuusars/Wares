@@ -50,8 +50,9 @@ public enum Lang {
     ADVANCEMENT_LAST_MINUTES_TITLE("advancement", "last_minutes.title"),
     ADVANCEMENT_LAST_MINUTES_DESCRIPTION("advancement", "last_minutes.description"),
 
-    STATS_INTERACT_WITH_DELIVERY_TABLE("stat", Wares.Stats.INTERACT_WITH_DELIVERY_TABLE.getPath()),
+    STATS_PACKAGES_OPENED("stat", Wares.Stats.PACKAGES_OPENED.getPath()),
     STATS_SEALED_AGREEMENTS_OPENED("stat", Wares.Stats.SEALED_LETTERS_OPENED.getPath()),
+    STATS_INTERACT_WITH_DELIVERY_TABLE("stat", Wares.Stats.INTERACT_WITH_DELIVERY_TABLE.getPath()),
 
     COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM("commands", "agreement.complete.wrong_item"),
     COMMAND_AGREEMENT_COMPLETE_IS_EMPTY("commands", "agreement.complete.is_empty"),

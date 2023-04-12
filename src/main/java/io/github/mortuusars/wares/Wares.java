@@ -97,6 +97,7 @@ public class Wares
                         .strength(0.5f)));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public static class BlockEntities {
         private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ID);
 
@@ -195,6 +196,8 @@ public class Wares
 
         public static final ResourceLocation SEALED_LETTERS_OPENED =
                 register(Wares.resource("sealed_letters_opened"), StatFormatter.DEFAULT);
+        public static final ResourceLocation PACKAGES_OPENED =
+                register(Wares.resource("packages_opened"), StatFormatter.DEFAULT);
         public static final ResourceLocation INTERACT_WITH_DELIVERY_TABLE =
                 register(Wares.resource("interact_with_delivery_table"), StatFormatter.DEFAULT);
 
