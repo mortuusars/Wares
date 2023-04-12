@@ -9,18 +9,9 @@
   "item.paper.crackle": {
     "subtitle": "subtitle.wares.paper.crackle",
     "sounds": [
-      {
-        "name": "item/book/open_flip1",
-        "volume": 1.1
-      },
-      {
-        "name": "item/book/open_flip2",
-        "volume": 1.1
-      },
-      {
-        "name": "item/book/open_flip3",
-        "volume": 1.1
-      },
+      "item/book/open_flip1",
+      "item/book/open_flip2",
+      "item/book/open_flip3",
       {
         "name": "wares:item/paper",
         "volume": 0.3,

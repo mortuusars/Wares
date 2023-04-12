@@ -20,7 +20,7 @@ public class Sounds extends SoundDefinitionsProvider {
 
         add(Wares.SoundEvents.PAPER_CRACKLE.get(), definition()
                 .subtitle(Lang.SUBTITLE_PAPER_CRACKLE.key)
-                .with(multiple(3, "item/book/open_flip", 1.1f, 1f))
+                .with(multiple(3, "item/book/open_flip", 1f, 1f))
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(0.85f))
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(1.25f)));
 
