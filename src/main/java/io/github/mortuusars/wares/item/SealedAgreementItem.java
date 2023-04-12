@@ -5,6 +5,7 @@ import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.data.agreement.SealedAgreement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -134,7 +135,6 @@ public class SealedAgreementItem extends Item {
                     else
                         player.addItem(agreementStack);
 
-                    player.getCooldowns().addCooldown(Wares.Items.DELIVERY_AGREEMENT.get(), 10);
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                     level.playSound(null,
                             player.position().x,
@@ -151,6 +151,10 @@ public class SealedAgreementItem extends Item {
                 stack.getOrCreateTag().putBoolean(UNOPENABLE_TAG, true);
             }
         }
+
+        // Release RMB after using. Otherwise, right click will be still held and will activate use again.
+        if (level.isClientSide)
+            Minecraft.getInstance().options.keyUse.setDown(false);
 
         return stack;
     }

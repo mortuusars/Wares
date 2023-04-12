@@ -3,6 +3,7 @@ package io.github.mortuusars.wares.item;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.data.Package;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -81,6 +82,11 @@ public class PackageItem extends BlockItem {
             if (livingEntity instanceof ServerPlayer serverPlayer)
                 serverPlayer.awardStat(Wares.Stats.PACKAGES_OPENED);
         }
+
+
+        // Release RMB after unpacking. Otherwise, use will be triggered on dropped items.
+        if (level.isClientSide)
+            Minecraft.getInstance().options.keyUse.setDown(false);
 
         return ItemStack.EMPTY;
     }
