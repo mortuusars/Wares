@@ -12,9 +12,9 @@
 	"elements": [
 		{
 			"name": "Ink",
-			"from": [1, 16, 11],
-			"to": [4, 18, 14],
-			"rotation": {"angle": 0, "axis": "y", "origin": [8, 11.5, 8]},
+			"from": [0.9, 16, 11.1],
+			"to": [3.9, 18, 14.1],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.9, 11.5, 8.1]},
 			"faces": {
 				"north": {"uv": [0, 14, 3, 16], "texture": "#extra"},
 				"east": {"uv": [0, 14, 3, 16], "texture": "#extra"},
@@ -25,9 +25,9 @@
 		},
 		{
 			"name": "Quill",
-			"from": [0.99964, 18, 4.8636],
-			"to": [0.99964, 26, 9.8636],
-			"rotation": {"angle": 45, "axis": "y", "origin": [8, 11.5, 8]},
+			"from": [0.89964, 18, 4.9636],
+			"to": [0.89964, 26, 9.9636],
+			"rotation": {"angle": 45, "axis": "y", "origin": [7.9, 11.5, 8.1]},
 			"faces": {
 				"east": {"uv": [0, 0, 7, 12], "texture": "#extra"},
 				"west": {"uv": [7, 0, 0, 12], "texture": "#extra"}
