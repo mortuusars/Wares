@@ -51,6 +51,7 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         super.init();
         imageWidth = 176;
         imageHeight = 172;
+        inventoryLabelY = 79;
 
         this.manualDeliveryButton = new ImageButton(getGuiLeft() + 74, getGuiTop() + 36, 28, 20,
                 176, 70, 20, TEXTURE, 256, 256,
