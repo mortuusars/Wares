@@ -43,6 +43,9 @@ public class Sounds extends SoundDefinitionsProvider {
         add(Wares.SoundEvents.CARDBOARD_FALL.get(), definition()
                 .with(multiple(7, "step/scaffold", 0.65f, 0.65f)));
 
+        add(Wares.SoundEvents.CARDBOARD_BOX_USE.get(), definition()
+                .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));
+
         add(Wares.SoundEvents.VILLAGER_WORK_PACKAGER.get(), definition()
                 .subtitle(Lang.SUBTITLE_PACKAGER_WORKS.key)
                 .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));

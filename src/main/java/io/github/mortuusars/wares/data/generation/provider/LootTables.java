@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
-@SuppressWarnings({"unused", "CommentedOutCode"})
+@SuppressWarnings({"unused"})
 public class LootTables extends LootTableProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -68,15 +68,15 @@ public class LootTables extends LootTableProvider {
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))
                                         .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 2))))
+                                                        .hasProperty(CardboardBoxBlock.BOXES, 2))))
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(3.0F))
                                         .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 3))))
+                                                        .hasProperty(CardboardBoxBlock.BOXES, 3))))
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))
                                         .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cardboardBoxBlock)
                                                 .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                        .hasProperty(CardboardBoxBlock.PACKAGES, 4))))))
+                                                        .hasProperty(CardboardBoxBlock.BOXES, 4))))))
                 .build());
     }
 

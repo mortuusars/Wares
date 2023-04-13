@@ -61,6 +61,10 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_AGREEMENT_TITLE, "Delivery Agreement");
         translate(Lang.GUI_AGREEMENT_MESSAGE, "I have some wares that I believe might interest you. Would you be open to trading your goods for mine?");
 
+        translate(Lang.GUI_CARDBOARD_BOX, "Cardboard Box");
+        translate(Lang.GUI_CARDBOARD_BOX_PACK, "Pack");
+        translate(Lang.GUI_CARDBOARD_BOX_PACK_TOOLTIP, "Pack");
+
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Place a Delivery Agreement to start a delivery");
         translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Packages are required for delivery");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Deliver Manually");

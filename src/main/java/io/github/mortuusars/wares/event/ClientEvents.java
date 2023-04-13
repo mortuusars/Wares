@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.event;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.client.gui.screen.CardboardBoxScreen;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -16,6 +17,7 @@ public class ClientEvents {
     public static void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(Wares.MenuTypes.DELIVERY_TABLE.get(), DeliveryTableScreen::new);
+            MenuScreens.register(Wares.MenuTypes.CARDBOARD_BOX.get(), CardboardBoxScreen::new);
 
             ItemBlockRenderTypes.setRenderLayer(Wares.Blocks.DELIVERY_TABLE.get(), RenderType.cutout());
         });

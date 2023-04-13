@@ -157,7 +157,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     private void onBatchDelivered(final int deliveredBatches) {
         deliveringManually = false;
         assert level != null;
-        level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.BLOCKS,
+        level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_FALL.get(), SoundSource.BLOCKS,
                 0.85f, level.getRandom().nextFloat() * 0.1f + 0.95f);
         if (!getAgreement().isInfinite())
             level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,

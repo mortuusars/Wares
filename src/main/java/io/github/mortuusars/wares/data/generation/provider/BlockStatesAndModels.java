@@ -6,6 +6,7 @@ import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -39,10 +40,10 @@ public class BlockStatesAndModels extends BlockStateProvider {
                     new String[]{"one", "two", "three", "four"});
             ModelFile.ExistingModelFile model = models().getExistingFile(
                     modLoc("block/" + Wares.Blocks.CARDBOARD_BOX.getId()
-                            .getPath() + "_" + PACKAGES.get(state.getValue(CardboardBoxBlock.PACKAGES).intValue())));
+                            .getPath() + "_" + PACKAGES.get(state.getValue(CardboardBoxBlock.BOXES).intValue())));
             return ConfiguredModel.builder()
                     .modelFile(model)
-                    .rotationY((int) state.getValue(DeliveryTableBlock.FACING).getOpposite().toYRot())
+                    .rotationY(state.getValue(CardboardBoxBlock.AXIS) == Direction.Axis.X ? 0 : 90)
                     .build();
         });
 

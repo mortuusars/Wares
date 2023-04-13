@@ -25,6 +25,10 @@ public class ItemTags extends ItemTagsProvider {
 
         tag(Wares.Tags.Items.DELIVERY_BOXES)
                 .add(Wares.Items.CARDBOARD_BOX.get());
+
+        tag(Wares.Tags.Items.CARDBOARD_BOX_BLACKLISTED)
+                .add(Wares.Items.PACKAGE.get(),
+                     Wares.Items.CARDBOARD_BOX.get());
     }
 
     private void optionalTags(TagAppender<Item> tag, String namespace, String... items) {

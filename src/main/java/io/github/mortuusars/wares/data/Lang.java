@@ -31,6 +31,10 @@ public enum Lang {
     GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP("gui", "delivery_table.manual_delivery.tooltip"),
     GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO("gui", "delivery_table.manual_delivery.tooltip_extra_info"),
 
+    GUI_CARDBOARD_BOX("gui", "cardboard_box"),
+    GUI_CARDBOARD_BOX_PACK("gui", "cardboard_box.pack"),
+    GUI_CARDBOARD_BOX_PACK_TOOLTIP("gui", "cardboard_box.pack.tooltip"),
+
     GUI_AGREEMENT_TITLE("gui", "agreement.title"),
     GUI_AGREEMENT_MESSAGE("gui", "agreement.message"),
     GUI_AGREEMENT_EXPIRE_TIME("gui", "agreement.expire_time"),

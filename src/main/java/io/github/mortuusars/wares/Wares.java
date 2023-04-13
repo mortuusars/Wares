@@ -10,8 +10,10 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.item.CardboardBoxItem;
 import io.github.mortuusars.wares.item.PackageItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
+import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -88,13 +90,13 @@ public class Wares
                 () -> new CardboardBoxBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .sound(SoundTypes.CARDBOARD)
                         .color(MaterialColor.COLOR_BROWN)
-                        .strength(0.5f)));
+                        .strength(0.4f)));
 
         public static final RegistryObject<PackageBlock> PACKAGE = BLOCKS.register("package",
                 () -> new PackageBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .sound(SoundTypes.CARDBOARD)
                         .color(MaterialColor.COLOR_BROWN)
-                        .strength(0.5f)));
+                        .strength(0.6f)));
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -116,6 +118,9 @@ public class Wares
 
         public static final RegistryObject<MenuType<DeliveryTableMenu>> DELIVERY_TABLE = MENU_TYPES
                 .register("delivery_table", () -> IForgeMenuType.create(DeliveryTableMenu::fromBuffer));
+
+        public static final RegistryObject<MenuType<CardboardBoxMenu>> CARDBOARD_BOX = MENU_TYPES
+                .register("cardboard_box", () -> IForgeMenuType.create(CardboardBoxMenu::fromBuffer));
     }
 
     public static class Items {
@@ -141,10 +146,10 @@ public class Wares
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
                 new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()
                         .tab(CreativeModeTab.TAB_DECORATIONS)));
-        public static final RegistryObject<BlockItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () ->
-                new BlockItem(Blocks.CARDBOARD_BOX.get(), new Item.Properties()
-                        .tab(CreativeModeTab.TAB_DECORATIONS)));
 
+        public static final RegistryObject<CardboardBoxItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () ->
+                new CardboardBoxItem(Blocks.CARDBOARD_BOX.get(), new Item.Properties()
+                        .tab(CreativeModeTab.TAB_DECORATIONS)));
         public static final RegistryObject<PackageItem> PACKAGE = ITEMS.register("package", () ->
                 new PackageItem(Blocks.PACKAGE.get(), new Item.Properties()
                         .stacksTo(1)
@@ -176,6 +181,8 @@ public class Wares
         public static final RegistryObject<SoundEvent> CARDBOARD_HIT = registerSound("block", "cardboard.hit");
         public static final RegistryObject<SoundEvent> CARDBOARD_FALL = registerSound("block", "cardboard.fall");
         public static final RegistryObject<SoundEvent> CARDBOARD_STEP = registerSound("block", "cardboard.step");
+
+        public static final RegistryObject<SoundEvent> CARDBOARD_BOX_USE = registerSound("block", "cardboard_box.use");
 
         public static final RegistryObject<SoundEvent> VILLAGER_WORK_PACKAGER = registerSound("entity", "villager.work_packager");
 
@@ -219,6 +226,7 @@ public class Wares
         public static class Items {
             public static final TagKey<Item> AGREEMENTS = ItemTags.create(Wares.resource("agreements"));
             public static final TagKey<Item> DELIVERY_BOXES = ItemTags.create(Wares.resource("delivery_boxes"));
+            public static final TagKey<Item> CARDBOARD_BOX_BLACKLISTED = ItemTags.create(Wares.resource("cardboard_box_blacklisted"));
         }
     }
 }

@@ -76,7 +76,7 @@ public class PackageItem extends BlockItem {
             for (ItemStack itemStack : pack.getItems(serverLevel)) {
                 Containers.dropItemStack(level, pos.x, pos.y, pos.z, itemStack);
             }
-            level.playSound(null, pos.x, pos.y, pos.z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
+            level.playSound(null, pos.x, pos.y, pos.z, Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.PLAYERS,
                     1f, level.getRandom().nextFloat() * 0.2f + 0.9f);
 
             if (livingEntity instanceof ServerPlayer serverPlayer)
