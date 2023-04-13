@@ -101,6 +101,7 @@ public record SealedAgreement(String id,
                 .buyerAddress(buyerAddress.get(random))
                 .title(title.get(random))
                 .message(message.get(random))
+                .seal(seal)
                 .requestedItems(getStacks(requested, level, Agreement.MAX_REQUESTED_STACKS))
                 .paymentItems(getStacks(payment, level, Agreement.MAX_PAYMENT_STACKS))
                 .ordered(quantity)
