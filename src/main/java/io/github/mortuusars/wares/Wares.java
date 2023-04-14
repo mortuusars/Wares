@@ -15,6 +15,7 @@ import io.github.mortuusars.wares.item.PackageItem;
 import io.github.mortuusars.wares.item.SealedAgreementItem;
 import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import io.github.mortuusars.wares.world.VillageStructures;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -67,6 +69,8 @@ public class Wares
         Villagers.POI_TYPES.register(modEventBus);
         Villagers.PROFESSIONS.register(modEventBus);
         SoundEvents.SOUNDS.register(modEventBus);
+
+        MinecraftForge.EVENT_BUS.addListener(VillageStructures::addVillageStructures);
     }
 
     /**

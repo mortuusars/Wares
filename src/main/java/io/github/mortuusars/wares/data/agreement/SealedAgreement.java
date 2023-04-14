@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -94,7 +95,7 @@ public record SealedAgreement(String id,
         int quantity = ordered.map(integer -> integer, steppedInt -> steppedInt.sample(random));
 
         int expiresIn = expiresInSeconds.map(integer -> integer, steppedInt -> steppedInt.sample(random));
-        long expireTime = level.getGameTime() + expiresIn * 20L;
+        long expireTime = expiresIn <= 0 ? -1 : level.getGameTime() + expiresIn * 20L;
 
         return Agreement.builder().id(id)
                 .buyerName(buyerName.get(random))
@@ -130,5 +131,128 @@ public record SealedAgreement(String id,
         }
 
         return container.removeAllItems();
+    }
+
+    @SuppressWarnings("unused")
+    public static class Builder {
+        private String id = "";
+        private TextProvider buyerName = TextProvider.EMPTY;
+        private TextProvider buyerAddress = TextProvider.EMPTY;
+        private TextProvider title = TextProvider.EMPTY;
+        private TextProvider message = TextProvider.EMPTY;
+        private String seal = "default";
+        private Component sealTooltip = TextComponent.EMPTY;
+        private Component backsideMessage = TextComponent.EMPTY;
+        private Either<ResourceLocation, List<ItemStack>> requested = Either.right(Collections.emptyList());
+        private Either<ResourceLocation, List<ItemStack>> payment = Either.right(Collections.emptyList());
+        private Either<Integer, SteppedInt> ordered = Either.left(0);
+        private Either<Integer, SteppedInt> experience = Either.left(0);
+        private Either<Integer, SteppedInt> deliveryTime = Either.left(-1);
+        private Either<Integer, SteppedInt> expiresInSecond = Either.left(-1);
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder buyerName(TextProvider buyerName) {
+            this.buyerName = buyerName;
+            return this;
+        }
+
+        public Builder buyerAddress(TextProvider buyerAddress) {
+            this.buyerAddress = buyerAddress;
+            return this;
+        }
+
+        public Builder title(TextProvider title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder message(TextProvider message) {
+            this.message = message;
+            return this;
+        }
+
+        public Builder seal(String seal) {
+            this.seal = seal;
+            return this;
+        }
+
+        public Builder sealTooltip(Component sealTooltip) {
+            this.sealTooltip = sealTooltip;
+            return this;
+        }
+
+        public Builder backsideMessage(Component backsideMessage) {
+            this.backsideMessage = backsideMessage;
+            return this;
+        }
+
+        public Builder requested(ResourceLocation lootTable) {
+            this.requested = Either.left(lootTable);
+            return this;
+        }
+
+        public Builder payment(ResourceLocation lootTable) {
+            this.payment = Either.left(lootTable);
+            return this;
+        }
+
+        public Builder requested(List<ItemStack> items) {
+            this.requested = Either.right(items);
+            return this;
+        }
+
+        public Builder payment(List<ItemStack> items) {
+            this.payment = Either.right(items);
+            return this;
+        }
+
+        public Builder ordered(int ordered) {
+            this.ordered = Either.left(ordered);
+            return this;
+        }
+
+        public Builder ordered(SteppedInt ordered) {
+            this.ordered = Either.right(ordered);
+            return this;
+        }
+
+        public Builder experience(int experience) {
+            this.experience = Either.left(experience);
+            return this;
+        }
+
+        public Builder experience(SteppedInt experience) {
+            this.experience = Either.right(experience);
+            return this;
+        }
+
+        public Builder deliveryTime(int deliveryTime) {
+            this.deliveryTime = Either.left(deliveryTime);
+            return this;
+        }
+
+        public Builder deliveryTime(SteppedInt deliveryTime) {
+            this.deliveryTime = Either.right(deliveryTime);
+            return this;
+        }
+
+        public Builder expiresInSecond(int expiresInSecond) {
+            this.expiresInSecond = Either.left(expiresInSecond);
+            return this;
+        }
+
+        public Builder expiresInSecond(SteppedInt expiresInSecond) {
+            this.expiresInSecond = Either.right(expiresInSecond);
+            return this;
+        }
+
+        public SealedAgreement build() {
+            return new SealedAgreement(id, buyerName, buyerAddress, title, message, seal, sealTooltip, backsideMessage,
+                    requested, payment, ordered, experience, deliveryTime, expiresInSecond);
+        }
     }
 }

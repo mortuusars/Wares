@@ -12,9 +12,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -63,7 +61,6 @@ public class PackageBlock extends BaseEntityBlock {
         return new PackageBlockEntity(pos, state);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
         return RenderShape.MODEL;
@@ -92,5 +89,18 @@ public class PackageBlock extends BaseEntityBlock {
     @Override
     public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, BlockPos pos) {
         return Block.canSupportCenter(level, pos.below(), Direction.UP);
+    }
+
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 }

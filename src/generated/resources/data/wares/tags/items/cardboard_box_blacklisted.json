@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "wares:package",
     "wares:cardboard_box"
   ]
 }

@@ -108,4 +108,21 @@ public class CardboardBoxBlock extends Block {
     public boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, BlockPos pos) {
         return Block.canSupportCenter(level, pos.below(), Direction.UP);
     }
+
+
+    @Override
+    public @NotNull BlockState rotate(@NotNull BlockState state, Rotation rotation) {
+        switch (rotation) {
+            case COUNTERCLOCKWISE_90, CLOCKWISE_90 -> {
+                return switch (state.getValue(AXIS)) {
+                    case X -> state.setValue(AXIS, Direction.Axis.Z);
+                    case Z -> state.setValue(AXIS, Direction.Axis.X);
+                    default -> state;
+                };
+            }
+            default -> {
+                return state;
+            }
+        }
+    }
 }
