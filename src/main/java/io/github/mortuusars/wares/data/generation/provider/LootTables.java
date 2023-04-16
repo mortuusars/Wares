@@ -2,10 +2,9 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.CardboardBoxBlock;
-import io.github.mortuusars.wares.data.agreement.SealedAgreement;
-import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -17,26 +16,20 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
-import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.ApplyExplosionDecay;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +40,6 @@ import java.util.Objects;
 
 @SuppressWarnings({"unused"})
 public class LootTables extends LootTableProvider {
-    public static final ResourceLocation PACKAGE_VILLAGE_PLAINS = Wares.resource("package/village/plains");
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private final DataGenerator generator;
@@ -58,7 +49,6 @@ public class LootTables extends LootTableProvider {
         this.generator = generator;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void run(@NotNull HashCache cache) {
         dropsSelf(cache, Wares.Items.DELIVERY_TABLE.get());
@@ -90,86 +80,10 @@ public class LootTables extends LootTableProvider {
                                                         .hasProperty(CardboardBoxBlock.BOXES, 4))))))
                 .build());
 
-        // AGREEMENT ITEMS
-        writeTable(cache, Wares.resource("agreement/village/plains_requested"), LootTable.lootTable()
-                .setParamSet(LootContextParamSets.CHEST)
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
-                        .add(item(Items.WHEAT, 8, 14))
-                        .add(item(Items.POTATO, 8, 14))
-                        .add(item(Items.LEATHER, 4, 10))
-                        .add(item(Items.PAPER, 10, 16))
-                        .add(item(Items.BEEF, 2, 6))
-                        .add(item(Items.PORKCHOP, 2, 6))
-                        .add(item(Items.CHICKEN, 2, 6))
-                        .add(item(Items.BREAD, 3, 6)))
-                .build());
-
-        writeTable(cache, Wares.resource("agreement/village/plains_payment"), LootTable.lootTable()
-                .setParamSet(LootContextParamSets.CHEST)
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
-                        .add(item(Items.EMERALD, 1, 3)))
-                .build());
-
-        // CHESTS
-
-        SealedAgreement plainsSealedAgreement = new SealedAgreement.Builder()
-                .requested(Wares.resource("agreement/village/plains_requested"))
-                .payment(Wares.resource("agreement/village/plains_payment"))
-                .ordered(new SteppedInt(32, 96, 8))
-                .experience(new SteppedInt(12, 32, 4))
-                .build();
-
-        ItemStack plainsSealedStack = new ItemStack(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
-        plainsSealedAgreement.toItemStack(plainsSealedStack);
-
-        writeTable(cache, Wares.resource("chests/village/plains_warehouse"), LootTable.lootTable()
-                .setParamSet(LootContextParamSets.CHEST)
-                .withPool(LootPool.lootPool()
-                        .setRolls(UniformGenerator.between(2, 6))
-                        .add(LootItem.lootTableItem(Items.PAPER).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))).setWeight(10)))
-                .withPool(LootPool.lootPool()
-                        .setRolls(UniformGenerator.between(1, 6))
-                        .add(LootItem.lootTableItem(Wares.Items.CARDBOARD_BOX.get()).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))).setWeight(8)))
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
-                        .add(LootItem.lootTableItem(Wares.Items.SEALED_DELIVERY_AGREEMENT.get()).apply(SetNbtFunction.setTag(plainsSealedStack.getOrCreateTag())).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))).setWeight(6))
-                        .add(EmptyLootItem.emptyItem()))
-                .build());
-
-        // PACKAGES
-        writeTable(cache, PACKAGE_VILLAGE_PLAINS, LootTable.lootTable()
-                .setParamSet(LootContextParamSets.CHEST)
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
-                        .add(LootItem.lootTableItem(Items.WHEAT).apply(SetItemCountFunction.setCount(UniformGenerator.between(12, 32))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.POTATO).apply(SetItemCountFunction.setCount(UniformGenerator.between(12, 32))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.CARROT).apply(SetItemCountFunction.setCount(UniformGenerator.between(12, 32))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.PAPER).apply(SetItemCountFunction.setCount(UniformGenerator.between(10, 30))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.BOOK).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 12))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.BLACK_DYE).apply(SetItemCountFunction.setCount(UniformGenerator.between(6, 16))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.LEATHER).apply(SetItemCountFunction.setCount(UniformGenerator.between(6, 16))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.PORKCHOP).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 10))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.BEEF).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 10))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.MUTTON).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 10))).setWeight(10))
-                        .add(LootItem.lootTableItem(Items.EXPERIENCE_BOTTLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 8))).setWeight(2)))
-                .build());
-    }
-
-    private LootPoolSingletonContainer.Builder<?> item(ItemLike item, int count) {
-        return item(item, count, count);
-    }
-
-    private LootPoolSingletonContainer.Builder<?> item(ItemLike item, int min, int max) {
-        LootPoolSingletonContainer.Builder<?> itemBuilder = LootItem.lootTableItem(item);
-
-        if (min == max)
-            itemBuilder.apply(SetItemCountFunction.setCount(ConstantValue.exactly(min)));
-        else
-            itemBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)));
-
-        return itemBuilder;
+        LootTablesWarehouse lootTablesWarehouse = new LootTablesWarehouse();
+        for (Pair<ResourceLocation, LootTable> locAndTable : lootTablesWarehouse.createTables()) {
+            writeTable(cache, locAndTable.getFirst(), locAndTable.getSecond());
+        }
     }
 
     private void dropsSelf(HashCache cache, BlockItem blockItem) {

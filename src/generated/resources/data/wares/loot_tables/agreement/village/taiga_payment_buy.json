@@ -13,13 +13,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 32.0
+                "min": 6.0,
+                "max": 14.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:wheat"
+          "name": "minecraft:pumpkin"
         },
         {
           "type": "minecraft:item",
@@ -29,8 +29,8 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 32.0
+                "min": 6.0,
+                "max": 14.0
               },
               "add": false
             }
@@ -45,72 +45,8 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 32.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:carrot"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 30.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:paper"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
                 "min": 4.0,
-                "max": 12.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:book"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 6.0,
-                "max": 16.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:black_dye"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 6.0,
-                "max": 16.0
+                "max": 10.0
               },
               "add": false
             }
@@ -125,13 +61,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 8.0,
+                "max": 16.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:porkchop"
+          "name": "minecraft:paper"
         },
         {
           "type": "minecraft:item",
@@ -141,13 +77,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 16.0,
+                "max": 24.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:beef"
+          "name": "minecraft:spruce_sapling"
         },
         {
           "type": "minecraft:item",
@@ -157,13 +93,29 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 14.0,
+                "max": 24.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:mutton"
+          "name": "minecraft:spruce_log"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6.0,
+                "max": 12.0
+              },
+              "add": false
+            }
+          ],
+          "name": "minecraft:bread"
         },
         {
           "type": "minecraft:item",
@@ -173,61 +125,61 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 12.0,
+                "max": 24.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:sunflower"
+          "name": "minecraft:mossy_cobblestone"
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 12.0,
+                "max": 24.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:tall_grass"
+          "name": "minecraft:podzol"
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
                 "min": 8.0,
-                "max": 20.0
+                "max": 14.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:emerald"
+          "name": "minecraft:red_mushroom"
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
+          "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 8.0
+                "min": 8.0,
+                "max": 14.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:experience_bottle"
+          "name": "minecraft:brown_mushroom"
         }
       ]
     }

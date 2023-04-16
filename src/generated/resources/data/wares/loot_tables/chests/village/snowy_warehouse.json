@@ -59,7 +59,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/plains_payment_sell\",requested:\"wares:agreement/village/plains_requested_sell\"}"
+              "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/snowy_payment_sell\",requested:\"wares:agreement/village/snowy_requested_sell\"}"
             },
             {
               "function": "minecraft:set_count",
@@ -75,7 +75,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/plains_payment_buy\",requested:\"wares:agreement/village/plains_requested_buy\"}"
+              "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/snowy_payment_buy\",requested:\"wares:agreement/village/snowy_requested_buy\"}"
             },
             {
               "function": "minecraft:set_count",

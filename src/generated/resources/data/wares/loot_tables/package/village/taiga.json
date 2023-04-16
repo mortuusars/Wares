@@ -19,7 +19,23 @@
               "add": false
             }
           ],
-          "name": "minecraft:wheat"
+          "name": "minecraft:sweet_berries"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 8.0,
+                "max": 16.0
+              },
+              "add": false
+            }
+          ],
+          "name": "minecraft:pumpkin"
         },
         {
           "type": "minecraft:item",
@@ -36,22 +52,6 @@
             }
           ],
           "name": "minecraft:potato"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 32.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:carrot"
         },
         {
           "type": "minecraft:item",
@@ -125,13 +125,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 16.0,
+                "max": 32.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:porkchop"
+          "name": "minecraft:spruce_log"
         },
         {
           "type": "minecraft:item",
@@ -141,13 +141,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 8.0,
+                "max": 18.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:beef"
+          "name": "minecraft:spruce_sapling"
         },
         {
           "type": "minecraft:item",
@@ -157,29 +157,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 8.0,
+                "max": 18.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:mutton"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 4,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
-              },
-              "add": false
-            }
-          ],
-          "name": "minecraft:sunflower"
+          "name": "minecraft:fern"
         },
         {
           "type": "minecraft:item",
@@ -189,13 +173,13 @@
               "function": "minecraft:set_count",
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "min": 8.0,
+                "max": 18.0
               },
               "add": false
             }
           ],
-          "name": "minecraft:tall_grass"
+          "name": "minecraft:large_fern"
         },
         {
           "type": "minecraft:item",
