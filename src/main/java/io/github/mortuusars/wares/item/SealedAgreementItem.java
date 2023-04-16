@@ -42,8 +42,9 @@ public class SealedAgreementItem extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
-        tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
-                .withStyle(Style.EMPTY.withColor(0xd6b589)));
+        SealedAgreement.fromItemStack(stack).ifPresent(a ->
+                tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
+                        .withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
 
     @Override

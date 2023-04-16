@@ -53,7 +53,7 @@ import java.util.Optional;
 public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     public static final int SLOTS = 14;
     public static final int AGREEMENT_SLOT = 0;
-    public static final int PACKAGES_SLOT = 1;
+    public static final int BOX_SLOT = 1;
     public static final int[] AGREEMENT_SLOTS = new int[] {0};
     public static final int[] AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1};
     public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1,2,3,4,5,6,7};
@@ -221,7 +221,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     public int getBatchSize() {
         Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
-        int packages = getItem(PACKAGES_SLOT).getCount();
+        int packages = getItem(BOX_SLOT).getCount();
         int villagerLevel = worker.map(villager -> villager.getVillagerData().getLevel()).orElse(1);
         return Math.min(packages, Config.getBatchSizeForLevel(villagerLevel));
     }
@@ -285,8 +285,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     private void consumePackage() {
-        if (Config.DELIVERIES_REQUIRE_PACKAGES.get())
-            removeItem(PACKAGES_SLOT, 1);
+        if (Config.DELIVERIES_REQUIRE_BOXES.get())
+            removeItem(BOX_SLOT, 1);
     }
 
     protected Deliverability getDeliverability() {
@@ -303,7 +303,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected boolean hasPackage() {
-        return !getItem(PACKAGES_SLOT).isEmpty() || !Config.DELIVERIES_REQUIRE_PACKAGES.get();
+        return !getItem(BOX_SLOT).isEmpty() || !Config.DELIVERIES_REQUIRE_BOXES.get();
     }
 
     protected boolean hasRequestedItems() {
@@ -395,15 +395,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 if (slot == AGREEMENT_SLOT)
                     return stack.getItem() instanceof AgreementItem;
-                else if (slot == PACKAGES_SLOT)
-                    return Config.DELIVERIES_REQUIRE_PACKAGES.get() && stack.is(Wares.Tags.Items.DELIVERY_BOXES);
+                else if (slot == BOX_SLOT)
+                    return Config.DELIVERIES_REQUIRE_BOXES.get() && stack.is(Wares.Tags.Items.DELIVERY_BOXES);
                 return super.isItemValid(slot, stack);
             }
 
             @NotNull
             @Override
             public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-                if (slot == PACKAGES_SLOT && !Config.DELIVERIES_REQUIRE_PACKAGES.get())
+                if (slot == BOX_SLOT && !Config.DELIVERIES_REQUIRE_BOXES.get())
                     return stack;
                 return super.insertItem(slot, stack, simulate);
             }
@@ -487,7 +487,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
-            case UP -> Config.DELIVERIES_REQUIRE_PACKAGES.get() ? AGREEMENT_PLUS_PACKAGES_SLOTS : AGREEMENT_SLOTS;
+            case UP -> Config.DELIVERIES_REQUIRE_BOXES.get() ? AGREEMENT_PLUS_PACKAGES_SLOTS : AGREEMENT_SLOTS;
             case NORTH, SOUTH, WEST, EAST -> INPUT_SLOTS;
         };
     }
@@ -511,7 +511,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
         return (slotIndex == AGREEMENT_SLOT && stack.getItem() instanceof AgreementItem)
-                || (slotIndex == PACKAGES_SLOT && stack.is(Wares.Tags.Items.DELIVERY_BOXES))
+                || (slotIndex == BOX_SLOT && stack.is(Wares.Tags.Items.DELIVERY_BOXES))
                 || (slotIndex >= INPUT_SLOTS[0] && slotIndex < OUTPUT_SLOTS[0]);
     }
 

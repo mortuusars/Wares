@@ -20,7 +20,7 @@ public class Config {
     public static final ForgeConfigSpec.ConfigValue<List<? extends Integer>> BATCH_SIZE_PER_LEVEL;
     public static final ForgeConfigSpec.ConfigValue<List<? extends Integer>> PACKAGER_XP_PER_LEVEL;
     public static final ForgeConfigSpec.IntValue DEFAULT_DELIVERY_TIME;
-    public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_PACKAGES;
+    public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_BOXES;
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
     public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
@@ -75,7 +75,7 @@ public class Config {
                 .comment("Time in ticks that deliveries take. Agreement can override this value. Default: 200 ticks (10 seconds)")
                 .defineInRange("DefaultDeliveryTime", 200, 1, Integer.MAX_VALUE);
 
-        DELIVERIES_REQUIRE_PACKAGES = builder
+        DELIVERIES_REQUIRE_BOXES = builder
                 .comment("Each delivery requires (and consumes) a packaging. ('wares:delivery_boxes' tag)",
                         "A slot for Delivery Packages will be added to delivery table. Default: true")
                 .define("DeliveriesRequirePackaging", true);

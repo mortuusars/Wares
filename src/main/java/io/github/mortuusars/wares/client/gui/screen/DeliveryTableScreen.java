@@ -81,10 +81,10 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
             if (!agreementSlot.hasItem() && isHovering(agreementSlot.x, agreementSlot.y, 18, 18, mouseX, mouseY))
                 this.renderTooltip(poseStack, Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP.translate(), mouseX, mouseY);
 
-            if (Config.DELIVERIES_REQUIRE_PACKAGES.get()) {
-                Slot packagesSlot = menu.slots.get(DeliveryTableBlockEntity.PACKAGES_SLOT);
-                if (!packagesSlot.hasItem() && isHovering(packagesSlot.x, packagesSlot.y, 18, 18, mouseX, mouseY))
-                    this.renderTooltip(poseStack, Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP.translate(), mouseX, mouseY);
+            if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
+                Slot boxSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
+                if (!boxSlot.hasItem() && isHovering(boxSlot.x, boxSlot.y, 18, 18, mouseX, mouseY))
+                    this.renderTooltip(poseStack, Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP.translate(), mouseX, mouseY);
             }
         }
     }
@@ -101,8 +101,8 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
             this.blit(poseStack, leftPos + 79, topPos + 15, 176, 34, 18, 18);
 
         // PACKAGES SLOT
-        if (Config.DELIVERIES_REQUIRE_PACKAGES.get()) {
-            Slot packagesSlot = menu.slots.get(DeliveryTableBlockEntity.PACKAGES_SLOT);
+        if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
+            Slot packagesSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
             this.blit(poseStack, leftPos + packagesSlot.x - 1, topPos + packagesSlot.y - 1, 176, 16, 18, 18);
 
             // Package placeholder

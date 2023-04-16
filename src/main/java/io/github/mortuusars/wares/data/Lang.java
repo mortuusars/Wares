@@ -26,7 +26,7 @@ public enum Lang {
     VILLAGER_PACKAGER("entity.minecraft.villager", "packager"),
 
     GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP("gui", "delivery_table.no_agreement.tooltip"),
-    GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP("gui", "delivery_table.no_packages.tooltip"),
+    GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP("gui", "delivery_table.no_packages.tooltip"),
     GUI_DELIVERY_TABLE_MANUAL_DELIVERY("gui", "delivery_table.manual_delivery"),
     GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP("gui", "delivery_table.manual_delivery.tooltip"),
     GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO("gui", "delivery_table.manual_delivery.tooltip_extra_info"),

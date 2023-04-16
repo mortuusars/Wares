@@ -35,10 +35,10 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
             this.addSlot(new SlotItemHandler(itemHandler, DeliveryTableBlockEntity.AGREEMENT_SLOT, 80, 16));
 
             // PACKAGES
-            if (Config.DELIVERIES_REQUIRE_PACKAGES.get())
-                this.addSlot(new SlotItemHandler(itemHandler, DeliveryTableBlockEntity.PACKAGES_SLOT, 80, 60));
+            if (Config.DELIVERIES_REQUIRE_BOXES.get())
+                this.addSlot(new SlotItemHandler(itemHandler, DeliveryTableBlockEntity.BOX_SLOT, 80, 60));
 
-            int index = DeliveryTableBlockEntity.PACKAGES_SLOT + 1;
+            int index = DeliveryTableBlockEntity.BOX_SLOT + 1;
 
             // INPUT
             for (int row = 0; row < 2; row++) {

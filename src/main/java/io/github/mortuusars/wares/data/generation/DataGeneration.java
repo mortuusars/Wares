@@ -30,8 +30,7 @@ public class DataGeneration
             generator.addProvider(new ItemModels(generator, blockStates.models().existingFileHelper));
             generator.addProvider(new Sounds(generator, helper));
             generator.addProvider(new Languages(generator, "en_us", Languages.MissingEntriesPolicy.EXCEPTION));
-            // TODO: finish UK_UA:
-//            generator.addProvider(new Languages(generator, "uk_ua", Languages.MissingEntriesPolicy.EXCEPTION));
+            generator.addProvider(new Languages(generator, "uk_ua", Languages.MissingEntriesPolicy.EXCEPTION));
         }
     }
 }

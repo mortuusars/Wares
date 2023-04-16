@@ -66,7 +66,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_CARDBOARD_BOX_PACK_TOOLTIP, "Pack");
 
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Place a Delivery Agreement to start a delivery");
-        translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Packages are required for delivery");
+        translate(Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP, "Delivery Boxes are required for delivery");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Deliver Manually");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Deliver Manually");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "%sx longer");
@@ -124,8 +124,12 @@ public class Languages extends LanguageProvider {
 
         translate(Lang.VILLAGER_PACKAGER, "Пакувальник");
 
+        translate(Lang.GUI_CARDBOARD_BOX, "Картонна коробка");
+        translate(Lang.GUI_CARDBOARD_BOX_PACK, "Упакувати");
+        translate(Lang.GUI_CARDBOARD_BOX_PACK_TOOLTIP, "Упакувати");
+
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Покладіть сюди Торговий Договір щоб почати доставку");
-        translate(Lang.GUI_DELIVERY_TABLE_NO_PACKAGES_TOOLTIP, "Для доставки товарів потрібні пакунки");
+        translate(Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP, "Для доставки товарів потрібні коробки");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Відправити вручну");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Відправити вручну");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "Займе у %s раз(и) більше часу");
