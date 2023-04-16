@@ -3,6 +3,7 @@ package io.github.mortuusars.wares.world;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.config.Config;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -27,18 +28,15 @@ public class VillageStructures {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void addVillageStructures(final ServerAboutToStartEvent event) {
-//        if (!Configuration.GENERATE_VILLAGE_STRUCTURES.get())
-//            return;
-
-        // TODO: CONFIG
+        if (!Config.GENERATE_WAREHOUSES.get())
+            return;
 
         Registry<StructureTemplatePool> templatePools = event.getServer().registryAccess().registry(Registry.TEMPLATE_POOL_REGISTRY).get();
         Registry<StructureProcessorList> processorListsRegistry = event.getServer().registryAccess().registry(Registry.PROCESSOR_LIST_REGISTRY).get();
 
         Holder<StructureProcessorList> mossify10ProcessorList = processorListsRegistry.getHolderOrThrow(MOSSIFY_10_PROCESSOR_LIST_KEY);
 
-        int weight = 999;
-//        Integer vaultWeight = Configuration.VAULT_WEIGHT.get();
+        int weight = Config.WAREHOUSE_WEIGHT.get();
 
         VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
                 new ResourceLocation("minecraft:village/plains/houses"),
@@ -69,7 +67,6 @@ public class VillageStructures {
                                                  int weight) {
 
         Logger logger = LogUtils.getLogger();
-//        logger.info("Adding '{}' structure to pool '{}'. Weight: {}.", nbtPieceRL, poolRL, weight);
 
         StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
         if (pool == null) {
@@ -91,7 +88,7 @@ public class VillageStructures {
                                                  int weight) {
 
         Logger logger = LogUtils.getLogger();
-        logger.info("Adding '{}' structure to pool '{}'. Weight: {}.", nbtPieceRL, poolRL, weight);
+//        logger.info("Adding '{}' structure to pool '{}'. Weight: {}.", nbtPieceRL, poolRL, weight);
 
         StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
         if (pool == null) {

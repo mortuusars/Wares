@@ -22,6 +22,9 @@ public class Config {
     public static final ForgeConfigSpec.IntValue DEFAULT_DELIVERY_TIME;
     public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_PACKAGES;
 
+    public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
+    public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
+
     // CLIENT
     public static final ForgeConfigSpec.BooleanValue AGREEMENT_CLOSE_WITH_RMB;
     public static final ForgeConfigSpec.BooleanValue AGREEMENT_APPEND_BUYER_INFO_TO_MESSAGE;
@@ -76,6 +79,18 @@ public class Config {
                 .comment("Each delivery requires (and consumes) a packaging. ('wares:delivery_boxes' tag)",
                         "A slot for Delivery Packages will be added to delivery table. Default: true")
                 .define("DeliveriesRequirePackaging", true);
+
+        builder.pop();
+
+        builder.push("Structures");
+
+        GENERATE_WAREHOUSES = builder
+                .comment("Warehouses will generate in villages.")
+                .define("GenerateWarehouses", true);
+
+        WAREHOUSE_WEIGHT = builder
+                .comment("Warehouse structure weight. Larger number = more chances to spawn.")
+                .defineInRange("WarehouseWeight", 10, 1, Integer.MAX_VALUE);
 
         builder.pop();
 
