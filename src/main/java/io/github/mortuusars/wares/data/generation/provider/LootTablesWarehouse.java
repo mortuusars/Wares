@@ -165,7 +165,7 @@ public class LootTablesWarehouse {
                 item(Items.WHEAT, 6, 16),
                 item(Items.CACTUS, 4, 12),
                 item(Items.GREEN_DYE, 8, 16),
-                item(Items.CLAY, 8, 14),
+                item(Items.CLAY_BALL, 8, 14),
                 item(Items.SANDSTONE, 10, 16),
                 item(Items.RED_SANDSTONE, 10, 16),
                 item(Items.TERRACOTTA, 10, 16),
@@ -186,7 +186,7 @@ public class LootTablesWarehouse {
                 item(Items.CACTUS, 4, 8).setWeight(10),
                 item(Items.RABBIT_HIDE, 4, 10).setWeight(10),
                 item(Items.PAPER, 8, 16).setWeight(10),
-                item(Items.CLAY, 8, 14).setWeight(8),
+                item(Items.CLAY_BALL, 8, 14).setWeight(8),
                 item(Items.DEAD_BUSH, 8, 16).setWeight(6),
                 item(Items.BREAD, 6, 12).setWeight(10))));
 
@@ -197,7 +197,7 @@ public class LootTablesWarehouse {
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(item(Items.CACTUS,8, 16).setWeight(10))
-                        .add(item(Items.CLAY,8, 16).setWeight(10))
+                        .add(item(Items.CLAY_BALL,8, 16).setWeight(10))
                         .add(item(Items.WHEAT,6, 12).setWeight(10))
                         .add(item(Items.PAPER,10, 30).setWeight(10))
                         .add(item(Items.BOOK,4, 12).setWeight(10))

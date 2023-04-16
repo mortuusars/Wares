@@ -43,6 +43,22 @@ public class VillageStructures {
         VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
                 new ResourceLocation("minecraft:village/plains/houses"),
                 Wares.ID + ":village/houses/plains_warehouse",  StructureTemplatePool.Projection.RIGID, weight);
+
+        VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
+                new ResourceLocation("minecraft:village/taiga/houses"),
+                Wares.ID + ":village/houses/taiga_warehouse",  StructureTemplatePool.Projection.RIGID, weight);
+
+        VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
+                new ResourceLocation("minecraft:village/desert/houses"),
+                Wares.ID + ":village/houses/desert_warehouse",  StructureTemplatePool.Projection.RIGID, weight);
+
+        VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
+                new ResourceLocation("minecraft:village/savanna/houses"),
+                Wares.ID + ":village/houses/savanna_warehouse",  StructureTemplatePool.Projection.RIGID, weight);
+
+        VillageStructures.addStructureToPoolSingle(templatePools, mossify10ProcessorList,
+                new ResourceLocation("minecraft:village/snowy/houses"),
+                Wares.ID + ":village/houses/snowy_warehouse",  StructureTemplatePool.Projection.RIGID, weight);
     }
 
     private static void addStructureToPoolLegacy(Registry<StructureTemplatePool> templatePoolRegistry,
