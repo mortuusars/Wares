@@ -19,8 +19,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ClickType;
@@ -36,7 +36,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private final Seal seal;
 
     public AgreementScreen(AgreementMenu menu) {
-        super(menu, menu.playerInventory, TextComponent.EMPTY);
+        super(menu, menu.playerInventory, Component.empty());
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
 
         seal = new Seal(getAgreement().getSeal()).printErrorAndFallbackToDefaultIfNotFound();
@@ -114,7 +114,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // ORDERS
         Rectangle orderedRect = layout.getElement(AgreementLayout.Element.ORDERED);
         if (orderedRect != null) {
-            addRenderableOnly(new TextBlockRenderable(() -> new TextComponent(
+            addRenderableOnly(new TextBlockRenderable(() -> Component.literal(
                     TextUtil.shortenNumber(getAgreement().getDelivered()) + " / " +
                             TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width, orderedRect.height)
                     .setDefaultColor(FONT_COLOR)
@@ -123,7 +123,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                         int ordered = getAgreement().getOrdered();
                         if (delivered >= 1000 || ordered >= 1000)
                             return Lang.GUI_AGREEMENT_DELIVERIES_TOOLTIP.translate(delivered, ordered);
-                        else return TextComponent.EMPTY;
+                        else return Component.empty();
                     })
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
                     .setAlignment(HorizontalAlignment.CENTER));
@@ -158,13 +158,13 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
 
         // SEAL
 
-        MutableComponent buyerInfoTooltip = new TextComponent("");
+        MutableComponent buyerInfoTooltip = Component.literal("");
 
-        if (getAgreement().getBuyerName() != TextComponent.EMPTY)
+        if (!getAgreement().getBuyerName().equals(Component.empty()))
             buyerInfoTooltip.append(getAgreement().getBuyerName());
 
-        if (getAgreement().getBuyerAddress() != TextComponent.EMPTY) {
-            if (getAgreement().getBuyerName() != TextComponent.EMPTY)
+        if (!getAgreement().getBuyerAddress().equals(Component.empty())) {
+            if (!getAgreement().getBuyerName().equals(Component.empty()))
                 buyerInfoTooltip.append("\n");
             buyerInfoTooltip.append(getAgreement().getBuyerAddress());
         }

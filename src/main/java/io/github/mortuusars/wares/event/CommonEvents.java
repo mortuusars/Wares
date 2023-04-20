@@ -2,7 +2,6 @@ package io.github.mortuusars.wares.event;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.command.WaresCommand;
-import io.github.mortuusars.wares.network.ModPackets;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -14,7 +13,6 @@ public class CommonEvents {
         public static void commonSetup(FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 Wares.Stats.register();
-//                ModPackets.register();
             });
         }
     }

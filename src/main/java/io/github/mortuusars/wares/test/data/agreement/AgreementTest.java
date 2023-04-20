@@ -4,7 +4,7 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.test.framework.ITestClass;
 import io.github.mortuusars.wares.test.framework.Test;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -17,7 +17,7 @@ public class AgreementTest implements ITestClass {
         return List.of(
             new Test("DefaultAgreementIsNotExpired", player -> {
                 Agreement agreement = Agreement.builder()
-                        .title(new TextComponent("Title Test"))
+                        .title(Component.literal("Title Test"))
                         .addRequestedItem(ItemStack.EMPTY)
                         .build();
                 assertThat(!agreement.isExpired(player.level.getGameTime()), "Expired when shouldn't.");
@@ -25,7 +25,7 @@ public class AgreementTest implements ITestClass {
 
             new Test("DefaultAgreementIsNotCompleted", player -> {
                 Agreement agreement = Agreement.builder()
-                        .title(new TextComponent("Title Test"))
+                        .title(Component.literal("Title Test"))
                         .addRequestedItem(ItemStack.EMPTY)
                         .build();
                 assertThat(!agreement.isCompleted(), "Completed when shouldn't.");
@@ -89,7 +89,7 @@ public class AgreementTest implements ITestClass {
             new Test("AgreementCodecEncodesAndDecodesCorrectly", player -> {
                 Agreement agreement = Agreement.builder()
                         .id("1")
-                        .buyerName(new TextComponent("Buyer"))
+                        .buyerName(Component.literal("Buyer"))
                         .addRequestedItem(new ItemStack(Items.BAKED_POTATO))
                         .addPaymentItem(new ItemStack(Items.EMERALD))
                         .ordered(99)
@@ -105,7 +105,7 @@ public class AgreementTest implements ITestClass {
 
                 assertThat(decoded.isPresent(), "Decoding failed and returned Empty.");
 
-                Agreement decodedAgreement = decoded.get();
+                @SuppressWarnings("OptionalGetWithoutIsPresent") Agreement decodedAgreement = decoded.get();
 
                 boolean agreementsMatch =
                         decodedAgreement.getId().equals(agreement.getId()) &&

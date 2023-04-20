@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/block",
+	"render_type": "minecraft:cutout",
 	"textures": {
 		"particle": "wares:block/delivery_table_top",
 		"top": "wares:block/delivery_table_top",

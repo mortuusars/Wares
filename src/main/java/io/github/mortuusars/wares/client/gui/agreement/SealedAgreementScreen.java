@@ -5,24 +5,22 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class SealedAgreementScreen extends Screen {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/sealed_agreement.png");
@@ -53,7 +51,7 @@ public class SealedAgreementScreen extends Screen {
     private long prevGameTime = 0;
 
     public SealedAgreementScreen(String seal, Component sealTooltip, Component backsideMessage) {
-        super(TextComponent.EMPTY);
+        super(Component.empty());
 
         this.seal = new Seal(seal).printErrorAndFallbackToDefaultIfNotFound();
         this.sealTooltip = sealTooltip;
@@ -122,7 +120,7 @@ public class SealedAgreementScreen extends Screen {
     protected void init() {
         super.init();
 
-        if (!backsideMessage.equals(TextComponent.EMPTY)) {
+        if (!backsideMessage.equals(Component.empty())) {
             List<FormattedCharSequence> messageLines = new ArrayList<>(font.split(backsideMessage, IMAGE_WIDTH - BACKSIDE_HORIZONTAL_MARGIN * 2));
             backsideMessageVisibleLines = messageLines.subList(0, Math.min(messageLines.size(), (IMAGE_HEIGHT - BACKSIDE_VERTICAL_MARGIN * 2) / font.lineHeight));
             messagePosY = (IMAGE_HEIGHT - backsideMessageVisibleLines.size() * font.lineHeight) / 2;
@@ -198,14 +196,14 @@ public class SealedAgreementScreen extends Screen {
         // SEAL TOOLTIP
         if (Math.abs(fromCenterX) < 20 && Math.abs(fromCenterY) < 20) {
             if (!isFlipped) {
-                if (!sealTooltip.equals(TextComponent.EMPTY))
+                if (!sealTooltip.equals(Component.empty()))
                     renderTooltip(poseStack, sealTooltip, mouseX, mouseY);
             }
         }
 
         // BACK MESSAGE TOOLTIP
         if (isFlipped && Screen.hasShiftDown() &&
-                !backsideMessage.equals(TextComponent.EMPTY) && !backsideMessageLeftoverLines.isEmpty()) {
+                !backsideMessage.equals(Component.empty()) && !backsideMessageLeftoverLines.isEmpty()) {
             renderTooltip(poseStack, backsideMessageLeftoverLines, mouseX, mouseY);
         }
 
@@ -251,7 +249,7 @@ public class SealedAgreementScreen extends Screen {
 
             assert Minecraft.getInstance().level != null;
             assert Minecraft.getInstance().player != null;
-            Random random = Minecraft.getInstance().level.random;
+            RandomSource random = Minecraft.getInstance().level.random;
             float pitch = random.nextFloat() * 0.2f + (isFlipped ? 1.1f : 1.5f);
             Minecraft.getInstance().player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 0.65f, pitch);
         }

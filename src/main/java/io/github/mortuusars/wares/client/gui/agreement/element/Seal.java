@@ -5,6 +5,10 @@ import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Seal {
@@ -25,6 +29,7 @@ public class Seal {
         }
     }
 
+    public static final String SEAL_FOLDER = "textures/gui/seal/";
     public static final String DEFAULT = "default";
     public static final int WIDTH = 48;
     public static final int HEIGHT = 48;
@@ -34,7 +39,7 @@ public class Seal {
 
     public Seal(String name) {
         this.name = name;
-        this.path = Wares.resource("textures/gui/seal/" + name + ".png");
+        this.path = Wares.resource(SEAL_FOLDER + name + ".png");
     }
 
     public static Seal defaultSeal() {
@@ -50,7 +55,13 @@ public class Seal {
     }
 
     public boolean isTextureValid() {
-        return Minecraft.getInstance().getResourceManager().hasResource(getTexturePath());
+        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+        Map<ResourceLocation, Resource> resourceLocationResourceMap = resourceManager.listResources(SEAL_FOLDER, this::sealTextureFilter);
+        return resourceLocationResourceMap.size() > 0;
+    }
+
+    private boolean sealTextureFilter(ResourceLocation resourceLocation) {
+        return resourceLocation.equals(getTexturePath());
     }
 
     public Seal defaultIfNotFound() {

@@ -18,8 +18,6 @@ public class ClientEvents {
         event.enqueueWork(() -> {
             MenuScreens.register(Wares.MenuTypes.DELIVERY_TABLE.get(), DeliveryTableScreen::new);
             MenuScreens.register(Wares.MenuTypes.CARDBOARD_BOX.get(), CardboardBoxScreen::new);
-
-            ItemBlockRenderTypes.setRenderLayer(Wares.Blocks.DELIVERY_TABLE.get(), RenderType.cutout());
         });
     }
 }

@@ -1,7 +1,6 @@
 package io.github.mortuusars.wares.data.agreement;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -10,10 +9,10 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class AgreementBuilder {
     private String id = "";
-    private Component buyerName = TextComponent.EMPTY;
-    private Component buyerAddress = TextComponent.EMPTY;
-    private Component title = TextComponent.EMPTY;
-    private Component message = TextComponent.EMPTY;
+    private Component buyerName = Component.empty();
+    private Component buyerAddress = Component.empty();
+    private Component title = Component.empty();
+    private Component message = Component.empty();
     private String seal = "default";
     private List<ItemStack> requestedItems = new ArrayList<>();
     private List<ItemStack> paymentItems = new ArrayList<>();

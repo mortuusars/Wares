@@ -16,9 +16,9 @@ import io.github.mortuusars.wares.test.framework.TestingResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -43,24 +43,24 @@ public class WaresCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             TestingResult testingResult = new Tests(player).run();
 
-            MutableComponent message = new TextComponent("Testing: ").withStyle(ChatFormatting.GOLD)
-                    .append(new TextComponent("Total: " + testingResult.getTotalTestCount() + ".").withStyle(ChatFormatting.WHITE));
+            MutableComponent message = Component.literal("Testing: ").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal("Total: " + testingResult.getTotalTestCount() + ".").withStyle(ChatFormatting.WHITE));
 
             if (testingResult.passed().size() > 0) {
                 message.append(" ");
-                message.append(new TextComponent("Passed: " + testingResult.passed()
+                message.append(Component.literal("Passed: " + testingResult.passed()
                         .size() + ".").withStyle(ChatFormatting.GREEN));
             }
 
             if (testingResult.failed().size() > 0) {
                 message.append(" ");
-                message.append(new TextComponent("Failed: " + testingResult.failed()
+                message.append(Component.literal("Failed: " + testingResult.failed()
                         .size() + ".").withStyle(ChatFormatting.RED));
             }
 
             if (testingResult.skipped().size() > 0) {
                 message.append(" ");
-                message.append(new TextComponent("Skipped: " + testingResult.skipped()
+                message.append(Component.literal("Skipped: " + testingResult.skipped()
                         .size() + ".").withStyle(ChatFormatting.GRAY));
             }
 
@@ -81,14 +81,14 @@ public class WaresCommand {
 
         SealedAgreement sealedAgreement = new SealedAgreement("example_agreement_sealed",
                 TextProvider.of(
-                        WeightedComponent.of(new TextComponent("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY)),
-                        WeightedComponent.of(new TextComponent("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED))),
-                TextProvider.of(new TextComponent("59 Side Road, Vibrant Plains Village")),
-                TextProvider.of(new TextComponent("Example Agreement")),
-                TextProvider.of(new TextComponent(LoremIpsum.words(20))),
+                        WeightedComponent.of(Component.literal("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY)),
+                        WeightedComponent.of(Component.literal("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED))),
+                TextProvider.of(Component.literal("59 Side Road, Vibrant Plains Village")),
+                TextProvider.of(Component.literal("Example Agreement")),
+                TextProvider.of(Component.literal(LoremIpsum.words(20))),
                 "default",
-                new TextComponent("Wares Inc."),
-                new TextComponent(LoremIpsum.words(45)),
+                Component.literal("Wares Inc."),
+                Component.literal(LoremIpsum.words(45)),
                 Either.left(new ResourceLocation("minecraft:chests/village/village_butcher")),
                 Either.left(new ResourceLocation("minecraft:chests/buried_treasure")),
                 Either.right(new SteppedInt(12, 64, 8)),
@@ -112,10 +112,10 @@ public class WaresCommand {
 
         Agreement agreement = Agreement.builder()
                 .id("example_agreement")
-                .buyerName(new TextComponent("Greg the Blacksmith").withStyle(Style.EMPTY.withColor(0x333333)))
-                .buyerAddress(new TextComponent("12 Side Road, Vibrant Plains Village").withStyle(ChatFormatting.OBFUSCATED))
-                .title(new TextComponent("Example Agreement").withStyle(Style.EMPTY.withColor(0x922706)))
-                .message(new TextComponent(LoremIpsum.words(50)))
+                .buyerName(Component.literal("Greg the Blacksmith").withStyle(Style.EMPTY.withColor(0x333333)))
+                .buyerAddress(Component.literal("12 Side Road, Vibrant Plains Village").withStyle(ChatFormatting.OBFUSCATED))
+                .title(Component.literal("Example Agreement").withStyle(Style.EMPTY.withColor(0x922706)))
+                .message(Component.literal(LoremIpsum.words(50)))
                 .addRequestedItem(new ItemStack(Items.BAKED_POTATO, 4))
                 .addRequestedItem(new ItemStack(Items.PUMPKIN_PIE, 2))
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))

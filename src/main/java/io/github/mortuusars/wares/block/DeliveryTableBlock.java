@@ -138,7 +138,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         }
 
         if (player instanceof ServerPlayer serverPlayer)
-            NetworkHooks.openGui(serverPlayer, deliveryTableBlockEntity, pos);
+            NetworkHooks.openScreen(serverPlayer, deliveryTableBlockEntity, pos);
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

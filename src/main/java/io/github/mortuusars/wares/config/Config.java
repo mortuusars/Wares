@@ -115,11 +115,13 @@ public class Config {
     }
 
     public static void onConfigReload(final ModConfigEvent.Reloading ignoredEvent) {
-        validateConfig();
+        if (COMMON.isLoaded())
+            validateConfig();
     }
 
     public static void onConfigLoad(final ModConfigEvent.Loading ignoredEvent) {
-        validateConfig();
+        if (COMMON.isLoaded())
+            validateConfig();
     }
 
     public static void validateConfig() {

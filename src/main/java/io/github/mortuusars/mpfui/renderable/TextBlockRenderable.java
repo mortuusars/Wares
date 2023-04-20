@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +23,7 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
     private TooltipBehavior tooltipBehavior = TooltipBehavior.REGULAR_AND_LEFTOVER;
     private List<FormattedCharSequence> leftoverTooltipLines = new ArrayList<>();
-    private final List<FormattedCharSequence> tooltipSeparatorLines = Minecraft.getInstance().font.split(new TextComponent("\n-\n"), 30);
+    private final List<FormattedCharSequence> tooltipSeparatorLines = Minecraft.getInstance().font.split(Component.literal("\n-\n"), 30);
 
     public TextBlockRenderable(Component text, int x, int y, int width, int height) {
         this(() -> text, x, y, width, height);

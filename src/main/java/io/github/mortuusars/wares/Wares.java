@@ -105,7 +105,7 @@ public class Wares
 
     @SuppressWarnings("DataFlowIssue")
     public static class BlockEntities {
-        private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ID);
+        private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ID);
 
         @SuppressWarnings("DataFlowIssue")
         public static final RegistryObject<BlockEntityType<DeliveryTableBlockEntity>> DELIVERY_TABLE =
@@ -118,7 +118,7 @@ public class Wares
     }
 
     public static class MenuTypes {
-        private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wares.ID);
+        private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Wares.ID);
 
         public static final RegistryObject<MenuType<DeliveryTableMenu>> DELIVERY_TABLE = MENU_TYPES
                 .register("delivery_table", () -> IForgeMenuType.create(DeliveryTableMenu::fromBuffer));
@@ -162,13 +162,14 @@ public class Wares
 
     public static class Villagers {
         public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(ForgeRegistries.POI_TYPES, Wares.ID);
-        public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, Wares.ID);
+        public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.VILLAGER_PROFESSIONS, Wares.ID);
+
 
         public static final RegistryObject<PoiType> DELIVERY_TABLE_POI = POI_TYPES.register(Blocks.DELIVERY_TABLE.getId().getPath(),
-                () -> new PoiType(Blocks.DELIVERY_TABLE.getId().getPath(), PoiType.getBlockStates(Blocks.DELIVERY_TABLE.get()), 1, 1));
+                () -> new PoiType(ImmutableSet.copyOf(Blocks.DELIVERY_TABLE.get().getStateDefinition().getPossibleStates()), 1, 1));
 
         public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
-                () -> new VillagerProfession("packager", DELIVERY_TABLE_POI.get(),
+                () -> new VillagerProfession("packager", poi -> poi.is(DELIVERY_TABLE_POI.getKey()), poi -> poi.is(DELIVERY_TABLE_POI.getKey()),
                         ImmutableSet.of(), ImmutableSet.of(), null));
     }
 

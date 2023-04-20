@@ -8,7 +8,6 @@ import io.github.mortuusars.wares.data.agreement.SealedAgreement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -54,7 +53,7 @@ public class SealedAgreementItem extends Item {
         if (stack.hasTag() && stack.getTag().contains(DAMAGED_TAG))
             id = id + "_damaged";
 
-        return new TranslatableComponent(id);
+        return Component.translatable(id);
     }
 
     @Override

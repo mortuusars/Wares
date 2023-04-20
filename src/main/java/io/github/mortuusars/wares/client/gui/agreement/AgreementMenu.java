@@ -7,7 +7,6 @@ import io.github.mortuusars.wares.data.agreement.Agreement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -107,13 +106,13 @@ public class AgreementMenu extends AbstractContainerMenu {
 
     public MutableComponent getTitle() {
         Component title = getAgreement().getTitle();
-        return title.equals(TextComponent.EMPTY) ? Lang.GUI_AGREEMENT_TITLE.translate() : title.copy();
+        return title.equals(Component.empty()) ? Lang.GUI_AGREEMENT_TITLE.translate() : title.copy();
     }
 
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
         MutableComponent message = (MutableComponent) getAgreement().getMessage();
-        message = message.equals(TextComponent.EMPTY) ? Lang.GUI_AGREEMENT_MESSAGE.translate() : message.copy();
+        message = message.equals(Component.empty()) ? Lang.GUI_AGREEMENT_MESSAGE.translate() : message.copy();
 
         if (Config.AGREEMENT_APPEND_BUYER_INFO_TO_MESSAGE.get()) {
             boolean hasBuyerName = Minecraft.getInstance().font.width(getAgreement().getBuyerName()) != 0;
@@ -226,6 +225,11 @@ public class AgreementMenu extends AbstractContainerMenu {
             }
         }
 
+    }
+
+    @Override
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
+        return ItemStack.EMPTY;
     }
 
     @Override

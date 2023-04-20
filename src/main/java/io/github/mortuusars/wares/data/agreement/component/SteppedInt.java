@@ -3,8 +3,8 @@ package io.github.mortuusars.wares.data.agreement.component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.RandomSource;
 
-import java.util.Random;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -31,7 +31,7 @@ public record SteppedInt(int min, int max, int step) {
         return codec.flatXmap(validateFunc, validateFunc);
     }
 
-    public int sample(Random random) {
+    public int sample(RandomSource random) {
         int sample = random.nextInt(min, max + 1);
         int offset = Math.abs(sample % step);
         return offset != 0 ? Math.min(max, sample - offset + Math.abs(step)) : sample;

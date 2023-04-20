@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,10 +23,10 @@ import java.util.Optional;
 public class Agreement {
     public static final Codec<Agreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.optionalFieldOf("id", "").forGetter(Agreement::getId),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerName", TextComponent.EMPTY).forGetter(Agreement::getBuyerName),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress", TextComponent.EMPTY).forGetter(Agreement::getBuyerAddress),
-                    ComponentCodec.CODEC.optionalFieldOf("title", TextComponent.EMPTY).forGetter(Agreement::getTitle),
-                    ComponentCodec.CODEC.optionalFieldOf("message", TextComponent.EMPTY).forGetter(Agreement::getMessage),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerName", Component.empty()).forGetter(Agreement::getBuyerName),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress", Component.empty()).forGetter(Agreement::getBuyerAddress),
+                    ComponentCodec.CODEC.optionalFieldOf("title", Component.empty()).forGetter(Agreement::getTitle),
+                    ComponentCodec.CODEC.optionalFieldOf("message", Component.empty()).forGetter(Agreement::getMessage),
                     Codec.STRING.optionalFieldOf("seal", "default").forGetter(Agreement::getSeal),
                     Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(Agreement::getRequestedItems),
                     Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(Agreement::getPaymentItems),

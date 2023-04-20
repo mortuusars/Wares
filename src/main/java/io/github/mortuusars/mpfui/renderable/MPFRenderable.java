@@ -7,15 +7,15 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class MPFRenderable<T extends MPFRenderable<T>> extends AbstractWidget {
     protected VisibilityPredicate<T> visibilityPredicate = (renderable, poseStack, mouseX, mouseY) -> true;
-    protected Supplier<Component> tooltip = () -> TextComponent.EMPTY;
+    protected Supplier<Component> tooltip = Component::empty;
     protected int tooltipWidth = 220;
 
     public MPFRenderable(int x, int y, int width, int height, Component message) {
@@ -23,7 +23,7 @@ public abstract class MPFRenderable<T extends MPFRenderable<T>> extends Abstract
     }
 
     public MPFRenderable(int x, int y, int width, int height) {
-        super(x, y, width, height, TextComponent.EMPTY);
+        super(x, y, width, height, Component.empty());
     }
 
     public abstract T getThis();
@@ -76,7 +76,7 @@ public abstract class MPFRenderable<T extends MPFRenderable<T>> extends Abstract
     public void renderToolTip(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY) {
         Component tooltipComponent = tooltip.get();
         Screen screen = Minecraft.getInstance().screen;
-        if (tooltipComponent != TextComponent.EMPTY && screen != null) {
+        if (!Objects.equals(tooltipComponent, Component.empty()) && screen != null) {
             screen.renderTooltip(pPoseStack, Minecraft.getInstance().font.split(tooltipComponent, tooltipWidth), pMouseX, pMouseY);
         }
     }

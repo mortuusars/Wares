@@ -1,8 +1,8 @@
 package io.github.mortuusars.wares.data;
 
 import io.github.mortuusars.wares.Wares;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -88,6 +88,6 @@ public enum Lang {
     }
 
     public MutableComponent translate(Object... args) {
-        return new TranslatableComponent(key, args);
+        return Component.translatable(key, args);
     }
 }

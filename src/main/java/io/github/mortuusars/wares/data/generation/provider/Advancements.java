@@ -8,9 +8,10 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +37,7 @@ public class Advancements extends AdvancementProvider {
     }
 
     @Override
-    public void run(@NotNull HashCache cache) {
+    public void run(CachedOutput cache) {
         Consumer<Advancement> consumer = getOutput(cache);
 
         CompoundTag almostExpiredTag = new CompoundTag();
@@ -56,7 +57,7 @@ public class Advancements extends AdvancementProvider {
                 .save(consumer, Wares.resource("adventure/at_the_last_minutes"), existingFileHelper);
     }
 
-    protected Consumer<Advancement> getOutput(HashCache cache) {
+    protected Consumer<Advancement> getOutput(CachedOutput cache) {
         Set<ResourceLocation> set = Sets.newHashSet();
         return (advancement) -> {
             if (!set.add(advancement.getId())) {
@@ -65,7 +66,7 @@ public class Advancements extends AdvancementProvider {
                 Path path1 = PATH.resolve("data/" + advancement.getId().getNamespace() + "/advancements/" + advancement.getId().getPath() + ".json");
 
                 try {
-                    DataProvider.save((new GsonBuilder()).setPrettyPrinting().create(), cache, advancement.deconstruct().serializeToJson(), path1);
+                    DataProvider.saveStable(cache, advancement.deconstruct().serializeToJson(), path1);
                 }
                 catch (IOException ioexception) {
                     LOGGER.error("Couldn't save advancement {}", path1, ioexception);

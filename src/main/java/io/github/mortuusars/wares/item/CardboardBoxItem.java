@@ -50,7 +50,7 @@ public class CardboardBoxItem extends BlockItem {
     }
 
     private void openCardboardBoxGui(ServerPlayer serverPlayer, ItemStack cardboardBoxStack) {
-        NetworkHooks.openGui(serverPlayer, new SimpleMenuProvider((containerId, playerInventory, player) ->
+        NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider((containerId, playerInventory, player) ->
                         new CardboardBoxMenu(containerId, playerInventory, cardboardBoxStack), cardboardBoxStack.getHoverName()),
                 buffer -> buffer.writeItemStack(cardboardBoxStack, false));
 

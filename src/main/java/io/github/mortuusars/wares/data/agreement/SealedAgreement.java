@@ -13,9 +13,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -51,8 +51,8 @@ public record SealedAgreement(String id,
             TextProvider.CODEC.optionalFieldOf("title", TextProvider.EMPTY).forGetter(SealedAgreement::title),
             TextProvider.CODEC.optionalFieldOf("message", TextProvider.EMPTY).forGetter(SealedAgreement::message),
             Codec.STRING.optionalFieldOf("seal", "default").forGetter(SealedAgreement::seal),
-            ComponentCodec.CODEC.optionalFieldOf("sealTooltip", TextComponent.EMPTY).forGetter(SealedAgreement::sealTooltip),
-            ComponentCodec.CODEC.optionalFieldOf("backsideMessage", TextComponent.EMPTY).forGetter(SealedAgreement::backsideMessage),
+            ComponentCodec.CODEC.optionalFieldOf("sealTooltip", Component.empty()).forGetter(SealedAgreement::sealTooltip),
+            ComponentCodec.CODEC.optionalFieldOf("backsideMessage", Component.empty()).forGetter(SealedAgreement::backsideMessage),
             Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).fieldOf("requested").forGetter(SealedAgreement::requested),
             Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).fieldOf("payment").forGetter(SealedAgreement::payment),
             Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("ordered", Either.left(0)).forGetter(SealedAgreement::ordered),
@@ -90,7 +90,7 @@ public record SealedAgreement(String id,
     }
 
     public Agreement realize(ServerLevel level) {
-        Random random = level.getRandom();
+        RandomSource random = level.getRandom();
 
         int quantity = ordered.map(integer -> integer, steppedInt -> steppedInt.sample(random));
 
@@ -141,8 +141,8 @@ public record SealedAgreement(String id,
         private TextProvider title = TextProvider.EMPTY;
         private TextProvider message = TextProvider.EMPTY;
         private String seal = "default";
-        private Component sealTooltip = TextComponent.EMPTY;
-        private Component backsideMessage = TextComponent.EMPTY;
+        private Component sealTooltip = Component.empty();
+        private Component backsideMessage = Component.empty();
         private Either<ResourceLocation, List<ItemStack>> requested = Either.right(Collections.emptyList());
         private Either<ResourceLocation, List<ItemStack>> payment = Either.right(Collections.emptyList());
         private Either<Integer, SteppedInt> ordered = Either.left(0);
