@@ -1,55 +1,30 @@
 {
   "variants": {
-    "agreement=none,facing=north": {
-      "model": "wares:block/delivery_table"
-    },
-    "agreement=sealed,facing=north": {
-      "model": "wares:block/delivery_table_agreement_sealed"
-    },
-    "agreement=regular,facing=north": {
-      "model": "wares:block/delivery_table_agreement_regular"
+    "agreement=completed,facing=east": {
+      "model": "wares:block/delivery_table_agreement_completed",
+      "y": 90
     },
     "agreement=completed,facing=north": {
       "model": "wares:block/delivery_table_agreement_completed"
-    },
-    "agreement=expired,facing=north": {
-      "model": "wares:block/delivery_table_agreement_expired"
-    },
-    "agreement=none,facing=south": {
-      "model": "wares:block/delivery_table",
-      "y": 180
-    },
-    "agreement=sealed,facing=south": {
-      "model": "wares:block/delivery_table_agreement_sealed",
-      "y": 180
-    },
-    "agreement=regular,facing=south": {
-      "model": "wares:block/delivery_table_agreement_regular",
-      "y": 180
     },
     "agreement=completed,facing=south": {
       "model": "wares:block/delivery_table_agreement_completed",
       "y": 180
     },
-    "agreement=expired,facing=south": {
-      "model": "wares:block/delivery_table_agreement_expired",
-      "y": 180
-    },
-    "agreement=none,facing=west": {
-      "model": "wares:block/delivery_table",
-      "y": 270
-    },
-    "agreement=sealed,facing=west": {
-      "model": "wares:block/delivery_table_agreement_sealed",
-      "y": 270
-    },
-    "agreement=regular,facing=west": {
-      "model": "wares:block/delivery_table_agreement_regular",
-      "y": 270
-    },
     "agreement=completed,facing=west": {
       "model": "wares:block/delivery_table_agreement_completed",
       "y": 270
+    },
+    "agreement=expired,facing=east": {
+      "model": "wares:block/delivery_table_agreement_expired",
+      "y": 90
+    },
+    "agreement=expired,facing=north": {
+      "model": "wares:block/delivery_table_agreement_expired"
+    },
+    "agreement=expired,facing=south": {
+      "model": "wares:block/delivery_table_agreement_expired",
+      "y": 180
     },
     "agreement=expired,facing=west": {
       "model": "wares:block/delivery_table_agreement_expired",
@@ -59,21 +34,46 @@
       "model": "wares:block/delivery_table",
       "y": 90
     },
-    "agreement=sealed,facing=east": {
-      "model": "wares:block/delivery_table_agreement_sealed",
-      "y": 90
+    "agreement=none,facing=north": {
+      "model": "wares:block/delivery_table"
+    },
+    "agreement=none,facing=south": {
+      "model": "wares:block/delivery_table",
+      "y": 180
+    },
+    "agreement=none,facing=west": {
+      "model": "wares:block/delivery_table",
+      "y": 270
     },
     "agreement=regular,facing=east": {
       "model": "wares:block/delivery_table_agreement_regular",
       "y": 90
     },
-    "agreement=completed,facing=east": {
-      "model": "wares:block/delivery_table_agreement_completed",
+    "agreement=regular,facing=north": {
+      "model": "wares:block/delivery_table_agreement_regular"
+    },
+    "agreement=regular,facing=south": {
+      "model": "wares:block/delivery_table_agreement_regular",
+      "y": 180
+    },
+    "agreement=regular,facing=west": {
+      "model": "wares:block/delivery_table_agreement_regular",
+      "y": 270
+    },
+    "agreement=sealed,facing=east": {
+      "model": "wares:block/delivery_table_agreement_sealed",
       "y": 90
     },
-    "agreement=expired,facing=east": {
-      "model": "wares:block/delivery_table_agreement_expired",
-      "y": 90
+    "agreement=sealed,facing=north": {
+      "model": "wares:block/delivery_table_agreement_sealed"
+    },
+    "agreement=sealed,facing=south": {
+      "model": "wares:block/delivery_table_agreement_sealed",
+      "y": 180
+    },
+    "agreement=sealed,facing=west": {
+      "model": "wares:block/delivery_table_agreement_sealed",
+      "y": 270
     }
   }
 }

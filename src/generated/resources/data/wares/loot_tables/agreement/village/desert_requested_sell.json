@@ -2,20 +2,19 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 6.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 6.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:wheat"
@@ -24,13 +23,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 12.0
+                "max": 12.0,
+                "min": 4.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:cactus"
@@ -39,13 +38,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:green_dye"
@@ -54,13 +53,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 14.0
+                "max": 14.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:clay_ball"
@@ -69,13 +68,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:sandstone"
@@ -84,13 +83,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:red_sandstone"
@@ -99,13 +98,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:terracotta"
@@ -114,13 +113,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:black_terracotta"
@@ -129,13 +128,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:white_terracotta"
@@ -144,13 +143,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "max": 10.0,
+                "min": 4.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:rabbit_hide"
@@ -159,13 +158,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:paper"
@@ -174,18 +173,19 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 3.0,
-                "max": 6.0
+                "max": 6.0,
+                "min": 3.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:bread"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

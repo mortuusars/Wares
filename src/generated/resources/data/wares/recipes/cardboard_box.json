@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "PP ",
-    "PP "
-  ],
   "key": {
     "P": {
       "item": "minecraft:paper"
     }
   },
+  "pattern": [
+    "PP ",
+    "PP "
+  ],
   "result": {
-    "item": "wares:cardboard_box",
-    "count": 2
+    "count": 2,
+    "item": "wares:cardboard_box"
   }
 }

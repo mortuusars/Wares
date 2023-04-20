@@ -2,58 +2,58 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "conditions": [
                 {
-                  "condition": "minecraft:block_state_property",
                   "block": "wares:cardboard_box",
+                  "condition": "minecraft:block_state_property",
                   "properties": {
                     "boxes": "2"
                   }
                 }
               ],
               "count": 2.0,
-              "add": false
+              "function": "minecraft:set_count"
             },
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "conditions": [
                 {
-                  "condition": "minecraft:block_state_property",
                   "block": "wares:cardboard_box",
+                  "condition": "minecraft:block_state_property",
                   "properties": {
                     "boxes": "3"
                   }
                 }
               ],
               "count": 3.0,
-              "add": false
+              "function": "minecraft:set_count"
             },
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "conditions": [
                 {
-                  "condition": "minecraft:block_state_property",
                   "block": "wares:cardboard_box",
+                  "condition": "minecraft:block_state_property",
                   "properties": {
                     "boxes": "4"
                   }
                 }
               ],
               "count": 4.0,
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "wares:cardboard_box"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

@@ -2,93 +2,93 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": {
-        "type": "minecraft:uniform",
-        "min": 2.0,
-        "max": 6.0
-      },
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 3.0
+                "max": 3.0,
+                "min": 1.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:paper"
+          "name": "minecraft:paper",
+          "weight": 10
         }
-      ]
-    },
-    {
+      ],
       "rolls": {
         "type": "minecraft:uniform",
-        "min": 1.0,
-        "max": 6.0
-      },
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "weight": 8,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 1.0,
-              "add": false
-            }
-          ],
-          "name": "wares:cardboard_box"
-        }
-      ]
+        "max": 6.0,
+        "min": 2.0
+      }
     },
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 6,
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "wares:cardboard_box",
+          "weight": 8
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 6.0,
+        "min": 1.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
               "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/snowy_payment_sell\",requested:\"wares:agreement/village/snowy_requested_sell\"}"
             },
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": 1.0,
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "wares:sealed_delivery_agreement"
+          "name": "wares:sealed_delivery_agreement",
+          "weight": 6
         },
         {
           "type": "minecraft:item",
-          "weight": 3,
           "functions": [
             {
               "function": "minecraft:set_nbt",
               "tag": "{experience:{max:32,min:12,step:4},ordered:{max:256,min:64,step:8},payment:\"wares:agreement/village/snowy_payment_buy\",requested:\"wares:agreement/village/snowy_requested_buy\"}"
             },
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": 1.0,
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "wares:sealed_delivery_agreement"
+          "name": "wares:sealed_delivery_agreement",
+          "weight": 3
         },
         {
           "type": "minecraft:empty"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

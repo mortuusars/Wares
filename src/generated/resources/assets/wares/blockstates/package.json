@@ -1,5 +1,9 @@
 {
   "variants": {
+    "facing=east": {
+      "model": "wares:block/package",
+      "y": 90
+    },
     "facing=north": {
       "model": "wares:block/package"
     },
@@ -10,10 +14,6 @@
     "facing=west": {
       "model": "wares:block/package",
       "y": 270
-    },
-    "facing=east": {
-      "model": "wares:block/package",
-      "y": 90
     }
   }
 }

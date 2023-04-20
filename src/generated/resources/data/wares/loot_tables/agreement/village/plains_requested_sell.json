@@ -2,20 +2,19 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 14.0
+                "max": 14.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:wheat"
@@ -24,13 +23,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 14.0
+                "max": 14.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:potato"
@@ -39,13 +38,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 10.0
+                "max": 10.0,
+                "min": 4.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:leather"
@@ -54,13 +53,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 10.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 10.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:paper"
@@ -69,13 +68,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 6.0
+                "max": 6.0,
+                "min": 2.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:beef"
@@ -84,13 +83,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 6.0
+                "max": 6.0,
+                "min": 2.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:porkchop"
@@ -99,13 +98,13 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 6.0
+                "max": 6.0,
+                "min": 2.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:chicken"
@@ -114,18 +113,19 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 3.0,
-                "max": 6.0
+                "max": 6.0,
+                "min": 3.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:bread"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

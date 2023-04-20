@@ -1,31 +1,182 @@
 {
-  "item.paper.tear": {
-    "subtitle": "subtitle.wares.paper.tear",
+  "block.cardboard.break": {
     "sounds": [
-      "wares:item/paper_tear1",
-      "wares:item/paper_tear2"
-    ]
-  },
-  "item.paper.crackle": {
-    "subtitle": "subtitle.wares.paper.crackle",
-    "sounds": [
-      "item/book/open_flip1",
-      "item/book/open_flip2",
-      "item/book/open_flip3",
       {
-        "name": "wares:item/paper",
-        "volume": 0.3,
-        "pitch": 0.85
+        "name": "block/scaffold/place1",
+        "pitch": 0.6,
+        "volume": 0.6
       },
       {
-        "name": "wares:item/paper",
-        "volume": 0.3,
-        "pitch": 1.25
+        "name": "block/scaffold/place2",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "block/scaffold/place3",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "block/scaffold/place4",
+        "pitch": 0.6,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.block.generic.break"
+  },
+  "block.cardboard.fall": {
+    "sounds": [
+      {
+        "name": "step/scaffold1",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold2",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold3",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold4",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold5",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold6",
+        "pitch": 0.65,
+        "volume": 0.65
+      },
+      {
+        "name": "step/scaffold7",
+        "pitch": 0.65,
+        "volume": 0.65
       }
     ]
   },
+  "block.cardboard.hit": {
+    "sounds": [
+      {
+        "name": "step/scaffold1",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold2",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold3",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold4",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold5",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold6",
+        "pitch": 0.7,
+        "volume": 0.5
+      },
+      {
+        "name": "step/scaffold7",
+        "pitch": 0.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.block.generic.hit"
+  },
+  "block.cardboard.place": {
+    "sounds": [
+      {
+        "name": "block/scaffold/place1",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "block/scaffold/place2",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "block/scaffold/place3",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "block/scaffold/place4",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.block.generic.place"
+  },
+  "block.cardboard.step": {
+    "sounds": [
+      {
+        "name": "step/scaffold1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold2",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold3",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold4",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold5",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold6",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/scaffold7",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "block.cardboard_box.use": {
+    "sounds": [
+      "wares:block/cardboard/hit1",
+      "wares:block/cardboard/hit2",
+      "wares:block/cardboard/hit3",
+      "wares:block/cardboard/hit4"
+    ]
+  },
   "block.delivery_table.writing": {
-    "subtitle": "subtitle.wares.writing",
     "sounds": [
       {
         "name": "wares:block/delivery_table/writing1",
@@ -39,192 +190,41 @@
         "name": "wares:block/delivery_table/writing3",
         "volume": 0.9
       }
-    ]
-  },
-  "block.cardboard.break": {
-    "subtitle": "subtitles.block.generic.break",
-    "sounds": [
-      {
-        "name": "block/scaffold/place1",
-        "volume": 0.6,
-        "pitch": 0.6
-      },
-      {
-        "name": "block/scaffold/place2",
-        "volume": 0.6,
-        "pitch": 0.6
-      },
-      {
-        "name": "block/scaffold/place3",
-        "volume": 0.6,
-        "pitch": 0.6
-      },
-      {
-        "name": "block/scaffold/place4",
-        "volume": 0.6,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "block.cardboard.place": {
-    "subtitle": "subtitles.block.generic.place",
-    "sounds": [
-      {
-        "name": "block/scaffold/place1",
-        "volume": 0.7,
-        "pitch": 0.8
-      },
-      {
-        "name": "block/scaffold/place2",
-        "volume": 0.7,
-        "pitch": 0.8
-      },
-      {
-        "name": "block/scaffold/place3",
-        "volume": 0.7,
-        "pitch": 0.8
-      },
-      {
-        "name": "block/scaffold/place4",
-        "volume": 0.7,
-        "pitch": 0.8
-      }
-    ]
-  },
-  "block.cardboard.step": {
-    "subtitle": "subtitles.block.generic.footsteps",
-    "sounds": [
-      {
-        "name": "step/scaffold1",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold2",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold3",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold4",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold5",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold6",
-        "volume": 0.6,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold7",
-        "volume": 0.6,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "block.cardboard.hit": {
-    "subtitle": "subtitles.block.generic.hit",
-    "sounds": [
-      {
-        "name": "step/scaffold1",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold2",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold3",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold4",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold5",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold6",
-        "volume": 0.5,
-        "pitch": 0.7
-      },
-      {
-        "name": "step/scaffold7",
-        "volume": 0.5,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "block.cardboard.fall": {
-    "sounds": [
-      {
-        "name": "step/scaffold1",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold2",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold3",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold4",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold5",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold6",
-        "volume": 0.65,
-        "pitch": 0.65
-      },
-      {
-        "name": "step/scaffold7",
-        "volume": 0.65,
-        "pitch": 0.65
-      }
-    ]
-  },
-  "block.cardboard_box.use": {
-    "sounds": [
-      "wares:block/cardboard/hit1",
-      "wares:block/cardboard/hit2",
-      "wares:block/cardboard/hit3",
-      "wares:block/cardboard/hit4"
-    ]
+    ],
+    "subtitle": "subtitle.wares.writing"
   },
   "entity.villager.work_packager": {
-    "subtitle": "subtitles.entity.villager.work_packager",
     "sounds": [
       "wares:block/cardboard/hit1",
       "wares:block/cardboard/hit2",
       "wares:block/cardboard/hit3",
       "wares:block/cardboard/hit4"
-    ]
+    ],
+    "subtitle": "subtitles.entity.villager.work_packager"
+  },
+  "item.paper.crackle": {
+    "sounds": [
+      "item/book/open_flip1",
+      "item/book/open_flip2",
+      "item/book/open_flip3",
+      {
+        "name": "wares:item/paper",
+        "pitch": 0.85,
+        "volume": 0.3
+      },
+      {
+        "name": "wares:item/paper",
+        "pitch": 1.25,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitle.wares.paper.crackle"
+  },
+  "item.paper.tear": {
+    "sounds": [
+      "wares:item/paper_tear1",
+      "wares:item/paper_tear2"
+    ],
+    "subtitle": "subtitle.wares.paper.tear"
   }
 }

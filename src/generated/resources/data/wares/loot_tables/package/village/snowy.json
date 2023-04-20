@@ -2,170 +2,170 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:potato"
+          "name": "minecraft:potato",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 20.0
+                "max": 20.0,
+                "min": 12.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:snow_block"
+          "name": "minecraft:snow_block",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 20.0
+                "max": 20.0,
+                "min": 12.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:ice"
+          "name": "minecraft:ice",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 20.0
+                "max": 20.0,
+                "min": 12.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:blue_ice"
+          "name": "minecraft:blue_ice",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 12.0,
-                "max": 20.0
+                "max": 20.0,
+                "min": 12.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:stripped_spruce_log"
+          "name": "minecraft:stripped_spruce_log",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 4.0,
-                "max": 12.0
+                "max": 12.0,
+                "min": 4.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:book"
+          "name": "minecraft:book",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 6.0,
-                "max": 16.0
+                "max": 16.0,
+                "min": 6.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:black_dye"
+          "name": "minecraft:black_dye",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 3.0
+                "max": 3.0,
+                "min": 1.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:bell"
+          "name": "minecraft:bell",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 8.0,
-                "max": 20.0
+                "max": 20.0,
+                "min": 8.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:emerald"
+          "name": "minecraft:emerald",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 8.0
+                "max": 8.0,
+                "min": 2.0
               },
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:experience_bottle"
+          "name": "minecraft:experience_bottle",
+          "weight": 2
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

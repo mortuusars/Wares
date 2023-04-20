@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "IF ",
-    "WW ",
-    "WW "
-  ],
   "key": {
-    "I": {
-      "item": "minecraft:ink_sac"
-    },
     "F": {
       "tag": "forge:feathers"
+    },
+    "I": {
+      "item": "minecraft:ink_sac"
     },
     "W": {
       "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "IF ",
+    "WW ",
+    "WW "
+  ],
   "result": {
     "item": "wares:delivery_table"
   }
