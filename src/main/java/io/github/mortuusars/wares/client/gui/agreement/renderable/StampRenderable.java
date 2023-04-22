@@ -2,7 +2,7 @@ package io.github.mortuusars.wares.client.gui.agreement.renderable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -23,8 +23,8 @@ public class StampRenderable extends TextureRenderable {
     protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
         poseStack.pushPose();
 
-        poseStack.translate(x + width / 2f, y + height / 2f, 0);
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(-5));
+        poseStack.translate(getX() + width / 2f, getY() + height / 2f, 0);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-5));
         poseStack.scale(1.2f, 1.2f, 1.2f);
         poseStack.translate(-(width/2f), -(height/2f), 0);
 

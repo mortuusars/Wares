@@ -5,6 +5,7 @@ import io.github.mortuusars.mpfui.component.TooltipBehavior;
 import io.github.mortuusars.mpfui.component.HorizontalAlignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -69,12 +70,17 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
     @Override
     public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (isVisible(poseStack, mouseX, mouseY)) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + this.width && mouseY < getY() + this.height;
             renderText(poseStack, mouseX, mouseY, partialTick);
 
             if (isHovered)
                 renderToolTip(poseStack, mouseX, mouseY);
         }
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+
     }
 
     protected void renderText(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
@@ -101,17 +107,16 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
             float lineX;
 
             if (horizontalAlignment == HorizontalAlignment.RIGHT)
-                lineX = x + (width - lineWidth);
+                lineX = getX() + (width - lineWidth);
             else if (horizontalAlignment == HorizontalAlignment.CENTER)
-                lineX = x + (width / 2f - lineWidth / 2f);
+                lineX = getX() + (width / 2f - lineWidth / 2f);
             else
-                lineX = x;
+                lineX = getX();
 
-            font.draw(poseStack, line, lineX, y + (lineIndex * font.lineHeight), getColor());
+            font.draw(poseStack, line, lineX, getY() + (lineIndex * font.lineHeight), getColor());
         }
     }
 
-    @Override
     public void renderToolTip(@NotNull PoseStack poseStack, int mouseX, int mouseY) {
         if (this.tooltipBehavior == TooltipBehavior.NONE)
             return;

@@ -29,7 +29,7 @@ public class Seal {
         }
     }
 
-    public static final String SEAL_FOLDER = "textures/gui/seal/";
+    public static final String SEAL_FOLDER = "textures/gui/seal";
     public static final String DEFAULT = "default";
     public static final int WIDTH = 48;
     public static final int HEIGHT = 48;
@@ -39,7 +39,7 @@ public class Seal {
 
     public Seal(String name) {
         this.name = name;
-        this.path = Wares.resource(SEAL_FOLDER + name + ".png");
+        this.path = Wares.resource(SEAL_FOLDER + "/" + name + ".png");
     }
 
     public static Seal defaultSeal() {

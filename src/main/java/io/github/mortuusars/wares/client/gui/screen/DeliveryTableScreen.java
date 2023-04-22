@@ -10,38 +10,35 @@ import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMenu> {
     public static final ResourceLocation TEXTURE = Wares.resource("textures/gui/delivery_table.png");
 
     private final Component manualDeliveryButtonTitle;
-    private final List<Component> manualDeliveryButtonTooltip;
+    private final MutableComponent manualDeliveryButtonTooltip;
     private ImageButton manualDeliveryButton;
 
     public DeliveryTableScreen(DeliveryTableMenu menu, Inventory playerinventory, Component title) {
         super(menu, playerinventory, title);
         this.manualDeliveryButtonTitle = Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY.translate();
-        manualDeliveryButtonTooltip = new ArrayList<>();
-        manualDeliveryButtonTooltip.add(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP.translate());
+        manualDeliveryButtonTooltip = Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP.translate();
 
         double manualDeliveryTimeModifier = Config.MANUAL_DELIVERY_TIME_MODIFIER.get();
         if (manualDeliveryTimeModifier > 1.0D) {
             String formattedModifier = manualDeliveryTimeModifier % 1 == 0 ?
                     String.format("%.0f", manualDeliveryTimeModifier) :
                     String.format("%.1f", manualDeliveryTimeModifier);
-            manualDeliveryButtonTooltip.add(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO.translate(formattedModifier)
+            manualDeliveryButtonTooltip.append("\n").append(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO.translate(formattedModifier)
                     .withStyle(ChatFormatting.GRAY));
         }
     }
@@ -56,8 +53,9 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         this.manualDeliveryButton = new ImageButton(getGuiLeft() + 74, getGuiTop() + 36, 28, 20,
                 176, 70, 20, TEXTURE, 256, 256,
                 this::manualDeliveryButtonPressed,
-                (button, poseStack, mouseX, mouseY) -> renderTooltip(poseStack, manualDeliveryButtonTooltip, Optional.empty(), mouseX, mouseY),
                 this.manualDeliveryButtonTitle);
+
+        this.manualDeliveryButton.setTooltip(Tooltip.create(manualDeliveryButtonTooltip));
 
         addRenderableWidget(manualDeliveryButton);
     }

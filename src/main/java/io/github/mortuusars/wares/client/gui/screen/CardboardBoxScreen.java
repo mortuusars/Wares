@@ -6,6 +6,7 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -44,9 +45,9 @@ public class CardboardBoxScreen extends AbstractContainerScreen<CardboardBoxMenu
                     assert minecraft != null;
                     assert minecraft.gameMode != null;
                     minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CardboardBoxMenu.PACK_BUTTON_ID);
-                },
-                (button, poseStack, mouseX, mouseY) -> renderTooltip(poseStack, this.packButtonTooltip, mouseX, mouseY),
-                this.packButtonTitle);
+                }, packButtonTitle);
+
+        packButton.setTooltip(Tooltip.create(packButtonTooltip));
 
         addRenderableWidget(packButton);
     }

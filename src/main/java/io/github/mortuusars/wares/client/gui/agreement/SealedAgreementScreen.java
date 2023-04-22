@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.client.gui.agreement;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.config.Config;
@@ -166,9 +166,9 @@ public class SealedAgreementScreen extends Screen {
             rotX *= -1;
         }
 
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(rotX * -1));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(rotY));
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(rotX * rotY * 0.001f));
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotX * -1));
+        poseStack.mulPose(Axis.XP.rotationDegrees(rotY));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(rotX * rotY * 0.001f));
         poseStack.scale(SCALE, SCALE, SCALE);
 
         // Shift letter to the center

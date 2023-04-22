@@ -21,7 +21,7 @@ public class Languages extends LanguageProvider {
     protected final List<String> translatedKeys = new ArrayList<>();
 
     public Languages(DataGenerator gen, String locale, MissingEntriesPolicy policy) {
-        super(gen, Wares.ID, locale);
+        super(gen.getPackOutput(), Wares.ID, locale);
         this.locale = locale;
         this.policy = policy;
     }

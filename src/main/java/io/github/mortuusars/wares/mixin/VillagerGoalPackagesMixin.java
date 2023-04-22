@@ -25,7 +25,6 @@ public abstract class VillagerGoalPackagesMixin {
         if (profession == Wares.Villagers.PACKAGER.get()) {
             List<Pair<Integer, ? extends Behavior<? super Villager>>> villagerList = new ArrayList<>(cir.getReturnValue());
             villagerList.add(Pair.of(11, new ShowWorkItem(new ItemStack(Wares.Items.CARDBOARD_BOX.get()), 30, 150)));
-            Wares.LOGGER.info("getWorkPackage mixin applied");
             cir.setReturnValue(ImmutableList.copyOf(villagerList));
         }
     }

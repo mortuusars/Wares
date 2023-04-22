@@ -3,6 +3,7 @@ package io.github.mortuusars.mpfui.renderable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -42,11 +43,8 @@ public class TextureRenderable extends MPFRenderable<TextureRenderable> {
     @Override
     public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (isVisible(poseStack, mouseX, mouseY)) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + this.width && mouseY < getY() + this.height;
             renderBg(poseStack, Minecraft.getInstance(), mouseX, mouseY);
-
-            if (isHoveredOrFocused())
-                renderToolTip(poseStack, mouseX, mouseY);
         }
     }
 
@@ -56,6 +54,11 @@ public class TextureRenderable extends MPFRenderable<TextureRenderable> {
         RenderSystem.setShaderColor(1, 1,1, this.alpha);
         RenderSystem.setShaderTexture(0, texture);
         int v = isHoveredOrFocused() ? vOffset + hoverVOffset : vOffset;
-        this.blit(poseStack, x, y, uOffset, v, width, height);
+        this.blit(poseStack, getX(), getY(), uOffset, v, width, height);
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+
     }
 }

@@ -13,7 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @SuppressWarnings({"DataFlowIssue", "UnusedReturnValue"})
 public class ItemModels extends ItemModelProvider {
     public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, Wares.ID, existingFileHelper);
+        super(generator.getPackOutput(), Wares.ID, existingFileHelper);
     }
 
     @Override

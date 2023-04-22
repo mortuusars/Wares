@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
@@ -35,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings({"unused", "DataFlowIssue"})
 public class LootTables extends LootTableProvider {
@@ -42,12 +45,12 @@ public class LootTables extends LootTableProvider {
     private final DataGenerator generator;
 
     public LootTables(DataGenerator generator) {
-        super(generator);
+        super(generator.getPackOutput(), BuiltInLootTables.all(), Collections.emptyList());
         this.generator = generator;
     }
 
     @Override
-    public void run(@NotNull CachedOutput cache) {
+    public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
         dropsSelf(cache, Wares.Items.DELIVERY_TABLE.get());
 
         writeTable(cache, Wares.resource("gameplay/empty_package"), LootTable.lootTable()
@@ -81,6 +84,8 @@ public class LootTables extends LootTableProvider {
         for (Pair<ResourceLocation, LootTable> locAndTable : lootTablesWarehouse.createTables()) {
             writeTable(cache, locAndTable.getFirst(), locAndTable.getSecond());
         }
+
+        return CompletableFuture.runAsync(() -> {});
     }
 
     private void dropsSelf(CachedOutput cache, BlockItem blockItem) {
@@ -120,12 +125,8 @@ public class LootTables extends LootTableProvider {
     }
 
     private void writeTable(CachedOutput cache, ResourceLocation location, LootTable lootTable) {
-        Path outputFolder = this.generator.getOutputFolder();
+        Path outputFolder = this.generator.getPackOutput().getOutputFolder();
         Path path = outputFolder.resolve("data/" + location.getNamespace() + "/loot_tables/" + location.getPath() + ".json");
-        try {
-            DataProvider.saveStable(cache, net.minecraft.world.level.storage.loot.LootTables.serialize(lootTable), path);
-        } catch (IOException e) {
-            LOGGER.error("Couldn't write loot lootTable {}", path, e);
-        }
+        DataProvider.saveStable(cache, net.minecraft.world.level.storage.loot.LootTables.serialize(lootTable), path);
     }
 }

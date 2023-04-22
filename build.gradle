@@ -44,7 +44,7 @@ minecraft {
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
     // mappings channel: 'official', version: '1.18.2'
-    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
+    mappings channel: 'parchment', version: '2023.03.12-1.19.3'
 
      accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -186,21 +186,21 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.4'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
 
     compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")) // Adds JEI API as a compile dependency
     compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))  // Adds JEI API as a compile dependency
     runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")) // Adds the full JEI mod as a runtime dependency
 
     // Locally sourced extra mods for runtime (i.e. testing) - thanks AE2 for this idea
-    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
-        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
-        def versionSep = basename.lastIndexOf('-')
-        assert versionSep != -1
-        def artifactId = basename.substring(0, versionSep)
-        def version = basename.substring(versionSep + 1)
-        runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
-    }
+//    for (extraModJar in fileTree(dir: extraModsDir, include: '*.jar')) {
+//        def basename = extraModJar.name.substring(0, extraModJar.name.length() - ".jar".length())
+//        def versionSep = basename.lastIndexOf('-')
+//        assert versionSep != -1
+//        def artifactId = basename.substring(0, versionSep)
+//        def version = basename.substring(versionSep + 1)
+//        runtimeOnly fg.deobf("extra-mods:$artifactId:$version")
+//    }
 }
 
 mixin {

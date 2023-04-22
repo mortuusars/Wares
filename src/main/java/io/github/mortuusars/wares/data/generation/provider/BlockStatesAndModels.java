@@ -16,7 +16,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class BlockStatesAndModels extends BlockStateProvider {
 
     public BlockStatesAndModels(DataGenerator gen, ExistingFileHelper exFileHelper) {
-        super(gen, Wares.ID, exFileHelper);
+        super(gen.getPackOutput(), Wares.ID, exFileHelper);
     }
 
     @Override

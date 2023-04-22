@@ -17,6 +17,7 @@ import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import io.github.mortuusars.wares.world.VillageStructures;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatFormatter;
@@ -26,7 +27,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -132,32 +132,25 @@ public class Wares
 
         public static final RegistryObject<SealedAgreementItem> SEALED_DELIVERY_AGREEMENT = ITEMS.register("sealed_delivery_agreement", () ->
                 new SealedAgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<AgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<AgreementItem> COMPLETED_DELIVERY_AGREEMENT = ITEMS.register("completed_delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<AgreementItem> EXPIRED_DELIVERY_AGREEMENT = ITEMS.register("expired_delivery_agreement", () ->
                 new AgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
 
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
-                new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()
-                        .tab(CreativeModeTab.TAB_DECORATIONS)));
+                new BlockItem(Blocks.DELIVERY_TABLE.get(), new Item.Properties()));
 
         public static final RegistryObject<CardboardBoxItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () ->
-                new CardboardBoxItem(Blocks.CARDBOARD_BOX.get(), new Item.Properties()
-                        .tab(CreativeModeTab.TAB_DECORATIONS)));
+                new CardboardBoxItem(Blocks.CARDBOARD_BOX.get(), new Item.Properties()));
         public static final RegistryObject<PackageItem> PACKAGE = ITEMS.register("package", () ->
                 new PackageItem(Blocks.PACKAGE.get(), new Item.Properties()
-                        .stacksTo(1)
-                        .tab(CreativeModeTab.TAB_DECORATIONS)));
+                        .stacksTo(1)));
     }
 
     public static class Villagers {
@@ -168,6 +161,7 @@ public class Wares
         public static final RegistryObject<PoiType> DELIVERY_TABLE_POI = POI_TYPES.register(Blocks.DELIVERY_TABLE.getId().getPath(),
                 () -> new PoiType(ImmutableSet.copyOf(Blocks.DELIVERY_TABLE.get().getStateDefinition().getPossibleStates()), 1, 1));
 
+        @SuppressWarnings("DataFlowIssue")
         public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
                 () -> new VillagerProfession("packager", poi -> poi.is(DELIVERY_TABLE_POI.getKey()), poi -> poi.is(DELIVERY_TABLE_POI.getKey()),
                         ImmutableSet.of(), ImmutableSet.of(), null));
@@ -195,7 +189,7 @@ public class Wares
             Preconditions.checkState(category != null && category.length() > 0, "'category' should not be empty.");
             Preconditions.checkState(key != null && key.length() > 0, "'key' should not be empty.");
             String path = category + "." + key;
-            return SOUNDS.register(path, () -> new SoundEvent(Wares.resource(path)));
+            return SOUNDS.register(path, () -> SoundEvent.createVariableRangeEvent(Wares.resource(path)));
         }
     }
 
@@ -221,7 +215,7 @@ public class Wares
 
         public static void register() {
             STATS.forEach((location, formatter) -> {
-                Registry.register(Registry.CUSTOM_STAT, location, location);
+                Registry.register(BuiltInRegistries.CUSTOM_STAT, location, location);
                 net.minecraft.stats.Stats.CUSTOM.get(location, formatter);
             });
         }

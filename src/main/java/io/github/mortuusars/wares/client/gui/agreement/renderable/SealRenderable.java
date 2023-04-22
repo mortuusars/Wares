@@ -32,11 +32,11 @@ public class SealRenderable extends TextureRenderable {
         RenderSystem.enableBlend();
 
         RenderSystem.setShaderColor(1, 1,1, 0.5f);
-        this.blit(poseStack, x, y, uOffset, Seal.Element.SHADOW.getVOffset(), width, shadowHeight);
+        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.SHADOW.getVOffset(), width, shadowHeight);
         RenderSystem.disableBlend();
         RenderSystem.setShaderColor(1, 1,1, this.alpha);
-        this.blit(poseStack, x, y, uOffset, Seal.Element.STRING.getVOffset(), width, height);
-        this.blit(poseStack, x, y, uOffset, Seal.Element.BASE.getVOffset(), width, height);
-        this.blit(poseStack, x, y, uOffset, Seal.Element.LOGO.getVOffset(), width, height);
+        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.STRING.getVOffset(), width, height);
+        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.BASE.getVOffset(), width, height);
+        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.LOGO.getVOffset(), width, height);
     }
 }
