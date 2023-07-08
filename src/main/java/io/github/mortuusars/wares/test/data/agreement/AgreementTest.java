@@ -20,7 +20,7 @@ public class AgreementTest implements ITestClass {
                         .title(Component.literal("Title Test"))
                         .addRequestedItem(ItemStack.EMPTY)
                         .build();
-                assertThat(!agreement.isExpired(player.level.getGameTime()), "Expired when shouldn't.");
+                assertThat(!agreement.isExpired(player.level().getGameTime()), "Expired when shouldn't.");
             }),
 
             new Test("DefaultAgreementIsNotCompleted", player -> {
@@ -34,9 +34,9 @@ public class AgreementTest implements ITestClass {
             new Test("ExpiredAgreementShouldBeExpired", player -> {
                 Agreement expiredAgreement = Agreement.builder()
                         .addRequestedItem(ItemStack.EMPTY)
-                        .expireTime(player.level.getGameTime() - 5)
+                        .expireTime(player.level().getGameTime() - 5)
                         .build();
-                assertThat(expiredAgreement.isExpired(player.level.getGameTime()), "Not expired when it should.");
+                assertThat(expiredAgreement.isExpired(player.level().getGameTime()), "Not expired when it should.");
             }),
 
             new Test("ExpireMethodExpiresAgreement", player -> {
@@ -46,7 +46,7 @@ public class AgreementTest implements ITestClass {
 
                 expiredAgreement.expire();
 
-                assertThat(expiredAgreement.isExpired(player.level.getGameTime()), "Not expired when it should.");
+                assertThat(expiredAgreement.isExpired(player.level().getGameTime()), "Not expired when it should.");
             }),
 
             new Test("OnDeliverCompletedAgreementOnLast", player -> {

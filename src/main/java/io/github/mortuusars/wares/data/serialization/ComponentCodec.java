@@ -15,7 +15,7 @@ public class ComponentCodec {
 
             return stringOptional.isPresent() ?
                     DataResult.success(Component.Serializer.fromJsonLenient(stringOptional.get()))
-                    : DataResult.error("Cannot read string from OPS.");
+                    : DataResult.error(() -> "Cannot read string from OPS.");
         }
 
         @Override

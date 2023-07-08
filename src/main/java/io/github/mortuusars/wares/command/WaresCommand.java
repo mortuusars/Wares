@@ -65,7 +65,7 @@ public class WaresCommand {
             }
 
             if (testingResult.failed().size() == 0)
-                context.getSource().sendSuccess(message, false);
+                context.getSource().sendSuccess(() -> message, false);
             else
                 context.getSource().sendFailure(message);
 
@@ -121,7 +121,7 @@ public class WaresCommand {
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))
                 .ordered(5)
                 .experience(12)
-                .expireTime(serverPlayer.level.getGameTime() + 20 * 60 * 15)
+                .expireTime(serverPlayer.level().getGameTime() + 20 * 60 * 15)
                 .build();
 
         ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());

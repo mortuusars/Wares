@@ -16,6 +16,7 @@ import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.Agreement;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -138,7 +139,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                     .setTooltip(Lang.GUI_AGREEMENT_EXPIRE_TIME.translate()))
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
                     .setDefaultColor(0xad3232)
-                    .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted()
+                    .visibility((renderable, mouseX, mouseY) -> !getAgreement().isCompleted()
                             && getAgreement().getExpireTimestamp() - menu.level.getGameTime() > 0);
         }
 
@@ -147,14 +148,14 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                 1, 1, STAMPS_TEXTURE)
                 .setTooltip(Lang.GUI_AGREEMENT_COMPLETED.translate()))
                 .setOpacity(0.75f)
-                .visibility((renderable, poseStack, mouseX, mouseY) -> getAgreement().isCompleted());
+                .visibility((renderable, mouseX, mouseY) -> getAgreement().isCompleted());
 
         // EXPIRED STAMP
         addRenderableOnly(new StampRenderable(getGuiLeft() + 12, getGuiTop() + 10, 71, 23,
                 1, 27, STAMPS_TEXTURE)
                 .setTooltip(Lang.GUI_AGREEMENT_EXPIRED.translate()))
                 .setOpacity(0.75f)
-                .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted() && getAgreement().isExpired(menu.level.getGameTime()));
+                .visibility((renderable, mouseX, mouseY) -> !getAgreement().isCompleted() && getAgreement().isExpired(menu.level.getGameTime()));
 
         // SEAL
 
@@ -178,29 +179,27 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
-    public void renderBg(@NotNull PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    public void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
 
         if (menu.isShort) {
-            this.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, 111);
-            this.blit(poseStack, this.leftPos, this.topPos + 111, 0, 155, this.imageWidth, 101);
+            graphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, 111);
+            graphics.blit(TEXTURE, this.leftPos, this.topPos + 111, 0, 155, this.imageWidth, 101);
         }
         else
-            this.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+            graphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         //Slots BG
         for (Slot slot : menu.slots) {
-            this.blit(poseStack, getGuiLeft() + slot.x - 1, getGuiTop() + slot.y - 1, 201, 1, 18, 18);
+            graphics.blit(TEXTURE, getGuiLeft() + slot.x - 1, getGuiTop() + slot.y - 1, 201, 1, 18, 18);
         }
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, partialTick);
-        this.renderTooltip(poseStack, mouseX, mouseY);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override

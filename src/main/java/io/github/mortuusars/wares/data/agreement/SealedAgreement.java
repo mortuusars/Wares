@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @SuppressWarnings("UnusedReturnValue")
 public record SealedAgreement(String id,
@@ -118,9 +117,8 @@ public record SealedAgreement(String id,
     }
 
     private List<ItemStack> unpackLootTable(ResourceLocation lootTablePath, ServerLevel level) {
-        LootTable lootTable = level.getServer().getLootTables().get(lootTablePath);
-        LootContext.Builder lootContextBuilder = new LootContext.Builder(level);
-        return lootTable.getRandomItems(lootContextBuilder.create(LootContextParamSets.EMPTY));
+        LootTable lootTable = level.getServer().getLootData().getLootTable(lootTablePath);
+        return lootTable.getRandomItems(new LootParams.Builder(level).create(LootContextParamSets.EMPTY));
     }
 
     private List<ItemStack> compressAndLimitStacks(List<ItemStack> stacks, int stackLimit) {

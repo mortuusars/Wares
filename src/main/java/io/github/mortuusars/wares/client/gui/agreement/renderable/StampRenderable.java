@@ -4,10 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public class StampRenderable extends TextureRenderable {
     public StampRenderable(int x, int y, int width, int height, int uOffset, int vOffset, ResourceLocation texture) {
@@ -20,7 +18,8 @@ public class StampRenderable extends TextureRenderable {
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
 
         poseStack.translate(getX() + width / 2f, getY() + height / 2f, 0);
@@ -28,12 +27,9 @@ public class StampRenderable extends TextureRenderable {
         poseStack.scale(1.2f, 1.2f, 1.2f);
         poseStack.translate(-(width/2f), -(height/2f), 0);
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1, 1,1, this.alpha);
-        RenderSystem.setShaderTexture(0, texture);
         RenderSystem.enableBlend();
         int v = isHoveredOrFocused() ? vOffset + hoverVOffset : vOffset;
-        this.blit(poseStack, 0, 0, uOffset, v, width, height);
+        graphics.blit(texture, 0, 0, uOffset, v, width, height);
 
         poseStack.popPose();
 

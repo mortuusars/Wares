@@ -45,11 +45,11 @@ public class AgreementMenu extends AbstractContainerMenu {
     public AgreementMenu(int containerId, Inventory playerInventory, Supplier<Agreement> agreementSupplier) {
         super(null, containerId);
         this.player = playerInventory.player;
-        this.level = playerInventory.player.level;
+        this.level = playerInventory.player.level();
         this.playerInventory = playerInventory;
         this.agreementSupplier = agreementSupplier;
 
-        if (!playerInventory.player.level.isClientSide)
+        if (!playerInventory.player.level().isClientSide)
             throw new IllegalStateException("AgreementMenu can exist only on client-side.");
 
         layout = layoutAgreementElements(CONTENT_AREA, ELEMENTS_SPACING);

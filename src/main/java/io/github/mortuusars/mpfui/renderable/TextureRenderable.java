@@ -3,6 +3,7 @@ package io.github.mortuusars.mpfui.renderable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -41,20 +42,20 @@ public class TextureRenderable extends MPFRenderable<TextureRenderable> {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        if (isVisible(poseStack, mouseX, mouseY)) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (isVisible(mouseX, mouseY)) {
             this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + this.width && mouseY < getY() + this.height;
-            renderBg(poseStack, Minecraft.getInstance(), mouseX, mouseY);
+            renderWidget(graphics, mouseX, mouseY, partialTick);
         }
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1,1, this.alpha);
         RenderSystem.setShaderTexture(0, texture);
         int v = isHoveredOrFocused() ? vOffset + hoverVOffset : vOffset;
-        this.blit(poseStack, getX(), getY(), uOffset, v, width, height);
+        graphics.blit(texture, getX(), getY(), uOffset, v, width, height);
     }
 
     @Override

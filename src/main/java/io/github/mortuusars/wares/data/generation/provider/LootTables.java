@@ -18,6 +18,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
@@ -127,6 +128,6 @@ public class LootTables extends LootTableProvider {
     private void writeTable(CachedOutput cache, ResourceLocation location, LootTable lootTable) {
         Path outputFolder = this.generator.getPackOutput().getOutputFolder();
         Path path = outputFolder.resolve("data/" + location.getNamespace() + "/loot_tables/" + location.getPath() + ".json");
-        DataProvider.saveStable(cache, net.minecraft.world.level.storage.loot.LootTables.serialize(lootTable), path);
+        DataProvider.saveStable(cache, LootDataType.TABLE.parser().toJsonTree(lootTable), path);
     }
 }

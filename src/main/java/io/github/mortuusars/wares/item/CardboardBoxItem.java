@@ -54,7 +54,7 @@ public class CardboardBoxItem extends BlockItem {
                         new CardboardBoxMenu(containerId, playerInventory, cardboardBoxStack), cardboardBoxStack.getHoverName()),
                 buffer -> buffer.writeItemStack(cardboardBoxStack, false));
 
-        serverPlayer.level.playSound(null, serverPlayer, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,
-                1f, serverPlayer.level.getRandom().nextFloat() * 0.3f + 0.85f);
+        serverPlayer.level().playSound(null, serverPlayer, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,
+                1f, serverPlayer.level().getRandom().nextFloat() * 0.3f + 0.85f);
     }
 }

@@ -1,13 +1,10 @@
 package io.github.mortuusars.wares.client.gui.agreement.renderable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public class SealRenderable extends TextureRenderable {
     private final ResourceLocation texture;
@@ -25,18 +22,14 @@ public class SealRenderable extends TextureRenderable {
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, texture);
-
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.enableBlend();
-
         RenderSystem.setShaderColor(1, 1,1, 0.5f);
-        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.SHADOW.getVOffset(), width, shadowHeight);
+        graphics.blit(texture, getX(), getY(), uOffset, Seal.Element.SHADOW.getVOffset(), width, shadowHeight);
         RenderSystem.disableBlend();
         RenderSystem.setShaderColor(1, 1,1, this.alpha);
-        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.STRING.getVOffset(), width, height);
-        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.BASE.getVOffset(), width, height);
-        this.blit(poseStack, getX(), getY(), uOffset, Seal.Element.LOGO.getVOffset(), width, height);
+        graphics.blit(texture, getX(), getY(), uOffset, Seal.Element.STRING.getVOffset(), width, height);
+        graphics.blit(texture, getX(), getY(), uOffset, Seal.Element.BASE.getVOffset(), width, height);
+        graphics.blit(texture, getX(), getY(), uOffset, Seal.Element.LOGO.getVOffset(), width, height);
     }
 }

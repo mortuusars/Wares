@@ -2,6 +2,7 @@ package io.github.mortuusars.mpfui.renderable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public abstract class MPFRenderable<T extends MPFRenderable<T>> extends AbstractWidget {
-    protected VisibilityPredicate<T> visibilityPredicate = (renderable, poseStack, mouseX, mouseY) -> true;
+    protected VisibilityPredicate<T> visibilityPredicate = (renderable, mouseX, mouseY) -> true;
     protected Supplier<Component> tooltip = Component::empty;
     protected int tooltipWidth = 220;
 
@@ -50,18 +51,18 @@ public abstract class MPFRenderable<T extends MPFRenderable<T>> extends Abstract
         return getThis();
     }
 
-    public boolean isVisible(PoseStack poseStack, int mouseX, int mouseY) {
-        return this.visible && visibilityPredicate.isVisible(getThis(), poseStack, mouseX, mouseY);
+    public boolean isVisible(int mouseX, int mouseY) {
+        return this.visible && visibilityPredicate.isVisible(getThis(), mouseX, mouseY);
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        if (isVisible(poseStack, mouseX, mouseY)) {
-            super.render(poseStack, mouseX, mouseY, partialTick);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (isVisible(mouseX, mouseY)) {
+            super.render(graphics, mouseX, mouseY, partialTick);
         }
     }
 
     public interface VisibilityPredicate<T extends MPFRenderable<?>> {
-        boolean isVisible(T renderable, PoseStack poseStack, int mouseX, int mouseY);
+        boolean isVisible(T renderable, int mouseX, int mouseY);
     }
 }

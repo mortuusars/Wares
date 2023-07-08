@@ -1,22 +1,24 @@
 package io.github.mortuusars.wares.client.gui.agreement;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +80,7 @@ public class SealedAgreementScreen extends Screen {
             minecraft.setScreen(this);
 
             assert minecraft.player != null;
-            minecraft.player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 1f, minecraft.player.level.getRandom().nextFloat() * 0.1f + 0.9f);
+            minecraft.player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 1f, minecraft.player.level().getRandom().nextFloat() * 0.1f + 0.9f);
         }
     }
 
@@ -89,7 +91,7 @@ public class SealedAgreementScreen extends Screen {
             parentScreen = null;
 
             assert minecraft.player != null;
-            minecraft.player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 1f, minecraft.player.level.getRandom().nextFloat() * 0.1f + 1.2f);
+            minecraft.player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 1f, minecraft.player.level().getRandom().nextFloat() * 0.1f + 1.2f);
 
             return;
         }
@@ -138,10 +140,12 @@ public class SealedAgreementScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(graphics);
 
+        PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
+        poseStack.translate(0, 0, 200);
 
         // Move origin to screen center
         poseStack.translate(width / 2f, height / 2f, 0);
@@ -174,22 +178,23 @@ public class SealedAgreementScreen extends Screen {
         // Shift letter to the center
         poseStack.translate(-(IMAGE_WIDTH / 2f), -(IMAGE_HEIGHT / 2f), 0);
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(brightness, brightness, brightness, 1F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
 
-        this.blit(poseStack, 0, 0, 0,  isFlipped ? 121 : 0, 196, 120);
+        graphics.blit(TEXTURE, 0, 0, 0,  isFlipped ? 121 : 0, 196, 120);
 
         if (!isFlipped) {
-            renderSeal(poseStack, rotX, rotY, brightness);
+            renderSeal(graphics, rotX, rotY, brightness);
+
         }
         else if (!backsideMessageVisibleLines.isEmpty()) {
             for (int i = 0; i < backsideMessageVisibleLines.size(); i++) {
                 FormattedCharSequence line = backsideMessageVisibleLines.get(i);
                 int mX = IMAGE_WIDTH / 2 - font.width(line) / 2;
-                font.draw(poseStack, line, mX, messagePosY + font.lineHeight * i, FONT_COLOR);
+                graphics.drawString(font, line, mX, messagePosY + font.lineHeight * i, FONT_COLOR);
             }
         }
+
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1F);
 
         poseStack.popPose();
 
@@ -197,28 +202,28 @@ public class SealedAgreementScreen extends Screen {
         if (Math.abs(fromCenterX) < 20 && Math.abs(fromCenterY) < 20) {
             if (!isFlipped) {
                 if (!sealTooltip.equals(Component.empty()))
-                    renderTooltip(poseStack, sealTooltip, mouseX, mouseY);
+                    graphics.renderTooltip(font, sealTooltip, mouseX, mouseY);
             }
         }
 
         // BACK MESSAGE TOOLTIP
         if (isFlipped && Screen.hasShiftDown() &&
                 !backsideMessage.equals(Component.empty()) && !backsideMessageLeftoverLines.isEmpty()) {
-            renderTooltip(poseStack, backsideMessageLeftoverLines, mouseX, mouseY);
+            graphics.renderTooltip(font, backsideMessageLeftoverLines, mouseX, mouseY);
         }
 
         if (Screen.hasShiftDown())
             shouldDrawShowRemainingTextMessage = false;
 
         if (!backsideMessageLeftoverLines.isEmpty()) {
-            drawShowRemainingTextMessage(poseStack);
+            drawShowRemainingTextMessage(graphics);
         }
 
         assert Minecraft.getInstance().level != null;
         prevGameTime = Minecraft.getInstance().level.getGameTime();
     }
 
-    private void drawShowRemainingTextMessage(@NotNull PoseStack poseStack) {
+    private void drawShowRemainingTextMessage(GuiGraphics graphics) {
         assert Minecraft.getInstance().level != null;
         long gameTime = Minecraft.getInstance().level.getGameTime();
 
@@ -235,7 +240,7 @@ public class SealedAgreementScreen extends Screen {
             showRemainingTextMessageOpacity -= 16;
 
         if (showRemainingTextMessageOpacity > 19)
-            font.draw(poseStack, showRemainingTextMessage, width / 2f - font.width(showRemainingTextMessage) / 2f, height - 50, 0x555555 | showRemainingTextMessageOpacity << 24);
+            graphics.drawString(font, showRemainingTextMessage, (int) (width / 2f - font.width(showRemainingTextMessage) / 2f), height - 50, 0x555555 | showRemainingTextMessageOpacity << 24);
     }
 
     private void flip(final boolean value) {
@@ -255,7 +260,7 @@ public class SealedAgreementScreen extends Screen {
         }
     }
 
-    private void renderSeal(@NotNull PoseStack poseStack, float rotX, float rotY, float brightness) {
+    private void renderSeal(GuiGraphics graphics, float rotX, float rotY, float brightness) {
         RenderSystem.setShaderTexture(0, seal.getTexturePath());
 
         final int sealX = IMAGE_WIDTH / 2 - Seal.WIDTH / 2;
@@ -264,38 +269,43 @@ public class SealedAgreementScreen extends Screen {
         float x = rotX * 0.2f;
         float y = rotY * 0.2f;
 
+        RenderSystem.disableDepthTest();
+
         // SHADOW
         float shadowAlpha = Mth.map(Math.max((rotY * -1), 0), -10, MAX_ROTATION_VERTICAL, 0.1f, 0.65f) + 0.1f;
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(brightness, brightness, brightness, shadowAlpha);
-        renderSealElementWithParallax(poseStack, sealX, sealY, 0, shadowAlpha * 3f, 0, Seal.Element.SHADOW);
+        renderSealElementWithParallax(graphics, sealX, sealY, 0, shadowAlpha * 3f, 0, Seal.Element.SHADOW);
         RenderSystem.disableBlend();
         RenderSystem.setShaderColor(brightness, brightness, brightness, 1F);
 
         // STRING
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.45f, y * 0.45f, -0.05f, Seal.Element.STRING);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.50f, y * 0.50f, -0.1f, Seal.Element.STRING);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.55f, y * 0.55f, -0.15f, Seal.Element.STRING);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.60f, y * 0.60f, -0.2f, Seal.Element.STRING);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.45f, y * 0.45f, -0.05f, Seal.Element.STRING);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.50f, y * 0.50f, -0.1f, Seal.Element.STRING);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.55f, y * 0.55f, -0.15f, Seal.Element.STRING);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.60f, y * 0.60f, -0.2f, Seal.Element.STRING);
 
         // BASE
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.BASE);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.20f, y * 0.20f, -0.2f, Seal.Element.BASE);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.25f, y * 0.25f, -0.3f, Seal.Element.BASE);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.30f, y * 0.30f, -0.4f, Seal.Element.BASE);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.35f, y * 0.35f, -0.5f, Seal.Element.BASE);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.BASE);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.20f, y * 0.20f, -0.2f, Seal.Element.BASE);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.25f, y * 0.25f, -0.3f, Seal.Element.BASE);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.30f, y * 0.30f, -0.4f, Seal.Element.BASE);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.35f, y * 0.35f, -0.5f, Seal.Element.BASE);
 
         // LOGO
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.1f, y * 0.1f, -0.05f, Seal.Element.LOGO);
-        renderSealElementWithParallax(poseStack, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.LOGO);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.1f, y * 0.1f, -0.05f, Seal.Element.LOGO);
+        renderSealElementWithParallax(graphics, sealX, sealY, x * 0.15f, y * 0.15f, -0.1f, Seal.Element.LOGO);
+
+        RenderSystem.enableDepthTest();
 
         RenderSystem.setShaderTexture(0, TEXTURE);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void renderSealElementWithParallax(PoseStack poseStack, int x, int y, float pX, float pY, float pZ, Seal.Element element) {
+    private void renderSealElementWithParallax(GuiGraphics graphics, int x, int y, float pX, float pY, float pZ, Seal.Element element) {
+        PoseStack poseStack = graphics.pose();
         poseStack.translate(pX, pY, pZ);
-        this.blit(poseStack, x, y, 0, element.getVOffset(), Seal.WIDTH, Seal.HEIGHT);
+        graphics.blit(seal.getTexturePath(), x, y, 0, element.getVOffset(), Seal.WIDTH, Seal.HEIGHT);
         poseStack.translate(-pX, -pY, -pZ);
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
@@ -59,9 +59,8 @@ public record Package(Either<ResourceLocation, List<ItemStack>> items) {
     }
 
     private static List<ItemStack> fromLootTable(ServerLevel level, ResourceLocation table) {
-        LootTable lootTable = level.getServer().getLootTables().get(table);
-        LootContext.Builder lootContextBuilder = new LootContext.Builder(level);
-        List<ItemStack> randomItems = lootTable.getRandomItems(lootContextBuilder.create(LootContextParamSets.EMPTY));
+        LootTable lootTable = level.getServer().getLootData().getLootTable(table);
+        List<ItemStack> randomItems = lootTable.getRandomItems(new LootParams.Builder(level).create(LootContextParamSets.EMPTY));
         return randomItems.size() == 0 ? getDefaultItems(level) : randomItems;
     }
 

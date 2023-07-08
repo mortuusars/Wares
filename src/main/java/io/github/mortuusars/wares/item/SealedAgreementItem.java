@@ -81,7 +81,7 @@ public class SealedAgreementItem extends Item {
         if (sealed.isEmpty())
             return false;
 
-        if (player.level.isClientSide)
+        if (player.level().isClientSide)
             new SealedAgreementScreen(sealed.get().seal(), sealed.get().sealTooltip(), sealed.get().backsideMessage()).showAsOverlay();
 
         return true;

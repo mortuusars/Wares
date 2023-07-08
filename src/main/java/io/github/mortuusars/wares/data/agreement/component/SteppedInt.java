@@ -23,7 +23,7 @@ public record SteppedInt(int min, int max, int step) {
         ).apply(instance, SteppedInt::new));
         Function<SteppedInt, DataResult<SteppedInt>> validateFunc = (steppedInt) -> {
             if (steppedInt.max < steppedInt.min)
-                return DataResult.error("'max' should be larger than 'min'. '" + steppedInt + "'.");
+                return DataResult.error(() -> "'max' should be larger than 'min'. '" + steppedInt + "'.");
             else
                 return DataResult.success(steppedInt);
         };

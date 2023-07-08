@@ -66,7 +66,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_CARDBOARD_BOX_PACK_TOOLTIP, "Pack");
 
         translate(Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP, "Place a Delivery Agreement to start a delivery");
-        translate(Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP, "Delivery Boxes are required for delivery");
+        translate(Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP, "Cardboard Boxes are required for delivery");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY, "Deliver Manually");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP, "Deliver Manually");
         translate(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO, "%sx longer");

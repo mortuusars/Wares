@@ -140,8 +140,8 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
             if (!player.addItem(packageStack))
                 player.drop(packageStack, false);
 
-            player.level.playSound(null, player, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,
-                    1f, player.level.getRandom().nextFloat() * 0.3f + 0.85f);
+            player.level().playSound(null, player, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,
+                    1f, player.level().getRandom().nextFloat() * 0.3f + 0.85f);
 
             player.closeContainer();
 

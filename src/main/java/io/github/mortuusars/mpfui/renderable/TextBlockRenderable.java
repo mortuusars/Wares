@@ -5,6 +5,7 @@ import io.github.mortuusars.mpfui.component.TooltipBehavior;
 import io.github.mortuusars.mpfui.component.HorizontalAlignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -68,14 +69,19 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        if (isVisible(poseStack, mouseX, mouseY)) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (isVisible(mouseX, mouseY)) {
             this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + this.width && mouseY < getY() + this.height;
-            renderText(poseStack, mouseX, mouseY, partialTick);
+            renderText(graphics, mouseX, mouseY, partialTick);
 
             if (isHovered)
-                renderToolTip(poseStack, mouseX, mouseY);
+                renderToolTip(graphics, mouseX, mouseY);
         }
+    }
+
+    @Override
+    protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+
     }
 
     @Override
@@ -83,7 +89,7 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
 
     }
 
-    protected void renderText(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    protected void renderText(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
 
         Component text = this.textSupplier.get();
@@ -113,11 +119,11 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
             else
                 lineX = getX();
 
-            font.draw(poseStack, line, lineX, getY() + (lineIndex * font.lineHeight), getColor());
+            graphics.drawString(font, line, (int) lineX, getY() + (lineIndex * font.lineHeight), getColor(), false);
         }
     }
 
-    public void renderToolTip(@NotNull PoseStack poseStack, int mouseX, int mouseY) {
+    public void renderToolTip(GuiGraphics graphics, int mouseX, int mouseY) {
         if (this.tooltipBehavior == TooltipBehavior.NONE)
             return;
 
@@ -126,7 +132,7 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
             return;
 
         if (this.tooltipBehavior == TooltipBehavior.LEFTOVER_ONLY) {
-            screen.renderTooltip(poseStack, leftoverTooltipLines, mouseX, mouseY);
+            graphics.renderTooltip(Minecraft.getInstance().font, leftoverTooltipLines, mouseX, mouseY);
             return;
         }
 
@@ -134,7 +140,7 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
         List<FormattedCharSequence> regularTooltipLines = font.split(this.tooltip.get(), tooltipWidth);
 
         if (this.tooltipBehavior == TooltipBehavior.REGULAR_ONLY && regularTooltipLines.size() > 0) {
-            screen.renderTooltip(poseStack, regularTooltipLines, mouseX, mouseY);
+            graphics.renderTooltip(font, regularTooltipLines, mouseX, mouseY);
         }
         else {
             List<FormattedCharSequence> lines = new ArrayList<>();
@@ -148,7 +154,7 @@ public class TextBlockRenderable extends MPFRenderable<TextBlockRenderable> {
             else if (this.tooltipBehavior == TooltipBehavior.REGULAR_AND_LEFTOVER && leftoverTooltipLines.size() > 0)
                 lines.addAll(leftoverTooltipLines);
 
-            screen.renderTooltip(poseStack, lines, mouseX, mouseY);
+            graphics.renderTooltip(font, lines, mouseX, mouseY);
         }
     }
 }

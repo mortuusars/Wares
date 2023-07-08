@@ -32,8 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.ForgeSoundType;
@@ -85,21 +84,21 @@ public class Wares
         private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ID);
 
         public static final RegistryObject<DeliveryTableBlock> DELIVERY_TABLE = BLOCKS.register("delivery_table",
-                () -> new DeliveryTableBlock(BlockBehaviour.Properties.of(Material.WOOD)
+                () -> new DeliveryTableBlock(BlockBehaviour.Properties.of()
                         .sound(SoundType.WOOD)
-                        .color(MaterialColor.COLOR_BROWN)
+                        .mapColor(MapColor.COLOR_BROWN)
                         .strength(2f)));
 
         public static final RegistryObject<CardboardBoxBlock> CARDBOARD_BOX = BLOCKS.register("cardboard_box",
-                () -> new CardboardBoxBlock(BlockBehaviour.Properties.of(Material.DECORATION)
+                () -> new CardboardBoxBlock(BlockBehaviour.Properties.of()
                         .sound(SoundTypes.CARDBOARD)
-                        .color(MaterialColor.COLOR_BROWN)
+                        .mapColor(MapColor.COLOR_BROWN)
                         .strength(0.4f)));
 
         public static final RegistryObject<PackageBlock> PACKAGE = BLOCKS.register("package",
-                () -> new PackageBlock(BlockBehaviour.Properties.of(Material.DECORATION)
+                () -> new PackageBlock(BlockBehaviour.Properties.of()
                         .sound(SoundTypes.CARDBOARD)
-                        .color(MaterialColor.COLOR_BROWN)
+                        .mapColor(MapColor.COLOR_BROWN)
                         .strength(0.6f)));
     }
 

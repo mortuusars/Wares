@@ -1,25 +1,23 @@
 package io.github.mortuusars.wares.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import org.jetbrains.annotations.NotNull;
 
 public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMenu> {
     public static final ResourceLocation TEXTURE = Wares.resource("textures/gui/delivery_table.png");
@@ -67,45 +65,43 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         manualDeliveryButton.visible = menu.canDeliverManually();
 
-        this.renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, partialTick);
-        this.renderTooltip(poseStack, mouseX, mouseY);
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(graphics, mouseX, mouseY);
 
         if (menu.getCarried().isEmpty()) {
             Slot agreementSlot = menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT);
             if (!agreementSlot.hasItem() && isHovering(agreementSlot.x, agreementSlot.y, 18, 18, mouseX, mouseY))
-                this.renderTooltip(poseStack, Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP.translate(), mouseX, mouseY);
+                graphics.renderTooltip(font, Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP.translate(), mouseX, mouseY);
 
             if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
                 Slot boxSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
                 if (!boxSlot.hasItem() && isHovering(boxSlot.x, boxSlot.y, 18, 18, mouseX, mouseY))
-                    this.renderTooltip(poseStack, Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP.translate(), mouseX, mouseY);
+                    graphics.renderTooltip(font, Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP.translate(), mouseX, mouseY);
             }
         }
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        this.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        graphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         // Agreement placeholder
         if (!menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT).hasItem())
-            this.blit(poseStack, leftPos + 79, topPos + 15, 176, 34, 18, 18);
+            graphics.blit(TEXTURE, leftPos + 79, topPos + 15, 176, 34, 18, 18);
 
         // PACKAGES SLOT
         if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
             Slot packagesSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
-            this.blit(poseStack, leftPos + packagesSlot.x - 1, topPos + packagesSlot.y - 1, 176, 16, 18, 18);
+            graphics.blit(TEXTURE, leftPos + packagesSlot.x - 1, topPos + packagesSlot.y - 1, 176, 16, 18, 18);
 
             // Package placeholder
             if (!packagesSlot.hasItem())
-                this.blit(poseStack, leftPos + packagesSlot.x - 1, topPos + packagesSlot.y - 1, 176, 52, 18, 18);
+                graphics.blit(TEXTURE, leftPos + packagesSlot.x - 1, topPos + packagesSlot.y - 1, 176, 52, 18, 18);
         }
 
         // ARROW
@@ -113,7 +109,7 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         int arrowWidth = 22;
         int arrowHeight = 16;
         int progressInPixels = Mth.clamp((int)((arrowWidth + 1) * progress), 0, arrowWidth);
-        this.blit(poseStack, leftPos + 77, topPos + 37, 176, 0, progressInPixels, arrowHeight);
+        graphics.blit(TEXTURE, leftPos + 77, topPos + 37, 176, 0, progressInPixels, arrowHeight);
     }
 }
 
