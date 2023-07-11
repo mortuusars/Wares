@@ -31,6 +31,7 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
     public Pair<Integer, Integer> cardboardBoxSlotPos = Pair.of(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
     private final IItemHandler cardboardBoxItemHandler;
+    private boolean itemsPacked = false;
 
     public CardboardBoxMenu(int containerId, final Inventory playerInventory, ItemStack cardboardBoxStack) {
         super(Wares.MenuTypes.CARDBOARD_BOX.get(), containerId);
@@ -94,7 +95,7 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
         }
         else if (index < slots.size()) {
-            if (!moveItemStackTo(clickedStack, 0, DeliveryTableBlockEntity.SLOTS, false))
+            if (!moveItemStackTo(clickedStack, 0, SLOTS, false))
                 return ItemStack.EMPTY;
         }
 
@@ -143,12 +144,26 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
             player.level.playSound(null, player, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,
                     1f, player.level.getRandom().nextFloat() * 0.3f + 0.85f);
 
+            this.itemsPacked = true;
             player.closeContainer();
 
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void removed(@NotNull Player player) {
+        if (player instanceof ServerPlayer serverPlayer && !itemsPacked) {
+            for (int slot = 0; slot < SLOTS; slot++) {
+                ItemStack stackInSlot = this.cardboardBoxItemHandler.getStackInSlot(slot);
+                if (!stackInSlot.isEmpty())
+                    serverPlayer.drop(stackInSlot, true);
+            }
+        }
+
+        super.removed(player);
     }
 
     @Override
