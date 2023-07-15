@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.wares.Wares;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -40,6 +41,9 @@ public record Package(Either<ResourceLocation, List<ItemStack>> items) {
     }
 
     public static Optional<Package> fromTag(@NotNull CompoundTag tag) {
+        if (!tag.contains("packedItems") && tag.contains("BlockEntityTag", Tag.TAG_COMPOUND))
+            tag = tag.getCompound("BlockEntityTag");
+
         return CODEC.decode(NbtOps.INSTANCE, tag)
                 .resultOrPartial(Wares.LOGGER::error)
                 .map(Pair::getFirst);
