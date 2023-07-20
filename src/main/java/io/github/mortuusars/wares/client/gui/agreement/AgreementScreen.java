@@ -39,7 +39,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         super(menu, menu.playerInventory, Component.empty());
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
 
-        seal = new Seal(getAgreement().getSeal()).printErrorAndFallbackToDefaultIfNotFound();
+        seal = new Seal(getAgreement().getSeal());
     }
 
     public boolean isOpen() {

@@ -21,7 +21,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
 
-version = '1.0.2'
+version = '1.0.3'
 group = 'io.github.mortuusars.wares' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "wares-${mc_version}"
 

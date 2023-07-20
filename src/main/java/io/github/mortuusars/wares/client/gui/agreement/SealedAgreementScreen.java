@@ -53,7 +53,7 @@ public class SealedAgreementScreen extends Screen {
     public SealedAgreementScreen(String seal, Component sealTooltip, Component backsideMessage) {
         super(Component.empty());
 
-        this.seal = new Seal(seal).printErrorAndFallbackToDefaultIfNotFound();
+        this.seal = new Seal(seal);
         this.sealTooltip = sealTooltip;
         this.backsideMessage = backsideMessage;
         this.showRemainingTextMessage = Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE.translate();
