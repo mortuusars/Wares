@@ -6,6 +6,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
+import io.github.mortuusars.wares.data.agreement.component.SealedRequestedItem;
 import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
 import io.github.mortuusars.wares.data.agreement.component.TextProvider;
 import io.github.mortuusars.wares.data.serialization.ComponentCodec;
@@ -21,53 +23,53 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
-@SuppressWarnings("UnusedReturnValue")
-public record SealedAgreement(String id,
-                              TextProvider buyerName,
-                              TextProvider buyerAddress,
-                              TextProvider title,
-                              TextProvider message,
-                              String seal,
-                              Component sealTooltip,
-                              Component backsideMessage,
-                              Either<ResourceLocation, List<ItemStack>> requested,
-                              Either<ResourceLocation, List<ItemStack>> payment,
-                              Either<Integer, SteppedInt> ordered,
-                              Either<Integer, SteppedInt> experience,
-                              Either<Integer, SteppedInt> deliveryTime,
-                              Either<Integer, SteppedInt> expiresInSeconds) {
+@SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+public record SealedDeliveryAgreement(String id,
+                                      TextProvider buyerName,
+                                      TextProvider buyerAddress,
+                                      TextProvider title,
+                                      TextProvider message,
+                                      String seal,
+                                      Component sealTooltip,
+                                      Component backsideMessage,
+                                      Either<ResourceLocation, List<SealedRequestedItem>> requested,
+                                      Either<ResourceLocation, List<ItemStack>> payment,
+                                      Either<Integer, SteppedInt> ordered,
+                                      Either<Integer, SteppedInt> experience,
+                                      Either<Integer, SteppedInt> deliveryTime,
+                                      Either<Integer, SteppedInt> expiresInSeconds) {
 
-    public static final Codec<SealedAgreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.optionalFieldOf("id", "").forGetter(SealedAgreement::id),
-            TextProvider.CODEC.optionalFieldOf("buyerName", TextProvider.EMPTY).forGetter(SealedAgreement::buyerName),
-            TextProvider.CODEC.optionalFieldOf("buyerAddress", TextProvider.EMPTY).forGetter(SealedAgreement::buyerAddress),
-            TextProvider.CODEC.optionalFieldOf("title", TextProvider.EMPTY).forGetter(SealedAgreement::title),
-            TextProvider.CODEC.optionalFieldOf("message", TextProvider.EMPTY).forGetter(SealedAgreement::message),
-            Codec.STRING.optionalFieldOf("seal", "default").forGetter(SealedAgreement::seal),
-            ComponentCodec.CODEC.optionalFieldOf("sealTooltip", Component.empty()).forGetter(SealedAgreement::sealTooltip),
-            ComponentCodec.CODEC.optionalFieldOf("backsideMessage", Component.empty()).forGetter(SealedAgreement::backsideMessage),
-            Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).fieldOf("requested").forGetter(SealedAgreement::requested),
-            Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).fieldOf("payment").forGetter(SealedAgreement::payment),
-            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("ordered", Either.left(0)).forGetter(SealedAgreement::ordered),
-            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("experience", Either.left(0)).forGetter(SealedAgreement::experience),
-            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("deliveryTime", Either.left(-1)).forGetter(SealedAgreement::deliveryTime),
-            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("expiresInSeconds", Either.left(-1)).forGetter(SealedAgreement::expiresInSeconds)
-        ).apply(instance, SealedAgreement::new));
+    public static final Codec<SealedDeliveryAgreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.optionalFieldOf("id", "").forGetter(SealedDeliveryAgreement::id),
+            TextProvider.CODEC.optionalFieldOf("buyerName", TextProvider.EMPTY).forGetter(SealedDeliveryAgreement::buyerName),
+            TextProvider.CODEC.optionalFieldOf("buyerAddress", TextProvider.EMPTY).forGetter(SealedDeliveryAgreement::buyerAddress),
+            TextProvider.CODEC.optionalFieldOf("title", TextProvider.EMPTY).forGetter(SealedDeliveryAgreement::title),
+            TextProvider.CODEC.optionalFieldOf("message", TextProvider.EMPTY).forGetter(SealedDeliveryAgreement::message),
+            Codec.STRING.optionalFieldOf("seal", "default").forGetter(SealedDeliveryAgreement::seal),
+            ComponentCodec.CODEC.optionalFieldOf("sealTooltip", Component.empty()).forGetter(SealedDeliveryAgreement::sealTooltip),
+            ComponentCodec.CODEC.optionalFieldOf("backsideMessage", Component.empty()).forGetter(SealedDeliveryAgreement::backsideMessage),
+            Codec.either(ResourceLocation.CODEC, Codec.list(SealedRequestedItem.CODEC)).optionalFieldOf("requested", Either.right(Collections.emptyList())).forGetter(SealedDeliveryAgreement::requested),
+            Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).optionalFieldOf("payment", Either.right(Collections.emptyList())).forGetter(SealedDeliveryAgreement::payment),
+            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("ordered", Either.left(0)).forGetter(SealedDeliveryAgreement::ordered),
+            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("experience", Either.left(0)).forGetter(SealedDeliveryAgreement::experience),
+            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("deliveryTime", Either.left(-1)).forGetter(SealedDeliveryAgreement::deliveryTime),
+            Codec.either(Codec.INT, SteppedInt.CODEC).optionalFieldOf("expiresInSeconds", Either.left(-1)).forGetter(SealedDeliveryAgreement::expiresInSeconds)
+        ).apply(instance, SealedDeliveryAgreement::new));
 
-    public static Optional<SealedAgreement> fromItemStack(ItemStack itemStack) {
+    public static Optional<SealedDeliveryAgreement> fromItemStack(ItemStack itemStack) {
         @Nullable CompoundTag compoundTag = itemStack.getTag();
         if (compoundTag == null)
             return Optional.empty();
 
         try {
-            DataResult<Pair<SealedAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, compoundTag);
-            SealedAgreement agreement = result.getOrThrow(false, Wares.LOGGER::error).getFirst();
+            DataResult<Pair<SealedDeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, compoundTag);
+            SealedDeliveryAgreement agreement = result.getOrThrow(false, Wares.LOGGER::error).getFirst();
             return Optional.of(agreement);
         } catch (Exception e) {
             Wares.LOGGER.error("Failed to decode SealedAgreement from item : '" + itemStack + "'.\n" + e);
@@ -88,7 +90,7 @@ public record SealedAgreement(String id,
         }
     }
 
-    public Agreement realize(ServerLevel level) {
+    public DeliveryAgreement realize(ServerLevel level) {
         RandomSource random = level.getRandom();
 
         int quantity = ordered.map(integer -> integer, steppedInt -> steppedInt.sample(random));
@@ -96,14 +98,14 @@ public record SealedAgreement(String id,
         int expiresIn = expiresInSeconds.map(integer -> integer, steppedInt -> steppedInt.sample(random));
         long expireTime = expiresIn <= 0 ? -1 : level.getGameTime() + expiresIn * 20L;
 
-        return Agreement.builder().id(id)
+        return DeliveryAgreement.builder().id(id)
                 .buyerName(buyerName.get(random))
                 .buyerAddress(buyerAddress.get(random))
                 .title(title.get(random))
                 .message(message.get(random))
                 .seal(seal)
-                .requestedItems(getStacks(requested, level, Agreement.MAX_REQUESTED_STACKS))
-                .paymentItems(getStacks(payment, level, Agreement.MAX_PAYMENT_STACKS))
+                .requested(realizeRequested(requested, level, DeliveryAgreement.MAX_REQUESTED_STACKS))
+                .payment(realizePayment(payment, level, DeliveryAgreement.MAX_PAYMENT_STACKS))
                 .ordered(quantity)
                 .experience(experience.map(integer -> integer, steppedInt -> steppedInt.sample(random)))
                 .deliveryTime(deliveryTime.map(integer -> integer, steppedInt -> steppedInt.sample(random)))
@@ -111,9 +113,28 @@ public record SealedAgreement(String id,
                 .build();
     }
 
-    private List<ItemStack> getStacks(Either<ResourceLocation, List<ItemStack>> lootTableOrItems, ServerLevel level, int stackLimit) {
-        List<ItemStack> items = lootTableOrItems.map(tableLocation -> unpackLootTable(tableLocation, level), list -> list);
-        return compressAndLimitStacks(items, stackLimit);
+    private List<RequestedItem> realizeRequested(Either<ResourceLocation, List<SealedRequestedItem>> requested, ServerLevel level, int maxCount) {
+        return requested.map(
+                lootTable -> compressAndLimitStacks(unpackLootTable(lootTable, level), maxCount)
+                        .stream()
+                        .map(RequestedItem::new)
+                        .toList(),
+                sealedItems -> sealedItems
+                        .stream()
+                        .map(mapSealedItem(level))
+                        .toList());
+    }
+
+    @NotNull
+    private static Function<SealedRequestedItem, RequestedItem> mapSealedItem(ServerLevel level) {
+        return sealedItem -> new RequestedItem(
+                sealedItem.getTagOrItem(),
+                sealedItem.getCount().map(integer -> integer, steppedInt -> steppedInt.sample(level.getRandom())),
+                sealedItem.getTag());
+    }
+
+    private List<ItemStack> realizePayment(Either<ResourceLocation, List<ItemStack>> payment, ServerLevel level, int maxCount) {
+        return compressAndLimitStacks(payment.map(lootTable -> unpackLootTable(lootTable, level), stacks -> stacks), maxCount);
     }
 
     private List<ItemStack> unpackLootTable(ResourceLocation lootTablePath, ServerLevel level) {
@@ -141,7 +162,7 @@ public record SealedAgreement(String id,
         private String seal = "default";
         private Component sealTooltip = Component.empty();
         private Component backsideMessage = Component.empty();
-        private Either<ResourceLocation, List<ItemStack>> requested = Either.right(Collections.emptyList());
+        private Either<ResourceLocation, List<SealedRequestedItem>> requested = Either.right(Collections.emptyList());
         private Either<ResourceLocation, List<ItemStack>> payment = Either.right(Collections.emptyList());
         private Either<Integer, SteppedInt> ordered = Either.left(0);
         private Either<Integer, SteppedInt> experience = Either.left(0);
@@ -198,7 +219,7 @@ public record SealedAgreement(String id,
             return this;
         }
 
-        public Builder requested(List<ItemStack> items) {
+        public Builder requested(List<SealedRequestedItem> items) {
             this.requested = Either.right(items);
             return this;
         }
@@ -248,8 +269,8 @@ public record SealedAgreement(String id,
             return this;
         }
 
-        public SealedAgreement build() {
-            return new SealedAgreement(id, buyerName, buyerAddress, title, message, seal, sealTooltip, backsideMessage,
+        public SealedDeliveryAgreement build() {
+            return new SealedDeliveryAgreement(id, buyerName, buyerAddress, title, message, seal, sealTooltip, backsideMessage,
                     requested, payment, ordered, experience, deliveryTime, expiresInSecond);
         }
     }

@@ -13,7 +13,8 @@ import io.github.mortuusars.wares.client.gui.agreement.renderable.SealRenderable
 import io.github.mortuusars.wares.client.gui.agreement.renderable.StampRenderable;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.menu.ItemDisplaySlot;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,15 +27,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/agreement.png");
     private static final ResourceLocation STAMPS_TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/stamps.png");
     private static final int FONT_COLOR = 0xff886447;
-    private Screen parentScreen;
     private final Seal seal;
+    private Screen parentScreen;
+    private int displayItemCycleTimer = 0;
 
     public AgreementScreen(AgreementMenu menu) {
         super(menu, menu.playerInventory, Component.empty());
@@ -75,7 +83,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         super.onClose();
     }
 
-    protected Agreement getAgreement() {
+    protected DeliveryAgreement getAgreement() {
         return menu.getAgreement();
     }
 
@@ -203,6 +211,23 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
+    protected void renderTooltip(PoseStack pPoseStack, int pX, int pY) {
+        if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
+            ItemStack stack = this.hoveredSlot.getItem();
+            List<Component> itemTooltip = getTooltipFromItem(stack);
+            Optional<TooltipComponent> imageTooltip = stack.getTooltipImage();
+            if (this.hoveredSlot instanceof ItemDisplaySlot itemDisplaySlot) {
+                Component additionalTooltip = itemDisplaySlot.getAdditionalTooltip();
+                if (!additionalTooltip.getString().isEmpty()) {
+                    itemTooltip = new ArrayList<>(itemTooltip);
+                    itemTooltip.add(additionalTooltip);
+                }
+            }
+            this.renderTooltip(pPoseStack, itemTooltip, imageTooltip, pX, pY);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (Config.AGREEMENT_CLOSE_WITH_RMB.get() && pButton == 1) {
             onClose();
@@ -215,5 +240,31 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     @Override
     protected void slotClicked(@NotNull Slot pSlot, int pSlotId, int pMouseButton, @NotNull ClickType pType) {
         // Ignored
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        displayItemCycleTimer++;
+
+        if (displayItemCycleTimer % 20 == 1)
+            cycleDisplayItems(false);
+    }
+
+    protected void cycleDisplayItems(boolean backwards) {
+        for (Slot slot : menu.slots) {
+            if (slot instanceof ItemDisplaySlot itemDisplaySlot)
+                itemDisplaySlot.cycleItem(backwards);
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+        boolean handled = super.mouseScrolled(pMouseX, pMouseY, pDelta);
+        if (!handled) {
+            cycleDisplayItems(pDelta > 0.0);
+            displayItemCycleTimer = 1;
+        }
+        return handled;
     }
 }

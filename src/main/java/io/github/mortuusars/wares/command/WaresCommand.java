@@ -8,6 +8,7 @@ import io.github.mortuusars.mpfui.helper.LoremIpsum;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.*;
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
 import io.github.mortuusars.wares.data.agreement.component.TextProvider;
 import io.github.mortuusars.wares.data.agreement.component.WeightedComponent;
@@ -21,6 +22,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -79,7 +81,7 @@ public class WaresCommand {
     private static int giveExampleSealedAgreement(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 
-        SealedAgreement sealedAgreement = new SealedAgreement("example_agreement_sealed",
+        SealedDeliveryAgreement sealedAgreement = new SealedDeliveryAgreement("example_agreement_sealed",
                 TextProvider.of(
                         WeightedComponent.of(Component.literal("Greg the Blacksmith").withStyle(ChatFormatting.DARK_GRAY)),
                         WeightedComponent.of(Component.literal("Arnold the Butcher").withStyle(ChatFormatting.DARK_RED))),
@@ -110,14 +112,15 @@ public class WaresCommand {
     private static int giveExampleAgreement(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 
-        Agreement agreement = Agreement.builder()
+        DeliveryAgreement agreement = DeliveryAgreement.builder()
                 .id("example_agreement")
                 .buyerName(Component.literal("Greg the Blacksmith").withStyle(Style.EMPTY.withColor(0x333333)))
                 .buyerAddress(Component.literal("12 Side Road, Vibrant Plains Village").withStyle(ChatFormatting.OBFUSCATED))
                 .title(Component.literal("Example Agreement").withStyle(Style.EMPTY.withColor(0x922706)))
                 .message(Component.literal(LoremIpsum.words(50)))
-                .addRequestedItem(new ItemStack(Items.BAKED_POTATO, 4))
-                .addRequestedItem(new ItemStack(Items.PUMPKIN_PIE, 2))
+                .addRequestedItem(new RequestedItem(Items.BAKED_POTATO, 4))
+                .addRequestedItem(new RequestedItem(Items.PUMPKIN_PIE, 2))
+                .addRequestedItem(new RequestedItem(ItemTags.LOGS, 2))
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))
                 .ordered(5)
                 .experience(12)
@@ -153,8 +156,8 @@ public class WaresCommand {
             return 1;
         }
 
-        Agreement agreement = Agreement.fromItemStack(mainHandItem).orElse(Agreement.EMPTY);
-        if (agreement == Agreement.EMPTY) {
+        DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(mainHandItem).orElse(DeliveryAgreement.EMPTY);
+        if (agreement == DeliveryAgreement.EMPTY) {
             context.getSource().sendFailure(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY.translate());
             return 1;
         }

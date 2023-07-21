@@ -77,6 +77,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_AGREEMENT_DELIVERIES_TOOLTIP, "%s / %s");
         translate(Lang.GUI_AGREEMENT_COMPLETED, "Completed");
         translate(Lang.GUI_AGREEMENT_EXPIRED, "Expired");
+        translate(Lang.GUI_AGREEMENT_TAG_SLOT_TOOLTIP, "Any of ");
         translate(Lang.GUI_TIME_DAYS,"%sd");
         translate(Lang.GUI_TIME_HOURS, "%sh");
         translate(Lang.GUI_TIME_MINUTES, "%sm");
@@ -142,6 +143,7 @@ public class Languages extends LanguageProvider {
         translate(Lang.GUI_AGREEMENT_DELIVERIES_TOOLTIP, "%s / %s");
         translate(Lang.GUI_AGREEMENT_COMPLETED, "Виконано");
         translate(Lang.GUI_AGREEMENT_EXPIRED, "Минув термін дії");
+        translate(Lang.GUI_AGREEMENT_TAG_SLOT_TOOLTIP, "Будь-що з ");
         translate(Lang.GUI_TIME_DAYS, "%sдн");
         translate(Lang.GUI_TIME_HOURS, "%sгод");
         translate(Lang.GUI_TIME_MINUTES, "%sхв");

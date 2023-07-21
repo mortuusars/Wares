@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.data.generation.provider;
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.agreement.SealedAgreement;
+import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -321,7 +321,7 @@ public class LootTablesWarehouse {
 
     @NotNull
     private LootTable chestLootTableWithAgreement(String type) {
-        SealedAgreement agreementSell = new SealedAgreement.Builder()
+        SealedDeliveryAgreement agreementSell = new SealedDeliveryAgreement.Builder()
                 .requested(Wares.resource("agreement/village/" + type + "_requested_sell"))
                 .payment(Wares.resource("agreement/village/" + type + "_payment_sell"))
                 .ordered(new SteppedInt(64, 256, 8))
@@ -331,7 +331,7 @@ public class LootTablesWarehouse {
         ItemStack sealedStackSell = new ItemStack(Wares.Items.SEALED_DELIVERY_AGREEMENT.get());
         agreementSell.toItemStack(sealedStackSell);
 
-        SealedAgreement agreementBuy = new SealedAgreement.Builder()
+        SealedDeliveryAgreement agreementBuy = new SealedDeliveryAgreement.Builder()
                 .requested(Wares.resource("agreement/village/" + type + "_requested_buy"))
                 .payment(Wares.resource("agreement/village/" + type + "_payment_buy"))
                 .ordered(new SteppedInt(64, 256, 8))

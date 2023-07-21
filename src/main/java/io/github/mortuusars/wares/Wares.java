@@ -9,10 +9,10 @@ import io.github.mortuusars.wares.block.PackageBlock;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import io.github.mortuusars.wares.item.CardboardBoxItem;
 import io.github.mortuusars.wares.item.PackageItem;
-import io.github.mortuusars.wares.item.SealedAgreementItem;
+import io.github.mortuusars.wares.item.SealedDeliveryAgreementItem;
 import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import io.github.mortuusars.wares.world.VillageStructures;
@@ -129,17 +129,21 @@ public class Wares
     public static class Items {
         private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
 
-        public static final RegistryObject<SealedAgreementItem> SEALED_DELIVERY_AGREEMENT = ITEMS.register("sealed_delivery_agreement", () ->
-                new SealedAgreementItem(new Item.Properties()
+        public static final RegistryObject<SealedDeliveryAgreementItem> SEALED_DELIVERY_AGREEMENT = ITEMS.register("sealed_delivery_agreement", () ->
+                new SealedDeliveryAgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
-        public static final RegistryObject<AgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
-                new AgreementItem(new Item.Properties()
+        public static final RegistryObject<DeliveryAgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
+                new DeliveryAgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
-        public static final RegistryObject<AgreementItem> COMPLETED_DELIVERY_AGREEMENT = ITEMS.register("completed_delivery_agreement", () ->
-                new AgreementItem(new Item.Properties()
+        public static final RegistryObject<DeliveryAgreementItem> COMPLETED_DELIVERY_AGREEMENT = ITEMS.register("completed_delivery_agreement", () ->
+                new DeliveryAgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
-        public static final RegistryObject<AgreementItem> EXPIRED_DELIVERY_AGREEMENT = ITEMS.register("expired_delivery_agreement", () ->
-                new AgreementItem(new Item.Properties()
+        public static final RegistryObject<DeliveryAgreementItem> EXPIRED_DELIVERY_AGREEMENT = ITEMS.register("expired_delivery_agreement", () ->
+                new DeliveryAgreementItem(new Item.Properties()
+                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
 
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->

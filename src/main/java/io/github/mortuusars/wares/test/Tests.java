@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.test;
 
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.test.data.RequestedItemTests;
 import io.github.mortuusars.wares.test.data.agreement.AgreementTest;
 import io.github.mortuusars.wares.test.framework.Test;
 import io.github.mortuusars.wares.test.framework.TestResult;
@@ -9,8 +10,10 @@ import io.github.mortuusars.wares.test.framework.TestingResult;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Tests {
 
@@ -23,7 +26,11 @@ public class Tests {
     public TestingResult run() {
         Wares.LOGGER.info("RUNNING TESTS");
 
-        Pair<List<TestResult>, List<TestResult>> ran = run(new AgreementTest().collect());
+        Pair<List<TestResult>, List<TestResult>> ran = run(
+                new AgreementTest().collect(),
+                new RequestedItemTests().collect()
+        );
+
         List<TestResult> skipped = skip();
         TestingResult testingResult = new TestingResult(ran.getFirst(), ran.getSecond(), skipped);
         Wares.LOGGER.info(String.join("",

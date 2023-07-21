@@ -3,9 +3,9 @@ package io.github.mortuusars.wares.block;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
-import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -105,7 +105,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
 
         // PLACE
         ItemStack stackInHand = player.getItemInHand(hand);
-        if (stackInHand.getItem() instanceof AgreementItem
+        if (stackInHand.getItem() instanceof DeliveryAgreementItem
                 && hitResult.getDirection() == Direction.UP
                 && deliveryTableBlockEntity.getAgreementItem().isEmpty()) {
             deliveryTableBlockEntity.setAgreementItem(stackInHand.split(1));
@@ -130,7 +130,7 @@ public class DeliveryTableBlock extends BaseEntityBlock {
 
                 return InteractionResult.SUCCESS;
             }
-            else if (deliveryTableBlockEntity.getAgreement() != Agreement.EMPTY){
+            else if (deliveryTableBlockEntity.getAgreement() != DeliveryAgreement.EMPTY){
                 if (level.isClientSide)
                     AgreementGUI.showAsOverlay(player, deliveryTableBlockEntity::getAgreement);
                 return InteractionResult.SUCCESS;
@@ -166,9 +166,9 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableEntity))
             return 0;
 
-        Agreement agreement = deliveryTableEntity.getAgreement();
+        DeliveryAgreement agreement = deliveryTableEntity.getAgreement();
 
-        if (agreement == Agreement.EMPTY || agreement.isExpired(level.getGameTime()))
+        if (agreement == DeliveryAgreement.EMPTY || agreement.isExpired(level.getGameTime()))
             return 0;
 
         if (agreement.isCompleted())

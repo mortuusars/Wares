@@ -1,13 +1,13 @@
 package io.github.mortuusars.wares.client.gui.agreement;
 
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Supplier;
 
 public class AgreementGUI {
-    public static void showAsOverlay(Player player, Supplier<Agreement> agreementSupplier) {
-        if (!player.level().isClientSide)
+    public static void showAsOverlay(Player player, Supplier<DeliveryAgreement> agreementSupplier) {
+        if (!player.level.isClientSide)
             throw new IllegalStateException("Tried to open Agreement GUI on the server. That's illegal.");
 
         int containerId = player.containerMenu.containerId + 1;

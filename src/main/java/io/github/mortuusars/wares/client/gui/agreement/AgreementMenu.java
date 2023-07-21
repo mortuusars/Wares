@@ -3,26 +3,25 @@ package io.github.mortuusars.wares.client.gui.agreement;
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
+import io.github.mortuusars.wares.menu.ItemDisplaySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class AgreementMenu extends AbstractContainerMenu {
     public static final Rectangle AREA = new Rectangle(0, 0, 200, 256);
@@ -36,13 +35,13 @@ public class AgreementMenu extends AbstractContainerMenu {
     public final Player player;
     public final Level level;
 
-    protected final Supplier<Agreement> agreementSupplier;
+    protected final Supplier<DeliveryAgreement> agreementSupplier;
     protected AgreementLayout layout;
 
     public final boolean isShort;
     public int posYOffset;
 
-    public AgreementMenu(int containerId, Inventory playerInventory, Supplier<Agreement> agreementSupplier) {
+    public AgreementMenu(int containerId, Inventory playerInventory, Supplier<DeliveryAgreement> agreementSupplier) {
         super(null, containerId);
         this.player = playerInventory.player;
         this.level = playerInventory.player.level();
@@ -68,23 +67,31 @@ public class AgreementMenu extends AbstractContainerMenu {
             isShort = false;
         }
 
-        Agreement agreement = getAgreement();
+        DeliveryAgreement agreement = getAgreement();
 
 
         // Slots:
-
-        SimpleContainer container = new SimpleContainer(Stream.concat(agreement.getRequestedItems().stream(),
-                agreement.getPaymentItems().stream()).toArray(ItemStack[]::new));
-
-        int requestedSlotsCount = agreement.getRequestedItems().size();
-        int paymentSlotsCount = agreement.getPaymentItems().size();
+        int requestedSlotsCount = agreement.getRequested().size();
+        int paymentSlotsCount = agreement.getPayment().size();
         boolean shouldCenterY = requestedSlotsCount > 3 || paymentSlotsCount > 3;
+
+        Function<Integer, List<ItemStack>> requestedStacksForSlot = integer -> agreement.getRequested().get(integer).getStacks();
+        Function<Integer, Component> requestedTooltipForSlot = integer -> {
+            RequestedItem requestedItem = agreement.getRequested().get(integer);
+            return requestedItem.getTagOrItem()
+                    .map(tag -> Component.translatable("gui.wares.agreement.tag_slot_tooltip", "#" + tag.location()),
+                         item -> Component.empty());
+        };
+
+        Function<Integer, List<ItemStack>> paymentStacksForSlot = integer -> List.of(agreement.getPayment().get(integer));
+        Function<Integer, Component> paymentTooltipForSlot = integer -> Component.empty();
+
 
         Rectangle slotsRect = layout.getElement(AgreementLayout.Element.SLOTS);
         if (slotsRect != null) { // Extra safety. Should not be null here.
             int slotsPosY = posYOffset + slotsRect.top();
-            arrangeSlotsInGrid(container, requestedSlotsCount, 0, 30, slotsPosY, shouldCenterY);
-            arrangeSlotsInGrid(container, paymentSlotsCount, requestedSlotsCount, 116, slotsPosY, shouldCenterY);
+            arrangeDisplaySlotsInGrid(requestedSlotsCount, 0, 30, slotsPosY, shouldCenterY, requestedStacksForSlot, requestedTooltipForSlot);
+            arrangeDisplaySlotsInGrid(paymentSlotsCount, requestedSlotsCount, 116, slotsPosY, shouldCenterY, paymentStacksForSlot, paymentTooltipForSlot);
         }
     }
 
@@ -100,7 +107,7 @@ public class AgreementMenu extends AbstractContainerMenu {
         return layout;
     }
 
-    public Agreement getAgreement() {
+    public DeliveryAgreement getAgreement() {
         return agreementSupplier.get();
     }
 
@@ -139,7 +146,7 @@ public class AgreementMenu extends AbstractContainerMenu {
     protected AgreementLayout layoutAgreementElements(Rectangle availableArea, int elementsSpacing) {
         int lineHeight = Minecraft.getInstance().font.lineHeight;
 
-        int slotsHeight = getAgreement().getRequestedItems().size() > 3 || getAgreement().getPaymentItems().size() > 3 ? 36 : 18;
+        int slotsHeight = getAgreement().getRequested().size() > 3 || getAgreement().getPayment().size() > 3 ? 36 : 18;
 
         // Info
         boolean shouldDisplayOrderedCount = !getAgreement().isInfinite();
@@ -184,7 +191,8 @@ public class AgreementMenu extends AbstractContainerMenu {
         return layout;
     }
 
-    protected void arrangeSlotsInGrid(Container container, int count, int startIndex, int startX, int startY, boolean centeredY) {
+    protected void arrangeDisplaySlotsInGrid(int count, int startIndex, int startX, int startY, boolean centeredY,
+                                             Function<Integer, List<ItemStack>> stacksForSlotIndex, Function<Integer, Component> tooltipsForSlotIndex) {
         List<Integer> rows = new ArrayList<>();
 
         if (count == 4) {
@@ -210,22 +218,16 @@ public class AgreementMenu extends AbstractContainerMenu {
             int y = count <= 3 && centeredY ? startY + 9 : startY;
 
             for (int column = 0; column < slots; column++) {
-                this.addSlot(new Slot(container, startIndex + index, x + column * 18, y + row * 18) {
-                    @Override
-                    public boolean mayPlace(@NotNull ItemStack stack) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mayPickup(@NotNull Player player) {
-                        return false;
-                    }
-                });
+                List<ItemStack> stacks = stacksForSlotIndex.apply(index);
+                Component tooltip = tooltipsForSlotIndex.apply(index);
+                this.addSlot(new ItemDisplaySlot(stacks, tooltip,startIndex + index, x + column * 18, y + row * 18));
                 index++;
             }
         }
 
     }
+
+
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
@@ -239,6 +241,6 @@ public class AgreementMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return getAgreement() != Agreement.EMPTY;
+        return getAgreement() != DeliveryAgreement.EMPTY;
     }
 }
