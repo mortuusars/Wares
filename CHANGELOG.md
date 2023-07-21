@@ -1,0 +1,3 @@
+- Fixed custom seal textures not working
+- Tags can now be used as a requested item.
+- Delivery Agreement's `requestedItems` and `paymentItems` fields have been renamed to `requested` and `payment` respectively. (Same as in Sealed Agreements)
