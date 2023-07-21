@@ -3,8 +3,8 @@ package io.github.mortuusars.wares.item;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.data.agreement.SealedAgreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -30,18 +30,17 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("DataFlowIssue")
-public class SealedAgreementItem extends Item {
-
+public class SealedDeliveryAgreementItem extends Item {
     public static final String DAMAGED_TAG = "AgreementDamaged";
     public static final String UNOPENABLE_TAG = "AgreementUnopenable";
 
-    public SealedAgreementItem(Properties properties) {
+    public SealedDeliveryAgreementItem(Properties properties) {
         super(properties);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
-        SealedAgreement.fromItemStack(stack).ifPresent(a ->
+        SealedDeliveryAgreement.fromItemStack(stack).ifPresent(a ->
                 tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
                         .withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
@@ -77,7 +76,7 @@ public class SealedAgreementItem extends Item {
     }
 
     public boolean inspect(ItemStack sealedAgreementStack, Player player) {
-        Optional<SealedAgreement> sealed = SealedAgreement.fromItemStack(sealedAgreementStack);
+        Optional<SealedDeliveryAgreement> sealed = SealedDeliveryAgreement.fromItemStack(sealedAgreementStack);
         if (sealed.isEmpty())
             return false;
 
@@ -107,7 +106,7 @@ public class SealedAgreementItem extends Item {
         if (!(livingEntity instanceof Player player))
             return stack;
 
-        Optional<SealedAgreement> descriptionOptional = SealedAgreement.fromItemStack(stack);
+        Optional<SealedDeliveryAgreement> descriptionOptional = SealedDeliveryAgreement.fromItemStack(stack);
 
         if (descriptionOptional.isEmpty()){
             Wares.LOGGER.error("Cannot read AgreementDescription from stack nbt.");
@@ -121,7 +120,7 @@ public class SealedAgreementItem extends Item {
 
         if (level instanceof ServerLevel serverLevel) {
             try {
-                Agreement agreement = descriptionOptional.get().realize(serverLevel);
+                DeliveryAgreement agreement = descriptionOptional.get().realize(serverLevel);
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
                 if (agreement.toItemStack(agreementStack)) {

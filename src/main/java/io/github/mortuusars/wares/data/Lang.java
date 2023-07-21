@@ -43,6 +43,7 @@ public enum Lang {
     GUI_AGREEMENT_DELIVERIES_TOOLTIP("gui", "agreement.deliveries.tooltip"),
     GUI_AGREEMENT_COMPLETED("gui", "agreement.completed.tooltip"),
     GUI_AGREEMENT_EXPIRED("gui", "agreement.expired.tooltip"),
+    GUI_AGREEMENT_TAG_SLOT_TOOLTIP("gui", "agreement.tag_slot.tooltip"),
     GUI_TIME_DAYS("gui", "days.short"),
     GUI_TIME_HOURS("gui", "hours.short"),
     GUI_TIME_MINUTES("gui", "minutes.short"),

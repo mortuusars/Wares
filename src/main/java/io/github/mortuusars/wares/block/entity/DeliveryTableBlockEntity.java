@@ -4,9 +4,10 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
-import io.github.mortuusars.wares.item.AgreementItem;
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
+import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -97,7 +98,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected boolean canDeliverManually = false;
     protected boolean deliveringManually = false;
 
-    protected Agreement agreement = Agreement.EMPTY;
+    protected DeliveryAgreement agreement = DeliveryAgreement.EMPTY;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -215,7 +216,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return Optional.empty();
     }
 
-    public Agreement getAgreement() {
+    public DeliveryAgreement getAgreement() {
         return agreement;
     }
 
@@ -258,8 +259,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 return deliveredCount;
 
             consumePackage();
-            consumeFromInputSlots(agreement.getRequestedItems());
-            insertCopiesToOutputSlots(agreement.getPaymentItems());
+            consumeFromInputSlots(agreement.getRequested());
+            insertCopiesToOutputSlots(agreement.getPayment());
             deliveredCount++;
 
             assert level != null;
@@ -307,7 +308,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     protected boolean hasRequestedItems() {
-        List<ItemStack> requestedItems = agreement.getRequestedItems();
+        List<RequestedItem> requestedItems = agreement.getRequested();
 
         List<ItemStack> inputStacks = new ArrayList<>();
         for (int slotIndex : INPUT_SLOTS) {
@@ -316,11 +317,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 inputStacks.add(stackInSlot.copy());
         }
 
-        for (ItemStack requestedItem : requestedItems) {
+        for (RequestedItem requestedItem : requestedItems) {
             int requiredCount = requestedItem.getCount();
 
             for (ItemStack stack : inputStacks) {
-                if (!stack.isEmpty() && ItemStack.isSameItemSameTags(requestedItem, stack)) {
+                if (!stack.isEmpty() && requestedItem.matches(stack)) {
                     ItemStack split = stack.split(requiredCount);
                     requiredCount -= split.getCount();
                 }
@@ -351,7 +352,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             i++;
         }
 
-        for (ItemStack stack : getAgreement().getPaymentItems()) {
+        for (ItemStack stack : getAgreement().getPayment()) {
             if (!outputSpaceCheckContainer.addItem(stack.copy()).isEmpty())
                 return false;
         }
@@ -359,12 +360,12 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
-    protected void consumeFromInputSlots(List<ItemStack> requestedItems) {
-        for (ItemStack requestedItem : requestedItems) {
+    protected void consumeFromInputSlots(List<RequestedItem> requestedItems) {
+        for (RequestedItem requestedItem : requestedItems) {
             int requiredCount = requestedItem.getCount();
 
             for (int slotIndex : INPUT_SLOTS) {
-                if (ItemStack.isSameItemSameTags(requestedItem, inventory.getStackInSlot(slotIndex))) {
+                if (requestedItem.matches(inventory.getStackInSlot(slotIndex))) {
                     ItemStack extractedStack = inventory.extractItem(slotIndex, requiredCount, false);
                     requiredCount -= extractedStack.getCount();
 
@@ -394,7 +395,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 if (slot == AGREEMENT_SLOT)
-                    return stack.getItem() instanceof AgreementItem;
+                    return stack.getItem() instanceof DeliveryAgreementItem;
                 else if (slot == BOX_SLOT)
                     return Config.DELIVERIES_REQUIRE_BOXES.get() && stack.is(Wares.Tags.Items.DELIVERY_BOXES);
                 return super.isItemValid(slot, stack);
@@ -412,7 +413,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             protected void onContentsChanged(int slot) {
                 if (slot == AGREEMENT_SLOT) {
                     updateBlockStateIfNeeded();
-                    agreement = Agreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(Agreement.EMPTY);
+                    agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
                     resetProgress();
                 }
                 setChanged();
@@ -510,7 +511,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public boolean canPlaceItem(int slotIndex, @NotNull ItemStack stack) {
-        return (slotIndex == AGREEMENT_SLOT && stack.getItem() instanceof AgreementItem)
+        return (slotIndex == AGREEMENT_SLOT && stack.getItem() instanceof DeliveryAgreementItem)
                 || (slotIndex == BOX_SLOT && stack.is(Wares.Tags.Items.DELIVERY_BOXES))
                 || (slotIndex >= INPUT_SLOTS[0] && slotIndex < OUTPUT_SLOTS[0]);
     }
@@ -546,7 +547,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         this.progress = tag.getInt("Progress");
         this.deliveringManually = tag.getBoolean("DeliveringManually");
 
-        agreement = Agreement.fromItemStack(getAgreementItem()).orElse(Agreement.EMPTY);
+        agreement = DeliveryAgreement.fromItemStack(getAgreementItem()).orElse(DeliveryAgreement.EMPTY);
         updateBlockStateIfNeeded();
     }
 
@@ -570,11 +571,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return;
 
         if (getAgreement().isCompleted())
-            setAgreementItem(AgreementItem.convertToCompleted(getAgreementItem()));
+            setAgreementItem(DeliveryAgreementItem.convertToCompleted(getAgreementItem()));
         else {
             assert level != null;
             if (getAgreement().isExpired(level.getGameTime()))
-                setAgreementItem(AgreementItem.convertToExpired(getAgreementItem()));
+                setAgreementItem(DeliveryAgreementItem.convertToExpired(getAgreementItem()));
         }
     }
 
