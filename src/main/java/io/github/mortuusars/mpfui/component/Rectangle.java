@@ -1,25 +1,25 @@
 package io.github.mortuusars.mpfui.component;
 
-public class Rectangle {
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-
-    public Rectangle(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+@SuppressWarnings("unused")
+public record Rectangle(int x, int y, int width, int height) {
+    public int left() {
+        return x;
     }
 
-    public int left() { return x; }
-    public int top() { return y; }
-    public int right() { return x + width; }
-    public int bottom() { return y + height; }
+    public int top() {
+        return y;
+    }
+
+    public int right() {
+        return x + width;
+    }
+
+    public int bottom() {
+        return y + height;
+    }
 
     public int centerX() {
-        return left() +  width / 2;
+        return left() + width / 2;
     }
 
     public int centerY() {

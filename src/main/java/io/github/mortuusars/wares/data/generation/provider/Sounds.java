@@ -1,7 +1,6 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
@@ -15,17 +14,17 @@ public class Sounds extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         add(Wares.SoundEvents.PAPER_TEAR.get(), definition()
-                .subtitle(Lang.SUBTITLE_PAPER_TEAR.key)
+                .subtitle("subtitle.wares.paper.tear")
                 .with(multiple(2, Wares.ID + ":item/paper_tear", 1f, 1)));
 
         add(Wares.SoundEvents.PAPER_CRACKLE.get(), definition()
-                .subtitle(Lang.SUBTITLE_PAPER_CRACKLE.key)
+                .subtitle("subtitle.wares.paper.crackle")
                 .with(multiple(3, "item/book/open_flip", 1f, 1f))
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(0.85f))
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(1.25f)));
 
         add(Wares.SoundEvents.WRITING.get(), definition()
-                .subtitle(Lang.SUBTITLE_WRITING.key)
+                .subtitle("subtitle.wares.writing")
                 .with(multiple(3, Wares.ID + ":block/delivery_table/writing", 0.9f, 1)));
 
         add(Wares.SoundEvents.CARDBOARD_BREAK.get(), definition()
@@ -47,7 +46,7 @@ public class Sounds extends SoundDefinitionsProvider {
                 .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));
 
         add(Wares.SoundEvents.VILLAGER_WORK_PACKAGER.get(), definition()
-                .subtitle(Lang.SUBTITLE_PACKAGER_WORKS.key)
+                .subtitle("subtitle.entity.villager.work_packager")
                 .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));
     }
 

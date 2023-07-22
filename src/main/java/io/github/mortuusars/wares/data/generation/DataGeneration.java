@@ -32,7 +32,5 @@ public class DataGeneration
         generator.addProvider(event.includeClient(), blockStates);
         generator.addProvider(event.includeClient(), new ItemModels(generator, blockStates.models().existingFileHelper));
         generator.addProvider(event.includeClient(), new Sounds(generator, helper));
-        generator.addProvider(event.includeClient(), new Languages(generator, "en_us", Languages.MissingEntriesPolicy.EXCEPTION));
-        generator.addProvider(event.includeClient(), new Languages(generator, "uk_ua", Languages.MissingEntriesPolicy.EXCEPTION));
     }
 }

@@ -2,8 +2,6 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import com.google.common.collect.Sets;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.Lang;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -15,6 +13,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -45,6 +44,20 @@ public class Advancements extends AdvancementProvider
         public void generate(HolderLookup.Provider pRegistries, Consumer<Advancement> consumer) {
             CompoundTag almostExpiredTag = new CompoundTag();
             almostExpiredTag.putBoolean("almostExpired", true);
+
+            Advancement.Builder.advancement()
+                .parent(new ResourceLocation("minecraft:adventure/root"))
+                .display(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(),
+                        Component.translatable("advancement.wares.last_minutes.title"),
+                        Component.translatable("advancement.wares.last_minutes.description"), null, FrameType.CHALLENGE,
+                        true, true, true)
+                .addCriterion("almost_expired", InventoryChangeTrigger.TriggerInstance.hasItems(
+                        ItemPredicate.Builder.item()
+                                .of(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())
+                                .hasNbt(almostExpiredTag)
+                                .build()))
+                .save(consumer, Wares.resource("adventure/at_the_last_minutes"), existingFileHelper);
+    }
 
             Advancement.Builder.advancement()
                     .parent(new ResourceLocation("minecraft:adventure/root"))

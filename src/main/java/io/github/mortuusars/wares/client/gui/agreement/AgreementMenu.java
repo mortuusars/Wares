@@ -2,7 +2,6 @@ package io.github.mortuusars.wares.client.gui.agreement;
 
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.menu.ItemDisplaySlot;
@@ -55,14 +54,14 @@ public class AgreementMenu extends AbstractContainerMenu {
 
         int height = layout.getHeight();
 
-        if (CONTENT_AREA.height - height >= SHORT_AGREEMENT_THRESHOLD) {
+        if (CONTENT_AREA.height() - height >= SHORT_AGREEMENT_THRESHOLD) {
             isShort = true;
             layout = layoutAgreementElements(CONTENT_AREA_SHORT, ELEMENTS_SPACING);
-            int yOffsetToCenter = (CONTENT_AREA_SHORT.height - layout.getHeight()) / 2;
+            int yOffsetToCenter = (CONTENT_AREA_SHORT.height() - layout.getHeight()) / 2;
             posYOffset = CONTENT_AREA_SHORT.top() + yOffsetToCenter;
         }
         else {
-            int yOffsetToCenter = (CONTENT_AREA.height - height) / 2;
+            int yOffsetToCenter = (CONTENT_AREA.height() - height) / 2;
             posYOffset = CONTENT_AREA.top() + yOffsetToCenter;
             isShort = false;
         }
@@ -96,11 +95,11 @@ public class AgreementMenu extends AbstractContainerMenu {
     }
 
     public int getUIWidth() {
-        return isShort ? AREA_SHORT.width : AREA.width;
+        return isShort ? AREA_SHORT.width() : AREA.width();
     }
 
     public int getUIHeight() {
-        return isShort ? AREA_SHORT.height : AREA.height;
+        return isShort ? AREA_SHORT.height() : AREA.height();
     }
 
     public AgreementLayout getLayout() {
@@ -113,13 +112,13 @@ public class AgreementMenu extends AbstractContainerMenu {
 
     public MutableComponent getTitle() {
         Component title = getAgreement().getTitle();
-        return title.equals(Component.empty()) ? Lang.GUI_AGREEMENT_TITLE.translate() : title.copy();
+        return title.equals(Component.empty()) ? Component.translatable("gui.wares.agreement.title") : title.copy();
     }
 
     public MutableComponent getMessage() {
         // Copying component here because on every consecutive call unwanted appends will be made.
         MutableComponent message = (MutableComponent) getAgreement().getMessage();
-        message = message.equals(Component.empty()) ? Lang.GUI_AGREEMENT_MESSAGE.translate() : message.copy();
+        message = message.equals(Component.empty()) ? Component.translatable("gui.wares.agreement.message") : message.copy();
 
         if (Config.AGREEMENT_APPEND_BUYER_INFO_TO_MESSAGE.get()) {
             boolean hasBuyerName = Minecraft.getInstance().font.width(getAgreement().getBuyerName()) != 0;
@@ -162,31 +161,31 @@ public class AgreementMenu extends AbstractContainerMenu {
 
 
         int heightWithoutMessage = lineHeight + elementsSpacing + slotsHeight + (infoHeight > 0 ? elementsSpacing + infoHeight : 0);
-        int heightForMessage = availableArea.height - heightWithoutMessage - elementsSpacing;
+        int heightForMessage = availableArea.height() - heightWithoutMessage - elementsSpacing;
 
         // Message
-        List<FormattedCharSequence> messageLines = Minecraft.getInstance().font.split(getMessage(), availableArea.width);
+        List<FormattedCharSequence> messageLines = Minecraft.getInstance().font.split(getMessage(), availableArea.width());
         int messageHeight = Math.min(heightForMessage, messageLines.size() * lineHeight);
 
 
         AgreementLayout layout = new AgreementLayout();
 
-        layout.append(AgreementLayout.Element.TITLE, availableArea.x, availableArea.width, lineHeight, 0);
+        layout.append(AgreementLayout.Element.TITLE, availableArea.x(), availableArea.width(), lineHeight, 0);
 
         if (messageHeight > 0)
-            layout.append(AgreementLayout.Element.MESSAGE, availableArea.x, availableArea.width, messageHeight, elementsSpacing);
+            layout.append(AgreementLayout.Element.MESSAGE, availableArea.x(), availableArea.width(), messageHeight, elementsSpacing);
 
-        layout.append(AgreementLayout.Element.SLOTS, availableArea.x + 18, availableArea.width - 18 * 2, slotsHeight, elementsSpacing);
+        layout.append(AgreementLayout.Element.SLOTS, availableArea.x() + 18, availableArea.width() - 18 * 2, slotsHeight, elementsSpacing);
 
         int infoSpacing = elementsSpacing;
 
         if (shouldDisplayOrderedCount) {
-            layout.append(AgreementLayout.Element.ORDERED, availableArea.x, availableArea.width, lineHeight, infoSpacing);
+            layout.append(AgreementLayout.Element.ORDERED, availableArea.x(), availableArea.width(), lineHeight, infoSpacing);
             infoSpacing = 0;
         }
 
         if (shouldDisplayExpirationTime)
-            layout.append(AgreementLayout.Element.EXPIRY, availableArea.x, availableArea.width, lineHeight, infoSpacing);
+            layout.append(AgreementLayout.Element.EXPIRY, availableArea.x(), availableArea.width(), lineHeight, infoSpacing);
 
         return layout;
     }

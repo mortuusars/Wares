@@ -3,6 +3,7 @@ package io.github.mortuusars.wares.data.agreement;
 import io.github.mortuusars.wares.Wares;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public enum AgreementType implements StringRepresentable {
     NONE("none"),
@@ -31,7 +32,7 @@ public enum AgreementType implements StringRepresentable {
     }
 
     @Override
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return name;
     }
 }

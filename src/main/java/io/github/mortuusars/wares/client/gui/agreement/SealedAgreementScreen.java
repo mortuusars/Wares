@@ -9,7 +9,6 @@ import com.mojang.math.Axis;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -58,7 +57,7 @@ public class SealedAgreementScreen extends Screen {
         this.seal = new Seal(seal);
         this.sealTooltip = sealTooltip;
         this.backsideMessage = backsideMessage;
-        this.showRemainingTextMessage = Lang.GUI_SEALED_AGREEMENT_SHOW_REMAINING_TEXT_MESSAGE.translate();
+        this.showRemainingTextMessage = Component.translatable("gui.wares.sealed_agreement.show_remaining_text_message");
 
         this.minecraft = Minecraft.getInstance();
     }

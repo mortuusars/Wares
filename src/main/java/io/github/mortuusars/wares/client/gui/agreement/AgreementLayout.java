@@ -10,7 +10,7 @@ import java.util.List;
 public class AgreementLayout {
 
     public enum Element {
-        TITLE, MESSAGE, SLOTS, ORDERED, EXPIRY;
+        TITLE, MESSAGE, SLOTS, ORDERED, EXPIRY
     }
 
     private List<Pair<Element, Rectangle>> elements = new ArrayList<>();

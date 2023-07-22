@@ -4,8 +4,6 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.screen.CardboardBoxScreen;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;

@@ -10,14 +10,11 @@ import io.github.mortuusars.wares.test.framework.TestingResult;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Tests {
-
-    private ServerPlayer player;
+    private final ServerPlayer player;
 
     public Tests(ServerPlayer player) {
         this.player = player;
@@ -36,12 +33,12 @@ public class Tests {
         Wares.LOGGER.info(String.join("",
                 "TESTS COMPLETED!\n",
                 testingResult.getTotalTestCount() + " test(s) were conducted.",
-                testingResult.passed().size() > 0 ? ("\nPassed:\n" + String.join("\n", testingResult.passed().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : "",
-                testingResult.failed().size() > 0 ? ("\nFailed:\n" + String.join("\n", testingResult.failed().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : "",
-                testingResult.skipped().size() > 0 ? ("\nSkipped:\n" + String.join("\n", testingResult.skipped().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : ""));
+                testingResult.passed().size() > 0 ? ("\nPassed:\n" + testingResult.passed().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : "",
+                testingResult.failed().size() > 0 ? ("\nFailed:\n" + testingResult.failed().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : "",
+                testingResult.skipped().size() > 0 ? ("\nSkipped:\n" + testingResult.skipped().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : ""));
         return testingResult;
     }
 

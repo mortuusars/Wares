@@ -17,12 +17,10 @@ public class SealRenderable extends TextureRenderable {
     }
 
     @Override
-    public TextureRenderable getThis() {
-        return this;
-    }
+    protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, texture);
 
-    @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1, 1,1, 0.5f);
         graphics.blit(texture, getX(), getY(), uOffset, Seal.Element.SHADOW.getVOffset(), width, shadowHeight);

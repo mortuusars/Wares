@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,15 +27,16 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
 
     public DeliveryTableScreen(DeliveryTableMenu menu, Inventory playerinventory, Component title) {
         super(menu, playerinventory, title);
-        this.manualDeliveryButtonTitle = Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY.translate();
-        manualDeliveryButtonTooltip = Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP.translate();
+        this.manualDeliveryButtonTitle = Component.translatable("gui.wares.delivery_table.manual_delivery");
+        manualDeliveryButtonTooltip = new ArrayList<>();
+        manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip"));
 
         double manualDeliveryTimeModifier = Config.MANUAL_DELIVERY_TIME_MODIFIER.get();
         if (manualDeliveryTimeModifier > 1.0D) {
             String formattedModifier = manualDeliveryTimeModifier % 1 == 0 ?
                     String.format("%.0f", manualDeliveryTimeModifier) :
                     String.format("%.1f", manualDeliveryTimeModifier);
-            manualDeliveryButtonTooltip.append("\n").append(Lang.GUI_DELIVERY_TABLE_MANUAL_DELIVERY_TOOLTIP_EXTRA_INFO.translate(formattedModifier)
+            manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip_extra_info", formattedModifier)
                     .withStyle(ChatFormatting.GRAY));
         }
     }
@@ -75,12 +75,12 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         if (menu.getCarried().isEmpty()) {
             Slot agreementSlot = menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT);
             if (!agreementSlot.hasItem() && isHovering(agreementSlot.x, agreementSlot.y, 18, 18, mouseX, mouseY))
-                graphics.renderTooltip(font, Lang.GUI_DELIVERY_TABLE_NO_AGREEMENT_TOOLTIP.translate(), mouseX, mouseY);
+                this.renderTooltip(poseStack, Component.translatable("gui.wares.delivery_table.no_agreement.tooltip"), mouseX, mouseY);
 
             if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
                 Slot boxSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
                 if (!boxSlot.hasItem() && isHovering(boxSlot.x, boxSlot.y, 18, 18, mouseX, mouseY))
-                    graphics.renderTooltip(font, Lang.GUI_DELIVERY_TABLE_NO_BOXES_TOOLTIP.translate(), mouseX, mouseY);
+                    this.renderTooltip(poseStack, Component.translatable("gui.wares.delivery_table.no_packages.tooltip"), mouseX, mouseY);
             }
         }
     }

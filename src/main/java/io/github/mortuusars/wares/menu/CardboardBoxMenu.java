@@ -3,7 +3,6 @@ package io.github.mortuusars.wares.menu;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.data.Package;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

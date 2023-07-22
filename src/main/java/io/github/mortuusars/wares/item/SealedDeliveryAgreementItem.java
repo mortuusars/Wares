@@ -2,7 +2,6 @@ package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
 import net.minecraft.client.Minecraft;
@@ -41,7 +40,7 @@ public class SealedDeliveryAgreementItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
         SealedDeliveryAgreement.fromItemStack(stack).ifPresent(a ->
-                tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
+                tooltipComponents.add(Component.translatable("item.wares.sealed_agreement.view.tooltip")
                         .withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
 
@@ -113,7 +112,7 @@ public class SealedDeliveryAgreementItem extends Item {
             stack.getOrCreateTag().putBoolean(DAMAGED_TAG, true);
 
             if (level.isClientSide)
-                player.displayClientMessage(Lang.SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE.translate(), true);
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.damaged.message"), true);
 
             return stack;
         }
@@ -146,7 +145,7 @@ public class SealedDeliveryAgreementItem extends Item {
             }
             catch (Exception e) {
                 Wares.LOGGER.error(e.toString());
-                player.displayClientMessage(Lang.SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE.translate(), true);
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.unopenable.message"), true);
                 stack.getOrCreateTag().putBoolean(UNOPENABLE_TAG, true);
             }
         }

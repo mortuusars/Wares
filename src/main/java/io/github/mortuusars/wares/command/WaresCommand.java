@@ -6,7 +6,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.mpfui.helper.LoremIpsum;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.*;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
@@ -120,7 +119,7 @@ public class WaresCommand {
                 .message(Component.literal(LoremIpsum.words(50)))
                 .addRequestedItem(new RequestedItem(Items.BAKED_POTATO, 4))
                 .addRequestedItem(new RequestedItem(Items.PUMPKIN_PIE, 2))
-                .addRequestedItem(new RequestedItem(ItemTags.LOGS, 2))
+                .addRequestedItem(new RequestedItem(ItemTags.FLOWERS, 2))
                 .addPaymentItem(new ItemStack(Items.EMERALD, 2))
                 .ordered(5)
                 .experience(12)
@@ -143,22 +142,21 @@ public class WaresCommand {
         ItemStack mainHandItem = player.getMainHandItem();
 
         if (mainHandItem.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())) {
-            context.getSource().sendFailure(Lang.COMMAND_AGREEMENT_COMPLETE_ALREADY_COMPLETED.translate());
+            context.getSource().sendFailure(Component.translatable("commands.wares.agreement.complete.already_completed"));
             return 1;
         }
         else if (mainHandItem.is(Wares.Items.EXPIRED_DELIVERY_AGREEMENT.get())) {
-            context.getSource().sendFailure(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EXPIRED.translate());
+            context.getSource().sendFailure(Component.translatable("commands.wares.agreement.complete.is_expired"));
             return 1;
         }
         else if (!mainHandItem.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
-            context.getSource().sendFailure(Lang.COMMAND_AGREEMENT_COMPLETE_WRONG_ITEM
-                    .translate(Wares.Items.DELIVERY_AGREEMENT.get(), mainHandItem.getItem()));
+            context.getSource().sendFailure(Component.translatable("commands.wares.agreement.complete.wrong_item", Wares.Items.DELIVERY_AGREEMENT.get(), mainHandItem.getItem()));
             return 1;
         }
 
         DeliveryAgreement agreement = DeliveryAgreement.fromItemStack(mainHandItem).orElse(DeliveryAgreement.EMPTY);
         if (agreement == DeliveryAgreement.EMPTY) {
-            context.getSource().sendFailure(Lang.COMMAND_AGREEMENT_COMPLETE_IS_EMPTY.translate());
+            context.getSource().sendFailure(Component.translatable("commands.wares.agreement.complete.is_empty"));
             return 1;
         }
 
