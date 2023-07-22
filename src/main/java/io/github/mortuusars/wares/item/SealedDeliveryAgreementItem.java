@@ -4,6 +4,7 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -39,6 +40,9 @@ public class SealedDeliveryAgreementItem extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
+        if (stack.getTag() == null || stack.getTag().isEmpty() || stack.getTag().contains(DAMAGED_TAG) || stack.getTag().contains(UNOPENABLE_TAG))
+            return;
+
         SealedDeliveryAgreement.fromItemStack(stack).ifPresent(a ->
                 tooltipComponents.add(Component.translatable("item.wares.sealed_agreement.view.tooltip")
                         .withStyle(Style.EMPTY.withColor(0xd6b589))));
@@ -68,6 +72,13 @@ public class SealedDeliveryAgreementItem extends Item {
 
         if (player.isSecondaryUseActive())
             inspect(stack, player);
+        else if (stack.getTag() == null || stack.getTag().isEmpty() || stack.getTag().contains(DAMAGED_TAG) || stack.getTag().contains(UNOPENABLE_TAG)) {
+            if (level.isClientSide)
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.damaged.message")
+                        .withStyle(ChatFormatting.RED), true);
+            Wares.LOGGER.error(stack + " does not have agreement data or data is not correct. Make sure item stack has agreement nbt and it is correct.");
+            player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 0.8f, 0.65f);
+        }
         else
             player.startUsingItem(hand);
 
@@ -123,22 +134,18 @@ public class SealedDeliveryAgreementItem extends Item {
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
                 if (agreement.toItemStack(agreementStack)) {
-
-                    int slotIndex = player.getInventory().findSlotMatchingItem(stack);
-
-                    stack.shrink(1);
-
-                    if (slotIndex > -1)
-                        player.getInventory().setItem(slotIndex, agreementStack);
-                    else
-                        player.addItem(agreementStack);
-
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                     level.playSound(null,
                             player.position().x,
                             player.position().y,
                             player.position().z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
                             1f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+
+                    // Release RMB after using. Otherwise, right click will be still held and will activate use again.
+                    if (level.isClientSide)
+                        Minecraft.getInstance().options.keyUse.setDown(false);
+
+                    return agreementStack;
                 }
                 else
                     throw new IllegalStateException("Saving Agreement to ItemStack failed.");

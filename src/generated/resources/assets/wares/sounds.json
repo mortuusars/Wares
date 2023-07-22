@@ -200,7 +200,7 @@
       "wares:block/cardboard/hit3",
       "wares:block/cardboard/hit4"
     ],
-    "subtitle": "subtitles.entity.villager.work_packager"
+    "subtitle": "subtitle.entity.villager.work_packager"
   },
   "item.paper.crackle": {
     "sounds": [
