@@ -1,4 +1,4 @@
-// 1.19.3	2023-04-22T11:25:35.9054689	Loot Tables
+// 1.19.2	2023-07-23T02:05:58.4951363	LootTables
 894e3f729be86356b7dad353424f7dd03381d000 data/wares/loot_tables/agreement/village/desert_payment_buy.json
 6110cce59b2624a89276557947953b755c617d7e data/wares/loot_tables/agreement/village/desert_payment_sell.json
 f98e3db82367d0757188db35565509e2282725bd data/wares/loot_tables/agreement/village/desert_requested_buy.json
@@ -19,6 +19,11 @@ b61f998787583b34d2e166dc5b97b3bb1fa5b500 data/wares/loot_tables/agreement/villag
 6110cce59b2624a89276557947953b755c617d7e data/wares/loot_tables/agreement/village/taiga_payment_sell.json
 f98e3db82367d0757188db35565509e2282725bd data/wares/loot_tables/agreement/village/taiga_requested_buy.json
 9a386fbe4c3ec03e41db681f0118fa1b349d5d74 data/wares/loot_tables/agreement/village/taiga_requested_sell.json
+9314535e1bf21aadda94763bfaf39413d752caaf data/wares/loot_tables/agreement/wandering_trader/dyes.json
+4a0c3490d8a32c1bd4347b2111933ee6d2be4011 data/wares/loot_tables/agreement/wandering_trader/rare_price.json
+63334eddcb4ceb4885a308c04addd2e03a612709 data/wares/loot_tables/agreement/wandering_trader/rare_ware.json
+c96bc3645a9f06086bb2b36f041beef44b86f44a data/wares/loot_tables/agreement/wandering_trader/regular_price.json
+847b40c9e43813341022ed83597b22a5096f5478 data/wares/loot_tables/agreement/wandering_trader/regular_ware.json
 d2f770bc1f633ece73e865cd8d8dccc346a85043 data/wares/loot_tables/blocks/cardboard_box.json
 225ecfa82b6dbd98ef5636e8a492ebb20f3f4742 data/wares/loot_tables/blocks/delivery_table.json
 a68d331190f6f87f32ce7ebab8c6f6c750b8428e data/wares/loot_tables/chests/village/desert_warehouse.json
@@ -30,4 +35,5 @@ a790bb0c3f4a41f9eba058d43f1e5a2b0760d927 data/wares/loot_tables/chests/village/s
 364cb38cfd1ea3b5d75d0fbf43d61b72409f377d data/wares/loot_tables/package/village/desert.json
 6224d654ed8550a5dd389a718f1b15851069a170 data/wares/loot_tables/package/village/plains.json
 5f33547f0788cad3c2a81692852bee7e7746825c data/wares/loot_tables/package/village/savanna.json
+c7351c1ddf7f6ff8a0c25284a41ea9010d138f21 data/wares/loot_tables/package/village/snowy.json
 ac41fcee388cd00be8aea25ef3bf63e190846ffa data/wares/loot_tables/package/village/taiga.json
