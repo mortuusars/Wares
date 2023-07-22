@@ -3,7 +3,6 @@ package io.github.mortuusars.wares.block.entity;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
@@ -529,7 +528,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     @Override
     protected @NotNull Component getDefaultName() {
-        return Lang.BLOCK_DELIVERY_TABLE.translate();
+        return Component.translatable("block.wares.delivery_table");
     }
 
     @Override
@@ -557,11 +556,6 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         tag.put("Inventory", this.inventory.serializeNBT());
         tag.putInt("Progress", progress);
         tag.putBoolean("DeliveringManually", deliveringManually);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
     }
 
     // <Updating>

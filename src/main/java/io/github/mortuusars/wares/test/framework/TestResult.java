@@ -7,7 +7,7 @@ public final class TestResult {
     public enum Status {
         PASSED,
         FAILED,
-        SKIPPED;
+        SKIPPED
     }
 
     private final String name;

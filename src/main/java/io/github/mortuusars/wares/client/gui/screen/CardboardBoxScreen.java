@@ -3,7 +3,6 @@ package io.github.mortuusars.wares.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -28,8 +27,8 @@ public class CardboardBoxScreen extends AbstractContainerScreen<CardboardBoxMenu
     public CardboardBoxScreen(CardboardBoxMenu menu, Inventory playerinventory, Component title) {
         super(menu, playerinventory, title);
 
-        this.packButtonTitle = Lang.GUI_CARDBOARD_BOX_PACK.translate();
-        this.packButtonTooltip = Lang.GUI_CARDBOARD_BOX_PACK_TOOLTIP.translate();
+        this.packButtonTitle = Component.translatable("gui.wares.cardboard_box.pack");
+        this.packButtonTooltip = Component.translatable("gui.wares.cardboard_box.pack.tooltip");
 
         cardboardBoxStack = playerinventory.getItem(menu.cardboardBoxSlotId);
     }

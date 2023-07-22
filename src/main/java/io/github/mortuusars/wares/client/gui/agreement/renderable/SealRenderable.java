@@ -20,11 +20,6 @@ public class SealRenderable extends TextureRenderable {
     }
 
     @Override
-    public TextureRenderable getThis() {
-        return this;
-    }
-
-    @Override
     protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, texture);

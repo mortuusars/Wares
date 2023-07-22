@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,7 +39,7 @@ public class DeliveryAgreementItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
         getAgreementFromStack(stack).ifLeft(agreement ->
-                tooltipComponents.add(Lang.ITEM_AGREEMENT_VIEW_TOOLTIP.translate().withStyle(Style.EMPTY.withColor(0xd6b589))));
+                tooltipComponents.add(Component.translatable("item.wares.agreement.view.tooltip").withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
 
     @Override

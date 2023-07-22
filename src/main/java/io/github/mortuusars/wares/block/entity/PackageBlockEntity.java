@@ -29,19 +29,16 @@ public class PackageBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         pack = Package.fromTag(tag).orElse(Package.DEFAULT);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         if (pack != null)
             pack.toTag(tag);
-        else {
-            boolean a = true;
-        }
     }
 
     @Override

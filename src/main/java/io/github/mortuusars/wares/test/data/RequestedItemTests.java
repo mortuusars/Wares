@@ -8,7 +8,6 @@ import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.test.framework.ITestClass;
 import io.github.mortuusars.wares.test.framework.Test;
-import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;

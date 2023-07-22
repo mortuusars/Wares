@@ -12,7 +12,6 @@ import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.SealRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.StampRenderable;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.menu.ItemDisplaySlot;
 import io.github.mortuusars.wares.util.TextUtil;
@@ -99,7 +98,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // TITLE
         Rectangle titleRect = layout.getElement(AgreementLayout.Element.TITLE);
         if (titleRect != null) { // Extra safety. Title should not be null.
-            addRenderableOnly(new TextBlockRenderable(menu.getTitle(), titleRect.left(), titleRect.top(), titleRect.width, titleRect.height)
+            addRenderableOnly(new TextBlockRenderable(menu.getTitle(), titleRect.left(), titleRect.top(), titleRect.width(), titleRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
                     .setDefaultColor(FONT_COLOR));
         }
@@ -107,7 +106,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // MESSAGE
         Rectangle messageRect = layout.getElement(AgreementLayout.Element.MESSAGE);
         if (messageRect != null) {
-            addRenderableOnly(new TextBlockRenderable(menu.getMessage(), messageRect.left(), messageRect.top(), messageRect.width, messageRect.height)
+            addRenderableOnly(new TextBlockRenderable(menu.getMessage(), messageRect.left(), messageRect.top(), messageRect.width(), messageRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
                     .setDefaultColor(FONT_COLOR));
         }
@@ -124,13 +123,13 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         if (orderedRect != null) {
             addRenderableOnly(new TextBlockRenderable(() -> Component.literal(
                     TextUtil.shortenNumber(getAgreement().getDelivered()) + " / " +
-                            TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width, orderedRect.height)
+                            TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width(), orderedRect.height())
                     .setDefaultColor(FONT_COLOR)
                     .setTooltip(() -> {
                         int delivered = getAgreement().getDelivered();
                         int ordered = getAgreement().getOrdered();
                         if (delivered >= 1000 || ordered >= 1000)
-                            return Lang.GUI_AGREEMENT_DELIVERIES_TOOLTIP.translate(delivered, ordered);
+                            return Component.translatable("gui.wares.agreement.deliveries.tooltip", delivered, ordered);
                         else return Component.empty();
                     })
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
@@ -141,9 +140,9 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         Rectangle expiryRect = layout.getElement(AgreementLayout.Element.EXPIRY);
         if (expiryRect != null) {
             addRenderableOnly(new TextBlockRenderable(() -> TextUtil.timeFromTicks(getAgreement().getExpireTimestamp() - menu.level.getGameTime()),
-                    expiryRect.left(), expiryRect.top(), expiryRect.width, expiryRect.height)
+                    expiryRect.left(), expiryRect.top(), expiryRect.width(), expiryRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
-                    .setTooltip(Lang.GUI_AGREEMENT_EXPIRE_TIME.translate()))
+                    .setTooltip(Component.translatable("gui.wares.agreement.expire_time")))
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
                     .setDefaultColor(0xad3232)
                     .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted()
@@ -153,14 +152,14 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // COMPLETED STAMP
         addRenderableOnly(new StampRenderable(getGuiLeft() + 12, getGuiTop() + 10, 71, 23,
                 1, 1, STAMPS_TEXTURE)
-                .setTooltip(Lang.GUI_AGREEMENT_COMPLETED.translate()))
+                .setTooltip(Component.translatable("gui.wares.agreement.completed.tooltip")))
                 .setOpacity(0.75f)
                 .visibility((renderable, poseStack, mouseX, mouseY) -> getAgreement().isCompleted());
 
         // EXPIRED STAMP
         addRenderableOnly(new StampRenderable(getGuiLeft() + 12, getGuiTop() + 10, 71, 23,
                 1, 27, STAMPS_TEXTURE)
-                .setTooltip(Lang.GUI_AGREEMENT_EXPIRED.translate()))
+                .setTooltip(Component.translatable("gui.wares.agreement.expired.tooltip")))
                 .setOpacity(0.75f)
                 .visibility((renderable, poseStack, mouseX, mouseY) -> !getAgreement().isCompleted() && getAgreement().isExpired(menu.level.getGameTime()));
 
@@ -212,7 +211,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
-    protected void renderTooltip(PoseStack pPoseStack, int pX, int pY) {
+    protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
         if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
             ItemStack stack = this.hoveredSlot.getItem();
             List<Component> itemTooltip = getTooltipFromItem(stack);
@@ -224,7 +223,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                     itemTooltip.add(additionalTooltip);
                 }
             }
-            this.renderTooltip(pPoseStack, itemTooltip, imageTooltip, pX, pY);
+            this.renderTooltip(poseStack, itemTooltip, imageTooltip, x, y);
         }
     }
 

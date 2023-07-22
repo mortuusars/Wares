@@ -11,9 +11,7 @@ public class CommonEvents {
     public static class Mod {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
-            event.enqueueWork(() -> {
-                Wares.Stats.register();
-            });
+            event.enqueueWork(Wares.Stats::register);
         }
     }
 

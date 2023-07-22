@@ -1,6 +1,6 @@
 package io.github.mortuusars.wares.util;
 
-import io.github.mortuusars.wares.data.Lang;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.Map;
@@ -44,11 +44,11 @@ public class TextUtil {
         if (minutes >= 60) {
             int hours = (int)(minutes / 60);
             return hours >= 24 ?
-                    Lang.GUI_TIME_DAYS.translate(hours / 24)
-                    : Lang.GUI_TIME_HOURS.translate(hours);
+                    Component.translatable("gui.wares.days.short", hours / 24)
+                    : Component.translatable("gui.wares.hours.short", hours);
         }
         else {
-            return Lang.GUI_TIME_MINUTES.translate(minutes < 1 ? "<1" : minutes);
+            return Component.translatable("gui.wares.minutes.short", minutes < 1 ? "<1" : minutes);
         }
     }
 }

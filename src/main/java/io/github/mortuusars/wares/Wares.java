@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Mod(Wares.ID)
 public class Wares
@@ -169,7 +170,7 @@ public class Wares
                 () -> new PoiType(ImmutableSet.copyOf(Blocks.DELIVERY_TABLE.get().getStateDefinition().getPossibleStates()), 1, 1));
 
         public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
-                () -> new VillagerProfession("packager", poi -> poi.is(DELIVERY_TABLE_POI.getKey()), poi -> poi.is(DELIVERY_TABLE_POI.getKey()),
+                () -> new VillagerProfession("packager", poi -> poi.is(Objects.requireNonNull(DELIVERY_TABLE_POI.getKey())), poi -> poi.is(Objects.requireNonNull(DELIVERY_TABLE_POI.getKey())),
                         ImmutableSet.of(), ImmutableSet.of(), null));
     }
 

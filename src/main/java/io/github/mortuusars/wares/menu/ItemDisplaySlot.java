@@ -43,12 +43,12 @@ public class ItemDisplaySlot extends Slot {
     }
 
     @Override
-    public boolean mayPlace(ItemStack pStack) {
+    public boolean mayPlace(@NotNull ItemStack pStack) {
         return false;
     }
 
     @Override
-    public boolean mayPickup(Player pPlayer) {
+    public boolean mayPickup(@NotNull Player pPlayer) {
         return false;
     }
 }

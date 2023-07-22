@@ -1,9 +1,7 @@
 package io.github.mortuusars.wares.data.generation.provider;
 
 import com.google.common.collect.Sets;
-import com.google.gson.GsonBuilder;
 import io.github.mortuusars.wares.Wares;
-import io.github.mortuusars.wares.data.Lang;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -11,9 +9,9 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +35,7 @@ public class Advancements extends AdvancementProvider {
     }
 
     @Override
-    public void run(CachedOutput cache) {
+    public void run(@NotNull CachedOutput cache) {
         Consumer<Advancement> consumer = getOutput(cache);
 
         CompoundTag almostExpiredTag = new CompoundTag();
@@ -46,8 +44,8 @@ public class Advancements extends AdvancementProvider {
         Advancement.Builder.advancement()
                 .parent(new ResourceLocation("minecraft:adventure/root"))
                 .display(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get(),
-                        Lang.ADVANCEMENT_LAST_MINUTES_TITLE.translate(),
-                        Lang.ADVANCEMENT_LAST_MINUTES_DESCRIPTION.translate(), null, FrameType.CHALLENGE,
+                        Component.translatable("advancement.wares.last_minutes.title"),
+                        Component.translatable("advancement.wares.last_minutes.description"), null, FrameType.CHALLENGE,
                         true, true, true)
                 .addCriterion("almost_expired", InventoryChangeTrigger.TriggerInstance.hasItems(
                         ItemPredicate.Builder.item()
