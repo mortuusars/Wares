@@ -81,13 +81,11 @@ public class RequestedItem {
 
     @SuppressWarnings("Convert2MethodRef")
     public boolean matches(ItemStack stack) {
-        if (!getTagOrItem().map(item -> stack.is(item), tag -> stack.is(tag)))
-            return false;
+        return getTagOrItem().map(item -> stack.is(item), tag -> stack.is(tag)) && tagMatches(stack);
+    }
 
-        if (stack.getCount() < getCount())
-            return false;
-
-        return tagMatches(stack);
+    public boolean matchesWithCount(ItemStack stack) {
+        return matches(stack) && stack.getCount() >= getCount();
     }
 
     public boolean tagMatches(ItemStack stack) {

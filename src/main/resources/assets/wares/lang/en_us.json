@@ -50,5 +50,7 @@
   "subtitle.wares.paper.crackle": "Paper crackles",
   "subtitle.wares.paper.tear": "Paper tears",
   "subtitle.wares.writing": "Quill writes on paper",
+  "subtitle.wares.delivery_table.open": "Delivery Table opens",
+  "subtitle.wares.delivery_table.close": "Delivery Table closes",
   "subtitle.entity.villager.work_packager": "Packager works"
 }
