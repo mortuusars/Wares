@@ -2,7 +2,6 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
