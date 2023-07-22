@@ -133,7 +133,7 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
             }
 
             ItemStack packageStack = new ItemStack(Wares.Items.PACKAGE.get());
-            new Package(Either.right(packedItems)).toItemStack(packageStack);
+            new Package(Either.right(packedItems), player.getScoreboardName()).toItemStack(packageStack);
 
             boxStack.shrink(1);
 

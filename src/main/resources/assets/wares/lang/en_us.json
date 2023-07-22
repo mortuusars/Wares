@@ -46,6 +46,8 @@
   "item.wares.sealed_delivery_agreement_damaged": "Damaged Sealed Delivery Agreement",
   "item.wares.sealed_delivery_agreement.damaged.message": "The letter is badly damaged, torn paper and faded ink make the contents unreadable.",
   "item.wares.sealed_delivery_agreement.unopenable.message": "The letter seems intact but sealed in a way that will damage and make the contents unreadable when opened.",
+  "item.wares.package.sender.tooltip": "Sender: ",
+  "item.wares.package.loot_table.tooltip": "Loot Table: ",
 
   "stat.wares.interact_with_delivery_table": "Interactions with Delivery Table",
   "stat.wares.packages_opened": "Packages Opened",
@@ -57,4 +59,5 @@
   "subtitle.wares.delivery_table.open": "Delivery Table opens",
   "subtitle.wares.delivery_table.close": "Delivery Table closes",
   "subtitle.entity.villager.work_packager": "Packager works"
+
 }
