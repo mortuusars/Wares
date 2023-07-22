@@ -111,11 +111,24 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         convertAgreementStackIfNeeded();
 
-        if (!getAgreementItem().is(Wares.Items.DELIVERY_AGREEMENT.get())) {
+        ItemStack agreementItem = getAgreementItem();
+        if (!agreementItem.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
             if (progress > 0){
                 resetProgress();
                 setChanged();
             }
+
+            if (agreementItem.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())) {
+                ItemStack agreementStack = getItem(AGREEMENT_SLOT);
+                for (int outputSlot : OUTPUT_SLOTS) {
+                    if (getItem(outputSlot).isEmpty()) {
+                        setItem(outputSlot, agreementStack);
+                        setItem(AGREEMENT_SLOT, ItemStack.EMPTY);
+                        break;
+                    }
+                }
+            }
+
             return;
         }
 

@@ -85,6 +85,7 @@ public class RequestedItem {
         return getTagOrItem().map(item -> stack.is(item), tag -> stack.is(tag)) && tagMatches(stack);
     }
 
+    @SuppressWarnings("unused")
     public boolean matchesWithCount(ItemStack stack) {
         return matches(stack) && stack.getCount() >= getCount();
     }

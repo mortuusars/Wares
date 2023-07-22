@@ -157,11 +157,6 @@ public class DeliveryAgreementItem extends Item {
         if (level.isClientSide) {
             Either<DeliveryAgreement, AgreementError> agreementOrError = getAgreementFromStack(usedItemStack);
 
-            agreementOrError.left().ifPresent(agr -> {
-                player.displayClientMessage(Component.literal(agr.toString()).withStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, agr.toString()))), false);
-            });
-
             agreementOrError.ifLeft(deliveryAgreement -> AgreementGUI.showAsOverlay(player, () -> deliveryAgreement))
                             .ifRight(error -> {
                                 String userErrorKey;

@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class AgreementLayout {
 
     public enum Element {
