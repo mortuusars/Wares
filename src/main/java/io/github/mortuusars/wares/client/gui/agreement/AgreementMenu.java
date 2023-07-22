@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +75,15 @@ public class AgreementMenu extends AbstractContainerMenu {
         int paymentSlotsCount = agreement.getPayment().size();
         boolean shouldCenterY = requestedSlotsCount > 3 || paymentSlotsCount > 3;
 
-        Function<Integer, List<ItemStack>> requestedStacksForSlot = integer -> agreement.getRequested().get(integer).getStacks();
+        Function<Integer, List<ItemStack>> requestedStacksForSlot = integer -> {
+            List<ItemStack> stacks = agreement.getRequested().get(integer).getStacks();
+            if (stacks.size() == 0) {
+                ItemStack barrier = new ItemStack(Items.BARRIER);
+                barrier.setHoverName(Component.translatable("gui.wares.agreement.empty_tag"));
+                stacks = List.of(barrier);
+            }
+            return stacks;
+        };
         Function<Integer, Component> requestedTooltipForSlot = integer -> {
             RequestedItem requestedItem = agreement.getRequested().get(integer);
             return requestedItem.getTagOrItem()

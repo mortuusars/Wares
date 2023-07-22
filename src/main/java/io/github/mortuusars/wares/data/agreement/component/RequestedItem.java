@@ -7,6 +7,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -101,7 +102,7 @@ public class RequestedItem {
     }
 
     public boolean isEmpty() {
-        return this.equals(EMPTY);
+        return this.equals(EMPTY) || getTagOrItem().map(tag -> false, item -> item instanceof AirItem);
     }
 
     @Override
