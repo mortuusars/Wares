@@ -9,6 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
@@ -155,6 +156,11 @@ public class DeliveryAgreementItem extends Item {
         ItemStack usedItemStack = player.getItemInHand(hand);
         if (level.isClientSide) {
             Either<DeliveryAgreement, AgreementError> agreementOrError = getAgreementFromStack(usedItemStack);
+
+            agreementOrError.left().ifPresent(agr -> {
+                player.displayClientMessage(Component.literal(agr.toString()).withStyle(Style.EMPTY
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, agr.toString()))), false);
+            });
 
             agreementOrError.ifLeft(deliveryAgreement -> AgreementGUI.showAsOverlay(player, () -> deliveryAgreement))
                             .ifRight(error -> {

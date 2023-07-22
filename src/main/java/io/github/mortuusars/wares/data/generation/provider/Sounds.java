@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.data.generation.provider;
 
 import io.github.mortuusars.wares.Wares;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
@@ -23,10 +24,6 @@ public class Sounds extends SoundDefinitionsProvider {
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(0.85f))
                 .with(sound(Wares.resource("item/paper")).volume(0.3f).pitch(1.25f)));
 
-        add(Wares.SoundEvents.WRITING.get(), definition()
-                .subtitle("subtitle.wares.writing")
-                .with(multiple(3, Wares.ID + ":block/delivery_table/writing", 0.9f, 1)));
-
         add(Wares.SoundEvents.CARDBOARD_BREAK.get(), definition()
                 .subtitle("subtitles.block.generic.break")
                 .with(multiple(4, "block/scaffold/place", 0.6f, 0.6f)));
@@ -42,6 +39,16 @@ public class Sounds extends SoundDefinitionsProvider {
         add(Wares.SoundEvents.CARDBOARD_FALL.get(), definition()
                 .with(multiple(7, "step/scaffold", 0.65f, 0.65f)));
 
+        add(Wares.SoundEvents.WRITING.get(), definition()
+                .subtitle("subtitle.wares.writing")
+                .with(multiple(3, Wares.ID + ":block/delivery_table/writing", 0.9f, 1)));
+        add(Wares.SoundEvents.DELIVERY_TABLE_OPEN.get(), definition()
+                .subtitle("subtitle.wares.delivery_table.open")
+                .with(sound("block/barrel/open1").volume(0.5f).pitch(0.8f),
+                      sound("block/barrel/open2").volume(0.5f).pitch(0.8f)));
+        add(Wares.SoundEvents.DELIVERY_TABLE_CLOSE.get(), definition()
+                .subtitle("subtitle.wares.delivery_table.close")
+                .with(sound("block/barrel/close").volume(0.5f).pitch(0.8f)));
         add(Wares.SoundEvents.CARDBOARD_BOX_USE.get(), definition()
                 .with(multiple(4, Wares.ID + ":block/cardboard/hit", 1, 1)));
 

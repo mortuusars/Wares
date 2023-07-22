@@ -6,11 +6,13 @@ import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +27,8 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
     private final MutableComponent manualDeliveryButtonTooltip;
     private ImageButton manualDeliveryButton;
 
-    public DeliveryTableScreen(DeliveryTableMenu menu, Inventory playerinventory, Component title) {
-        super(menu, playerinventory, title);
+    public DeliveryTableScreen(DeliveryTableMenu menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
         this.manualDeliveryButtonTitle = Component.translatable("gui.wares.delivery_table.manual_delivery");
         manualDeliveryButtonTooltip = new ArrayList<>();
         manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip"));
@@ -39,6 +41,9 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
             manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip_extra_info", formattedModifier)
                     .withStyle(ChatFormatting.GRAY));
         }
+
+        playerInventory.player.playSound(Wares.SoundEvents.DELIVERY_TABLE_OPEN.get(), 0.8f,
+                playerInventory.player.level.getRandom().nextFloat() * 0.2f + 0.9f);
     }
 
     @Override
@@ -110,6 +115,15 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         int arrowHeight = 16;
         int progressInPixels = Mth.clamp((int)((arrowWidth + 1) * progress), 0, arrowWidth);
         graphics.blit(TEXTURE, leftPos + 77, topPos + 37, 176, 0, progressInPixels, arrowHeight);
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        if (Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.playSound(Wares.SoundEvents.DELIVERY_TABLE_CLOSE.get(), 0.8f,
+                Minecraft.getInstance().player.level.getRandom().nextFloat() * 0.2f + 0.9f);
+        }
     }
 }
 
