@@ -21,14 +21,18 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public record Package(Either<ResourceLocation, List<ItemStack>> items) {
+public record Package(Either<ResourceLocation, List<ItemStack>> items, String sender) {
     public static final Codec<Package> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC))
-                    .optionalFieldOf("packedItems", Either.right(List.of(ItemStack.EMPTY))).forGetter(Package::items))
+            Codec.either(ResourceLocation.CODEC, Codec.list(ItemStack.CODEC)).optionalFieldOf("packedItems", Either.right(List.of(ItemStack.EMPTY))).forGetter(Package::items),
+            Codec.STRING.optionalFieldOf("sender", "").forGetter(Package::sender))
             .apply(instance, Package::new));
 
     public static final ResourceLocation DEFAULT_LOOT_TABLE = Wares.resource("gameplay/empty_package");
     public static final Package DEFAULT = new Package(Either.left(DEFAULT_LOOT_TABLE));
+
+    public Package(Either<ResourceLocation, List<ItemStack>> items) {
+        this(items, "");
+    }
 
     public void toTag(CompoundTag tag) {
         CODEC.encodeStart(NbtOps.INSTANCE, this)

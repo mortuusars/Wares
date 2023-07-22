@@ -3,8 +3,11 @@ package io.github.mortuusars.wares.item;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
 import io.github.mortuusars.wares.data.Package;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -26,11 +30,31 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class PackageItem extends BlockItem {
     public PackageItem(Block block, Properties properties) {
         super(block, properties);
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+
+        if (level instanceof ClientLevel) {
+            Package.fromItemStack(stack).ifPresent(pkg -> {
+                String sender = pkg.sender();
+                if (sender.length() > 0)
+                    tooltip.add(Component.translatable("item.wares.package.sender.tooltip").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(sender).withStyle(ChatFormatting.WHITE)));
+
+                if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative())
+                    pkg.items().ifLeft(lootTable -> tooltip.add(
+                            Component.translatable("item.wares.package.loot_table.tooltip").withStyle(ChatFormatting.DARK_GRAY)
+                                    .append(Component.literal(lootTable.toString()))));
+            });
+        }
     }
 
     @Override
@@ -47,6 +71,7 @@ public class PackageItem extends BlockItem {
     public @NotNull UseAnim getUseAnimation(@NotNull ItemStack pStack) {
         return UseAnim.EAT;
     }
+
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context) {
         if (!context.isSecondaryUseActive()) {
