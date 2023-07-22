@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,8 +29,8 @@ public class DeliveryAgreement {
                     ComponentCodec.CODEC.optionalFieldOf("title", Component.empty()).forGetter(DeliveryAgreement::getTitle),
                     ComponentCodec.CODEC.optionalFieldOf("message", Component.empty()).forGetter(DeliveryAgreement::getMessage),
                     Codec.STRING.optionalFieldOf("seal", "default").forGetter(DeliveryAgreement::getSeal),
-                    Codec.list(RequestedItem.CODEC).optionalFieldOf("requested", Collections.emptyList()).forGetter(DeliveryAgreement::getRequested),
-                    Codec.list(ItemStack.CODEC).optionalFieldOf("payment", Collections.emptyList()).forGetter(DeliveryAgreement::getPayment),
+                    Codec.list(RequestedItem.CODEC).fieldOf("requested").forGetter(DeliveryAgreement::getRequested),
+                    Codec.list(ItemStack.CODEC).fieldOf("payment").forGetter(DeliveryAgreement::getPayment),
                     Codec.INT.optionalFieldOf("ordered", 0).forGetter(DeliveryAgreement::getOrdered),
                     Codec.INT.optionalFieldOf("delivered", 0).forGetter(DeliveryAgreement::getDelivered),
                     Codec.INT.optionalFieldOf("experience", 0).forGetter(DeliveryAgreement::getExperience),

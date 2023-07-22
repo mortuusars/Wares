@@ -317,6 +317,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
 
         for (RequestedItem requestedItem : requestedItems) {
+            if (requestedItem.isEmpty())
+                break;
             int requiredCount = requestedItem.getCount();
 
             for (ItemStack stack : inputStacks) {

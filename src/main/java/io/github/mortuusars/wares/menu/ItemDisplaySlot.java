@@ -1,5 +1,6 @@
 package io.github.mortuusars.wares.menu;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +17,7 @@ public class ItemDisplaySlot extends Slot {
 
     public ItemDisplaySlot(List<ItemStack> stacks, Component additionalTooltip, int slot, int x, int y) {
         super(new SimpleContainer(slot), slot, x, y);
+        Preconditions.checkState(stacks.size() > 0, "No items to display.");
         this.stacks = stacks;
         this.additionalTooltip = additionalTooltip;
     }
