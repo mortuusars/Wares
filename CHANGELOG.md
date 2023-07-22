@@ -4,3 +4,4 @@
 - Added sounds to Delivery Table opening and closing.
 - When Delivery Agreement is completed - it will be placed into output slots (and therefore can be automatically extracted).
 - Packages now show sender name in the item tooltip.
+- Wandering Trader now sells some Delivery Agreements.
