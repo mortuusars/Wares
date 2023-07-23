@@ -23,6 +23,8 @@ public class RequestedItem {
     public static final Codec<RequestedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.either(TagKey.hashedCodec(Registries.ITEM), ForgeRegistries.ITEMS.getCodec()).fieldOf("id").forGetter(RequestedItem::getTagOrItem),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(RequestedItem::getCount),
+                    Codec.either(TagKey.hashedCodec(Registry.ITEM_REGISTRY), Registry.ITEM.byNameCodec()).fieldOf("id").forGetter(RequestedItem::getTagOrItem),
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("Count", 1).forGetter(RequestedItem::getCount),
                     CompoundTag.CODEC.optionalFieldOf("tag").forGetter(ri -> Optional.ofNullable(ri.getTag())))
             .apply(instance, RequestedItem::new));
 
