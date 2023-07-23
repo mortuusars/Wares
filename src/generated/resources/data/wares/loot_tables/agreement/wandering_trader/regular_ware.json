@@ -71,5 +71,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:agreement/wandering_trader/regular_ware"
 }

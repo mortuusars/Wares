@@ -55,7 +55,7 @@ public class DeliveryAgreementItem extends Item {
                 if (agreementStack.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
                     if (agreement.isCompleted())
                         slot.set(convertToCompleted(agreementStack));
-                    else if (agreement.isExpired(player.level.getGameTime()))
+                    else if (agreement.isExpired(player.level().getGameTime()))
                         slot.set(convertToExpired(agreementStack));
                 }
 

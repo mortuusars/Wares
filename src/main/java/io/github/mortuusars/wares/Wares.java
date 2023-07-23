@@ -132,19 +132,15 @@ public class Wares
 
         public static final RegistryObject<SealedDeliveryAgreementItem> SEALED_DELIVERY_AGREEMENT = ITEMS.register("sealed_delivery_agreement", () ->
                 new SealedDeliveryAgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<DeliveryAgreementItem> DELIVERY_AGREEMENT = ITEMS.register("delivery_agreement", () ->
                 new DeliveryAgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<DeliveryAgreementItem> COMPLETED_DELIVERY_AGREEMENT = ITEMS.register("completed_delivery_agreement", () ->
                 new DeliveryAgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
         public static final RegistryObject<DeliveryAgreementItem> EXPIRED_DELIVERY_AGREEMENT = ITEMS.register("expired_delivery_agreement", () ->
                 new DeliveryAgreementItem(new Item.Properties()
-                        .tab(CreativeModeTab.TAB_MISC)
                         .stacksTo(1)));
 
         public static final RegistryObject<BlockItem> DELIVERY_TABLE = ITEMS.register("delivery_table", () ->
@@ -165,7 +161,6 @@ public class Wares
         public static final RegistryObject<PoiType> DELIVERY_TABLE_POI = POI_TYPES.register(Blocks.DELIVERY_TABLE.getId().getPath(),
                 () -> new PoiType(ImmutableSet.copyOf(Blocks.DELIVERY_TABLE.get().getStateDefinition().getPossibleStates()), 1, 1));
 
-        @SuppressWarnings("DataFlowIssue")
         public static final RegistryObject<VillagerProfession> PACKAGER = PROFESSIONS.register("packager",
                 () -> new VillagerProfession("packager", poi -> poi.is(Objects.requireNonNull(DELIVERY_TABLE_POI.getKey())), poi -> poi.is(Objects.requireNonNull(DELIVERY_TABLE_POI.getKey())),
                         ImmutableSet.of(), ImmutableSet.of(), null));

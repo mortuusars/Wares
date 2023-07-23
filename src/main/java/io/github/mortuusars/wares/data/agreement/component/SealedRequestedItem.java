@@ -3,7 +3,7 @@ package io.github.mortuusars.wares.data.agreement.component;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -17,9 +17,8 @@ import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SealedRequestedItem {
-    @SuppressWarnings("deprecation")
     public static final Codec<SealedRequestedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.either(TagKey.hashedCodec(Registry.ITEM_REGISTRY), Registry.ITEM.byNameCodec()).fieldOf("id").forGetter(SealedRequestedItem::getTagOrItem),
+                    Codec.either(TagKey.hashedCodec(Registries.ITEM), ForgeRegistries.ITEMS.getCodec()).fieldOf("id").forGetter(SealedRequestedItem::getTagOrItem),
                     Codec.either(ExtraCodecs.POSITIVE_INT, SteppedInt.CODEC).optionalFieldOf("count", Either.left(1)).forGetter(SealedRequestedItem::getCount),
                     CompoundTag.CODEC.optionalFieldOf("tag").forGetter(sri -> Optional.ofNullable(sri.getTag())))
             .apply(instance, SealedRequestedItem::new));

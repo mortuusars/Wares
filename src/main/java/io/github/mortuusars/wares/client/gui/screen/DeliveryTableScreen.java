@@ -7,11 +7,11 @@ import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -29,20 +29,18 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
     public DeliveryTableScreen(DeliveryTableMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.manualDeliveryButtonTitle = Component.translatable("gui.wares.delivery_table.manual_delivery");
-        manualDeliveryButtonTooltip = new ArrayList<>();
-        manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip"));
+        manualDeliveryButtonTooltip = Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip");
 
         double manualDeliveryTimeModifier = Config.MANUAL_DELIVERY_TIME_MODIFIER.get();
         if (manualDeliveryTimeModifier > 1.0D) {
             String formattedModifier = manualDeliveryTimeModifier % 1 == 0 ?
                     String.format("%.0f", manualDeliveryTimeModifier) :
                     String.format("%.1f", manualDeliveryTimeModifier);
-            manualDeliveryButtonTooltip.add(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip_extra_info", formattedModifier)
-                    .withStyle(ChatFormatting.GRAY));
+            manualDeliveryButtonTooltip.append("\n").append(Component.translatable("gui.wares.delivery_table.manual_delivery.tooltip_extra_info", formattedModifier).withStyle(ChatFormatting.GRAY));
         }
 
         playerInventory.player.playSound(Wares.SoundEvents.DELIVERY_TABLE_OPEN.get(), 0.8f,
-                playerInventory.player.level.getRandom().nextFloat() * 0.2f + 0.9f);
+                playerInventory.player.level().getRandom().nextFloat() * 0.2f + 0.9f);
     }
 
     @Override
@@ -79,12 +77,12 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         if (menu.getCarried().isEmpty()) {
             Slot agreementSlot = menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT);
             if (!agreementSlot.hasItem() && isHovering(agreementSlot.x, agreementSlot.y, 18, 18, mouseX, mouseY))
-                this.renderTooltip(poseStack, Component.translatable("gui.wares.delivery_table.no_agreement.tooltip"), mouseX, mouseY);
+                graphics.renderTooltip(font, Component.translatable("gui.wares.delivery_table.no_agreement.tooltip"), mouseX, mouseY);
 
             if (Config.DELIVERIES_REQUIRE_BOXES.get()) {
                 Slot boxSlot = menu.slots.get(DeliveryTableBlockEntity.BOX_SLOT);
                 if (!boxSlot.hasItem() && isHovering(boxSlot.x, boxSlot.y, 18, 18, mouseX, mouseY))
-                    this.renderTooltip(poseStack, Component.translatable("gui.wares.delivery_table.no_packages.tooltip"), mouseX, mouseY);
+                    graphics.renderTooltip(font, Component.translatable("gui.wares.delivery_table.no_packages.tooltip"), mouseX, mouseY);
             }
         }
     }
@@ -121,7 +119,7 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         super.onClose();
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().player.playSound(Wares.SoundEvents.DELIVERY_TABLE_CLOSE.get(), 0.8f,
-                Minecraft.getInstance().player.level.getRandom().nextFloat() * 0.2f + 0.9f);
+                Minecraft.getInstance().player.level().getRandom().nextFloat() * 0.2f + 0.9f);
         }
     }
 }

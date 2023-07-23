@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "wares:delivery_table"
-  }
+  },
+  "show_notification": true
 }

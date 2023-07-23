@@ -36,7 +36,7 @@ public class AgreementTest implements ITestClass {
             new Test("ExpiredAgreementShouldBeExpired", player -> {
                 DeliveryAgreement expiredAgreement = DeliveryAgreement.builder()
                         .addRequestedItem(RequestedItem.EMPTY)
-                        .expireTime(player.level.getGameTime() - 5)
+                        .expireTime(player.level().getGameTime() - 5)
                         .build();
                 assertThat(expiredAgreement.isExpired(player.level().getGameTime()), "Not expired when it should.");
             }),

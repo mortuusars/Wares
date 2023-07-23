@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.mpfui.renderable.TextureRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class SealRenderable extends TextureRenderable {
@@ -15,9 +16,8 @@ public class SealRenderable extends TextureRenderable {
         this.texture = seal.getTexturePath();
         this.shadowHeight = shadowHeight;
     }
-
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, @NotNull Minecraft minecraft, int mouseX, int mouseY) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, texture);
 

@@ -1,7 +1,6 @@
 package io.github.mortuusars.wares.client.gui.agreement;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.component.HorizontalAlignment;
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.mpfui.component.TooltipBehavior;
@@ -19,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -210,10 +208,10 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
-    protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
+    protected void renderTooltip(GuiGraphics graphics, int x, int y) {
         if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
             ItemStack stack = this.hoveredSlot.getItem();
-            List<Component> itemTooltip = getTooltipFromItem(stack);
+            List<Component> itemTooltip = getTooltipFromItem(Minecraft.getInstance(), stack);
             Optional<TooltipComponent> imageTooltip = stack.getTooltipImage();
             if (this.hoveredSlot instanceof ItemDisplaySlot itemDisplaySlot) {
                 Component additionalTooltip = itemDisplaySlot.getAdditionalTooltip();
@@ -222,7 +220,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
                     itemTooltip.add(additionalTooltip);
                 }
             }
-            this.renderTooltip(poseStack, itemTooltip, imageTooltip, x, y);
+            graphics.renderTooltip(font, itemTooltip, imageTooltip, x, y);
         }
     }
 
