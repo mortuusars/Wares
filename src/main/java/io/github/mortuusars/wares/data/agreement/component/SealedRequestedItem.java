@@ -19,7 +19,7 @@ import java.util.Optional;
 public class SealedRequestedItem {
     public static final Codec<SealedRequestedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.either(TagKey.hashedCodec(Registries.ITEM), ForgeRegistries.ITEMS.getCodec()).fieldOf("id").forGetter(SealedRequestedItem::getTagOrItem),
-                    Codec.either(ExtraCodecs.POSITIVE_INT, SteppedInt.CODEC).optionalFieldOf("count", Either.left(1)).forGetter(SealedRequestedItem::getCount),
+                    Codec.either(ExtraCodecs.POSITIVE_INT, SteppedInt.CODEC).optionalFieldOf("Count", Either.left(1)).forGetter(SealedRequestedItem::getCount),
                     CompoundTag.CODEC.optionalFieldOf("tag").forGetter(sri -> Optional.ofNullable(sri.getTag())))
             .apply(instance, SealedRequestedItem::new));
 
