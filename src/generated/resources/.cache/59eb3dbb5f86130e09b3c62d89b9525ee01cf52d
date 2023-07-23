@@ -1,4 +1,4 @@
-// 1.20.1	2023-07-23T02:56:42.0550016	Loot Tables
+// 1.20.1	2023-07-23T04:51:08.5557097	Loot Tables
 3e4b0ce86e5ccf13106b13b07096d9c7231ca68f data/wares/loot_tables/agreement/village/desert_payment_buy.json
 282852178556dd20c39ba3ad1b09d88521eed87c data/wares/loot_tables/agreement/village/desert_payment_sell.json
 7ef5a018aabe142f8a444d45ee101a15c59e6139 data/wares/loot_tables/agreement/village/desert_requested_buy.json
@@ -32,6 +32,7 @@ fe3d8681330178bba9bece6fd28b09bb92e7c3df data/wares/loot_tables/blocks/delivery_
 78326bf2f918b228f80ea92607d3da69e9a2fb46 data/wares/loot_tables/chests/village/savanna_warehouse.json
 7771f98d0d90d97dd0b7c6f63017eedef1b6bb75 data/wares/loot_tables/chests/village/snowy_warehouse.json
 fc8b76b72292296e6c918091dbd21a75d00e5f1d data/wares/loot_tables/chests/village/taiga_warehouse.json
+1bb3debcb9f1ee756ab917f34e2b60b8eaa395a5 data/wares/loot_tables/gameplay/empty_package.json
 72e417e2c266ecce843707c651a3c37ad9dc87ab data/wares/loot_tables/package/village/desert.json
 bbdea25e60534fafdba8cc47856bdd3cc46d83c3 data/wares/loot_tables/package/village/plains.json
 fce3c274704dcaa040923f0443b0edace5271bfc data/wares/loot_tables/package/village/savanna.json

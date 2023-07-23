@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,26 +56,29 @@ public record Package(Either<ResourceLocation, List<ItemStack>> items, String se
     }
 
     public static Optional<Package> fromItemStack(ItemStack stack) {
-        //noinspection DataFlowIssue
-        return stack.hasTag() ? fromTag(stack.getTag()) : Optional.empty();
+        return stack.getTag() != null ? fromTag(stack.getTag()) : Optional.empty();
     }
 
-    public List<ItemStack> getItems(ServerLevel level) {
-        return this.items.map(lootTable -> fromLootTable(level, lootTable), itemsList -> fromItemsList(level, itemsList));
+    public List<ItemStack> getItems(ServerLevel level, Vec3 position) {
+        return this.items.map(lootTable -> fromLootTable(level, position, lootTable), itemsList -> fromItemsList(level, position, itemsList));
     }
 
-    public static List<ItemStack> getDefaultItems(ServerLevel level) {
-        return fromLootTable(level, DEFAULT_LOOT_TABLE);
+    public static List<ItemStack> getDefaultItems(ServerLevel level, Vec3 position) {
+        return unpackLootTable(level, position, DEFAULT_LOOT_TABLE);
     }
 
-    private static List<ItemStack> fromLootTable(ServerLevel level, ResourceLocation table) {
-        LootTable lootTable = level.getServer().getLootData().getLootTable(table);
-        List<ItemStack> randomItems = lootTable.getRandomItems(new LootParams.Builder(level).create(LootContextParamSets.EMPTY));
-        return randomItems.size() == 0 ? getDefaultItems(level) : randomItems;
+    private static List<ItemStack> fromLootTable(ServerLevel level, Vec3 position, ResourceLocation table) {
+        List<ItemStack> items = unpackLootTable(level, position, table);
+        return items.size() == 0 ? getDefaultItems(level, position) : items;
     }
 
-    private static List<ItemStack> fromItemsList(ServerLevel level, List<ItemStack> stacks) {
+    private static List<ItemStack> fromItemsList(ServerLevel level, Vec3 position, List<ItemStack> stacks) {
         ArrayList<ItemStack> nonEmptyStacks = new ArrayList<>(stacks.stream().filter(itemStack -> !itemStack.isEmpty()).toList());
-        return nonEmptyStacks.size() == 0 ? getDefaultItems(level) : nonEmptyStacks;
+        return nonEmptyStacks.size() == 0 ? getDefaultItems(level, position) : nonEmptyStacks;
+    }
+
+    private static List<ItemStack> unpackLootTable(ServerLevel level, Vec3 position, ResourceLocation tableLocation) {
+        LootTable lootTable = level.getServer().getLootData().getLootTable(tableLocation);
+        return lootTable.getRandomItems(new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, position).create(LootContextParamSets.CHEST));
     }
 }

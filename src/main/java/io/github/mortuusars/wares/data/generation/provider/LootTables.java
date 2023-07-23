@@ -77,11 +77,11 @@ public class LootTables {
 
         @Override
         public void generate(@NotNull BiConsumer<ResourceLocation, LootTable.Builder> consumer) {
+            consumer.accept(Wares.resource("gameplay/empty_package"), agreementItems(item(Items.PAPER, 1)));
 
             for (Pair<ResourceLocation, LootTable.Builder> locAndTable : villageTables()) {
                 consumer.accept(locAndTable.getFirst(), locAndTable.getSecond());
             }
-
 
             LootPoolSingletonContainer.Builder<?>[] dyes = new LootPoolSingletonContainer.Builder[DyeColor.values().length];
             for (DyeColor value : DyeColor.values()) {
