@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public class PackageBlock extends BaseEntityBlock {
     public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
             if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof PackageBlockEntity packageBlockEntity) {
-                List<ItemStack> items = packageBlockEntity.getPackage().getItems(serverLevel);
+                List<ItemStack> items = packageBlockEntity.getPackage().getItems(serverLevel, Vec3.atCenterOf(pos));
                 for (ItemStack item : items) {
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item.copy());
                 }

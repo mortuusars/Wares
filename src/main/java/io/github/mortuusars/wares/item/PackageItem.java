@@ -98,7 +98,7 @@ public class PackageItem extends BlockItem {
         if (level instanceof ServerLevel serverLevel) {
             Package pack = Package.fromItemStack(stack).orElse(Package.DEFAULT);
             Vec3 pos = livingEntity.position();
-            for (ItemStack itemStack : pack.getItems(serverLevel)) {
+            for (ItemStack itemStack : pack.getItems(serverLevel, livingEntity.position())) {
                 Containers.dropItemStack(level, pos.x, pos.y, pos.z, itemStack);
             }
             level.playSound(null, pos.x, pos.y, pos.z, Wares.SoundEvents.CARDBOARD_HIT.get(), SoundSource.PLAYERS,
