@@ -90,5 +90,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:chests/village/savanna_warehouse"
 }

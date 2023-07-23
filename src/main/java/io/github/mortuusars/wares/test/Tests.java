@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.test;
 
 import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.test.data.RequestedItemTests;
 import io.github.mortuusars.wares.test.data.agreement.AgreementTest;
 import io.github.mortuusars.wares.test.framework.Test;
 import io.github.mortuusars.wares.test.framework.TestResult;
@@ -13,8 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Tests {
-
-    private ServerPlayer player;
+    private final ServerPlayer player;
 
     public Tests(ServerPlayer player) {
         this.player = player;
@@ -23,18 +23,22 @@ public class Tests {
     public TestingResult run() {
         Wares.LOGGER.info("RUNNING TESTS");
 
-        Pair<List<TestResult>, List<TestResult>> ran = run(new AgreementTest().collect());
+        Pair<List<TestResult>, List<TestResult>> ran = run(
+                new AgreementTest().collect(),
+                new RequestedItemTests().collect()
+        );
+
         List<TestResult> skipped = skip();
         TestingResult testingResult = new TestingResult(ran.getFirst(), ran.getSecond(), skipped);
         Wares.LOGGER.info(String.join("",
                 "TESTS COMPLETED!\n",
                 testingResult.getTotalTestCount() + " test(s) were conducted.",
-                testingResult.passed().size() > 0 ? ("\nPassed:\n" + String.join("\n", testingResult.passed().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : "",
-                testingResult.failed().size() > 0 ? ("\nFailed:\n" + String.join("\n", testingResult.failed().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : "",
-                testingResult.skipped().size() > 0 ? ("\nSkipped:\n" + String.join("\n", testingResult.skipped().stream()
-                        .map(TestResult::toString).collect(Collectors.toList()))) : ""));
+                testingResult.passed().size() > 0 ? ("\nPassed:\n" + testingResult.passed().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : "",
+                testingResult.failed().size() > 0 ? ("\nFailed:\n" + testingResult.failed().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : "",
+                testingResult.skipped().size() > 0 ? ("\nSkipped:\n" + testingResult.skipped().stream()
+                        .map(TestResult::toString).collect(Collectors.joining("\n"))) : ""));
         return testingResult;
     }
 

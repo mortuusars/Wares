@@ -157,5 +157,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:agreement/village/plains_payment_buy"
 }

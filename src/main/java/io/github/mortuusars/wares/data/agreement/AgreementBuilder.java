@@ -1,5 +1,6 @@
 package io.github.mortuusars.wares.data.agreement;
 
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,13 +15,13 @@ public class AgreementBuilder {
     private Component title = Component.empty();
     private Component message = Component.empty();
     private String seal = "default";
-    private List<ItemStack> requestedItems = new ArrayList<>();
-    private List<ItemStack> paymentItems = new ArrayList<>();
+    private List<RequestedItem> requested = new ArrayList<>();
+    private List<ItemStack> payment = new ArrayList<>();
     private int orderedQuantity = 0;
     private int delivered = 0;
     private int experience = 0;
     private int deliveryTime = 0;
-    private long expireTime = -1;
+    private long expireTimestamp = -1;
 
     public AgreementBuilder id(String id) {
         this.id = id;
@@ -52,23 +53,23 @@ public class AgreementBuilder {
         return this;
     }
 
-    public AgreementBuilder requestedItems(List<ItemStack> requestedItems) {
-        this.requestedItems = requestedItems;
+    public AgreementBuilder requested(List<RequestedItem> requested) {
+        this.requested = requested;
         return this;
     }
 
-    public AgreementBuilder addRequestedItem(ItemStack requestedItem) {
-        requestedItems.add(requestedItem);
+    public AgreementBuilder addRequestedItem(RequestedItem requestedItem) {
+        requested.add(requestedItem);
         return this;
     }
 
-    public AgreementBuilder paymentItems(List<ItemStack> paymentItems) {
-        this.paymentItems = paymentItems;
+    public AgreementBuilder payment(List<ItemStack> payment) {
+        this.payment = payment;
         return this;
     }
 
     public AgreementBuilder addPaymentItem(ItemStack paymentItem) {
-        paymentItems.add(paymentItem);
+        payment.add(paymentItem);
         return this;
     }
 
@@ -93,12 +94,12 @@ public class AgreementBuilder {
     }
 
     public AgreementBuilder expireTime(long expireTime) {
-        this.expireTime = expireTime;
+        this.expireTimestamp = expireTime;
         return this;
     }
 
-    public Agreement build() {
-        return new Agreement(id, buyerName, buyerAddress, title, message, seal, requestedItems, paymentItems,
-                orderedQuantity, delivered, experience, deliveryTime, expireTime, false, false);
+    public DeliveryAgreement build() {
+        return new DeliveryAgreement(id, buyerName, buyerAddress, title, message, seal, requested, payment,
+                orderedQuantity, delivered, experience, deliveryTime, expireTimestamp, false, false);
     }
 }

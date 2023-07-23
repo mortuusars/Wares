@@ -24,6 +24,7 @@ public class Config {
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
     public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
+    public static final ForgeConfigSpec.BooleanValue WANDERING_TRADER_AGREEMENTS;
 
     // CLIENT
     public static final ForgeConfigSpec.BooleanValue AGREEMENT_CLOSE_WITH_RMB;
@@ -93,6 +94,10 @@ public class Config {
                 .defineInRange("WarehouseWeight", 10, 1, Integer.MAX_VALUE);
 
         builder.pop();
+
+        WANDERING_TRADER_AGREEMENTS = builder
+                .comment("Wandering Trader will sell Sealed Delivery Agreements.")
+                .define("WanderingTraderSellsAgreements", true);
 
         COMMON = builder.build();
 

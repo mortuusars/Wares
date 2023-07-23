@@ -176,6 +176,31 @@
       "wares:block/cardboard/hit4"
     ]
   },
+  "block.delivery_table.close": {
+    "sounds": [
+      {
+        "name": "block/barrel/close",
+        "pitch": 0.8,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitle.wares.delivery_table.close"
+  },
+  "block.delivery_table.open": {
+    "sounds": [
+      {
+        "name": "block/barrel/open1",
+        "pitch": 0.8,
+        "volume": 0.5
+      },
+      {
+        "name": "block/barrel/open2",
+        "pitch": 0.8,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitle.wares.delivery_table.open"
+  },
   "block.delivery_table.writing": {
     "sounds": [
       {
@@ -200,7 +225,7 @@
       "wares:block/cardboard/hit3",
       "wares:block/cardboard/hit4"
     ],
-    "subtitle": "subtitles.entity.villager.work_packager"
+    "subtitle": "subtitle.entity.villager.work_packager"
   },
   "item.paper.crackle": {
     "sounds": [

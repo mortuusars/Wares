@@ -2,9 +2,9 @@ package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
-import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
-import io.github.mortuusars.wares.data.agreement.SealedAgreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -30,19 +30,21 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("DataFlowIssue")
-public class SealedAgreementItem extends Item {
-
+public class SealedDeliveryAgreementItem extends Item {
     public static final String DAMAGED_TAG = "AgreementDamaged";
     public static final String UNOPENABLE_TAG = "AgreementUnopenable";
 
-    public SealedAgreementItem(Properties properties) {
+    public SealedDeliveryAgreementItem(Properties properties) {
         super(properties);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
-        SealedAgreement.fromItemStack(stack).ifPresent(a ->
-                tooltipComponents.add(Lang.ITEM_SEALED_AGREEMENT_INSPECT_TOOLTIP.translate()
+        if (stack.getTag() == null || stack.getTag().isEmpty() || stack.getTag().contains(DAMAGED_TAG) || stack.getTag().contains(UNOPENABLE_TAG))
+            return;
+
+        SealedDeliveryAgreement.fromItemStack(stack).ifPresent(a ->
+                tooltipComponents.add(Component.translatable("item.wares.sealed_agreement.view.tooltip")
                         .withStyle(Style.EMPTY.withColor(0xd6b589))));
     }
 
@@ -70,6 +72,13 @@ public class SealedAgreementItem extends Item {
 
         if (player.isSecondaryUseActive())
             inspect(stack, player);
+        else if (stack.getTag() == null || stack.getTag().isEmpty() || stack.getTag().contains(DAMAGED_TAG) || stack.getTag().contains(UNOPENABLE_TAG)) {
+            if (level.isClientSide)
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.damaged.message")
+                        .withStyle(ChatFormatting.RED), true);
+            Wares.LOGGER.error(stack + " does not have agreement data or data is not correct. Make sure item stack has agreement nbt and it is correct.");
+            player.playSound(Wares.SoundEvents.PAPER_CRACKLE.get(), 0.8f, 0.65f);
+        }
         else
             player.startUsingItem(hand);
 
@@ -77,7 +86,7 @@ public class SealedAgreementItem extends Item {
     }
 
     public boolean inspect(ItemStack sealedAgreementStack, Player player) {
-        Optional<SealedAgreement> sealed = SealedAgreement.fromItemStack(sealedAgreementStack);
+        Optional<SealedDeliveryAgreement> sealed = SealedDeliveryAgreement.fromItemStack(sealedAgreementStack);
         if (sealed.isEmpty())
             return false;
 
@@ -107,47 +116,43 @@ public class SealedAgreementItem extends Item {
         if (!(livingEntity instanceof Player player))
             return stack;
 
-        Optional<SealedAgreement> descriptionOptional = SealedAgreement.fromItemStack(stack);
+        Optional<SealedDeliveryAgreement> descriptionOptional = SealedDeliveryAgreement.fromItemStack(stack);
 
         if (descriptionOptional.isEmpty()){
             Wares.LOGGER.error("Cannot read AgreementDescription from stack nbt.");
             stack.getOrCreateTag().putBoolean(DAMAGED_TAG, true);
 
             if (level.isClientSide)
-                player.displayClientMessage(Lang.SEALED_AGREEMENT_DAMAGED_ERROR_MESSAGE.translate(), true);
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.damaged.message"), true);
 
             return stack;
         }
 
         if (level instanceof ServerLevel serverLevel) {
             try {
-                Agreement agreement = descriptionOptional.get().realize(serverLevel);
+                DeliveryAgreement agreement = descriptionOptional.get().realize(serverLevel);
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
                 if (agreement.toItemStack(agreementStack)) {
-
-                    int slotIndex = player.getInventory().findSlotMatchingItem(stack);
-
-                    stack.shrink(1);
-
-                    if (slotIndex > -1)
-                        player.getInventory().setItem(slotIndex, agreementStack);
-                    else
-                        player.addItem(agreementStack);
-
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                     level.playSound(null,
                             player.position().x,
                             player.position().y,
                             player.position().z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
                             1f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+
+                    // Release RMB after using. Otherwise, right click will be still held and will activate use again.
+                    if (level.isClientSide)
+                        Minecraft.getInstance().options.keyUse.setDown(false);
+
+                    return agreementStack;
                 }
                 else
                     throw new IllegalStateException("Saving Agreement to ItemStack failed.");
             }
             catch (Exception e) {
                 Wares.LOGGER.error(e.toString());
-                player.displayClientMessage(Lang.SEALED_AGREEMENT_UNOPENABLE_ERROR_MESSAGE.translate(), true);
+                player.displayClientMessage(Component.translatable("item.wares.sealed_delivery_agreement.unopenable.message"), true);
                 stack.getOrCreateTag().putBoolean(UNOPENABLE_TAG, true);
             }
         }

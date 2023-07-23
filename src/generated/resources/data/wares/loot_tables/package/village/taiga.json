@@ -215,5 +215,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:package/village/taiga"
 }

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class ComponentCodec {
     public static final PrimitiveCodec<Component> CODEC = new PrimitiveCodec<>() {
+        @SuppressWarnings("OptionalIsPresent")
         @Override
         public <T> DataResult<Component> read(DynamicOps<T> ops, T input) {
             Optional<String> stringOptional = ops.getStringValue(input).resultOrPartial(s -> { });

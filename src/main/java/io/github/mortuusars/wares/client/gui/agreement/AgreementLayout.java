@@ -7,10 +7,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class AgreementLayout {
 
     public enum Element {
-        TITLE, MESSAGE, SLOTS, ORDERED, EXPIRY;
+        TITLE, MESSAGE, SLOTS, ORDERED, EXPIRY
     }
 
     private List<Pair<Element, Rectangle>> elements = new ArrayList<>();

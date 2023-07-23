@@ -34,5 +34,6 @@
     [
       "almost_expired"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

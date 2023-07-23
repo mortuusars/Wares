@@ -1,7 +1,6 @@
 package io.github.mortuusars.wares.client.gui.agreement;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.mpfui.component.HorizontalAlignment;
 import io.github.mortuusars.mpfui.component.Rectangle;
 import io.github.mortuusars.mpfui.component.TooltipBehavior;
@@ -12,35 +11,41 @@ import io.github.mortuusars.wares.client.gui.agreement.element.Seal;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.SealRenderable;
 import io.github.mortuusars.wares.client.gui.agreement.renderable.StampRenderable;
 import io.github.mortuusars.wares.config.Config;
-import io.github.mortuusars.wares.data.Lang;
-import io.github.mortuusars.wares.data.agreement.Agreement;
+import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.menu.ItemDisplaySlot;
 import io.github.mortuusars.wares.util.TextUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/agreement.png");
     private static final ResourceLocation STAMPS_TEXTURE = new ResourceLocation(Wares.ID, "textures/gui/stamps.png");
     private static final int FONT_COLOR = 0xff886447;
-    private Screen parentScreen;
     private final Seal seal;
+    private Screen parentScreen;
+    private int displayItemCycleTimer = 0;
 
     public AgreementScreen(AgreementMenu menu) {
         super(menu, menu.playerInventory, Component.empty());
         minecraft = Minecraft.getInstance(); // Minecraft is null if not updated here
 
-        seal = new Seal(getAgreement().getSeal()).printErrorAndFallbackToDefaultIfNotFound();
+        seal = new Seal(getAgreement().getSeal());
     }
 
     public boolean isOpen() {
@@ -75,7 +80,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         super.onClose();
     }
 
-    protected Agreement getAgreement() {
+    protected DeliveryAgreement getAgreement() {
         return menu.getAgreement();
     }
 
@@ -92,7 +97,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // TITLE
         Rectangle titleRect = layout.getElement(AgreementLayout.Element.TITLE);
         if (titleRect != null) { // Extra safety. Title should not be null.
-            addRenderableOnly(new TextBlockRenderable(menu.getTitle(), titleRect.left(), titleRect.top(), titleRect.width, titleRect.height)
+            addRenderableOnly(new TextBlockRenderable(menu.getTitle(), titleRect.left(), titleRect.top(), titleRect.width(), titleRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
                     .setDefaultColor(FONT_COLOR));
         }
@@ -100,7 +105,7 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // MESSAGE
         Rectangle messageRect = layout.getElement(AgreementLayout.Element.MESSAGE);
         if (messageRect != null) {
-            addRenderableOnly(new TextBlockRenderable(menu.getMessage(), messageRect.left(), messageRect.top(), messageRect.width, messageRect.height)
+            addRenderableOnly(new TextBlockRenderable(menu.getMessage(), messageRect.left(), messageRect.top(), messageRect.width(), messageRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
                     .setDefaultColor(FONT_COLOR));
         }
@@ -117,13 +122,13 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         if (orderedRect != null) {
             addRenderableOnly(new TextBlockRenderable(() -> Component.literal(
                     TextUtil.shortenNumber(getAgreement().getDelivered()) + " / " +
-                            TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width, orderedRect.height)
+                            TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width(), orderedRect.height())
                     .setDefaultColor(FONT_COLOR)
                     .setTooltip(() -> {
                         int delivered = getAgreement().getDelivered();
                         int ordered = getAgreement().getOrdered();
                         if (delivered >= 1000 || ordered >= 1000)
-                            return Lang.GUI_AGREEMENT_DELIVERIES_TOOLTIP.translate(delivered, ordered);
+                            return Component.translatable("gui.wares.agreement.deliveries.tooltip", delivered, ordered);
                         else return Component.empty();
                     })
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
@@ -134,9 +139,9 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         Rectangle expiryRect = layout.getElement(AgreementLayout.Element.EXPIRY);
         if (expiryRect != null) {
             addRenderableOnly(new TextBlockRenderable(() -> TextUtil.timeFromTicks(getAgreement().getExpireTimestamp() - menu.level.getGameTime()),
-                    expiryRect.left(), expiryRect.top(), expiryRect.width, expiryRect.height)
+                    expiryRect.left(), expiryRect.top(), expiryRect.width(), expiryRect.height())
                     .setAlignment(HorizontalAlignment.CENTER)
-                    .setTooltip(Lang.GUI_AGREEMENT_EXPIRE_TIME.translate()))
+                    .setTooltip(Component.translatable("gui.wares.agreement.expire_time")))
                     .setTooltipBehavior(TooltipBehavior.REGULAR_ONLY)
                     .setDefaultColor(0xad3232)
                     .visibility((renderable, mouseX, mouseY) -> !getAgreement().isCompleted()
@@ -146,14 +151,14 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // COMPLETED STAMP
         addRenderableOnly(new StampRenderable(getGuiLeft() + 12, getGuiTop() + 10, 71, 23,
                 1, 1, STAMPS_TEXTURE)
-                .setTooltip(Lang.GUI_AGREEMENT_COMPLETED.translate()))
+                .setTooltip(Component.translatable("gui.wares.agreement.completed.tooltip")))
                 .setOpacity(0.75f)
                 .visibility((renderable, mouseX, mouseY) -> getAgreement().isCompleted());
 
         // EXPIRED STAMP
         addRenderableOnly(new StampRenderable(getGuiLeft() + 12, getGuiTop() + 10, 71, 23,
                 1, 27, STAMPS_TEXTURE)
-                .setTooltip(Lang.GUI_AGREEMENT_EXPIRED.translate()))
+                .setTooltip(Component.translatable("gui.wares.agreement.expired.tooltip")))
                 .setOpacity(0.75f)
                 .visibility((renderable, mouseX, mouseY) -> !getAgreement().isCompleted() && getAgreement().isExpired(menu.level.getGameTime()));
 
@@ -203,6 +208,23 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     }
 
     @Override
+    protected void renderTooltip(GuiGraphics graphics, int x, int y) {
+        if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
+            ItemStack stack = this.hoveredSlot.getItem();
+            List<Component> itemTooltip = getTooltipFromItem(Minecraft.getInstance(), stack);
+            Optional<TooltipComponent> imageTooltip = stack.getTooltipImage();
+            if (this.hoveredSlot instanceof ItemDisplaySlot itemDisplaySlot) {
+                Component additionalTooltip = itemDisplaySlot.getAdditionalTooltip();
+                if (!additionalTooltip.getString().isEmpty()) {
+                    itemTooltip = new ArrayList<>(itemTooltip);
+                    itemTooltip.add(additionalTooltip);
+                }
+            }
+            graphics.renderTooltip(font, itemTooltip, imageTooltip, x, y);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (Config.AGREEMENT_CLOSE_WITH_RMB.get() && pButton == 1) {
             onClose();
@@ -215,5 +237,31 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
     @Override
     protected void slotClicked(@NotNull Slot pSlot, int pSlotId, int pMouseButton, @NotNull ClickType pType) {
         // Ignored
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        displayItemCycleTimer++;
+
+        if (displayItemCycleTimer % 20 == 1)
+            cycleDisplayItems(false);
+    }
+
+    protected void cycleDisplayItems(boolean backwards) {
+        for (Slot slot : menu.slots) {
+            if (slot instanceof ItemDisplaySlot itemDisplaySlot)
+                itemDisplaySlot.cycleItem(backwards);
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+        boolean handled = super.mouseScrolled(pMouseX, pMouseY, pDelta);
+        if (!handled) {
+            cycleDisplayItems(pDelta > 0.0);
+            displayItemCycleTimer = 1;
+        }
+        return handled;
     }
 }

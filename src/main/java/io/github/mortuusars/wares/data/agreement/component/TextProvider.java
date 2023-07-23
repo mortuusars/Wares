@@ -17,7 +17,7 @@ public record TextProvider(Either<Component, List<WeightedComponent>> provider) 
     public static final Codec<TextProvider> CODEC = Codec.either(ComponentCodec.CODEC, Codec.list(WeightedComponent.CODEC))
             .flatXmap(i -> DataResult.success(new TextProvider(i)), i -> DataResult.success(i.provider));
 
-    public static TextProvider EMPTY = TextProvider.of(Component.empty());
+    public static final TextProvider EMPTY = TextProvider.of(Component.empty());
 
     public static TextProvider of(Component component) {
         return new TextProvider(Either.left(component));

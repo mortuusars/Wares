@@ -187,5 +187,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:agreement/village/desert_requested_sell"
 }

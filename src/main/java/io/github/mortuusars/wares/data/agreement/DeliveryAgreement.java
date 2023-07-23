@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.config.Config;
+import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.data.serialization.ComponentCodec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -20,32 +21,29 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
-public class Agreement {
-    public static final Codec<Agreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.STRING.optionalFieldOf("id", "").forGetter(Agreement::getId),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerName", Component.empty()).forGetter(Agreement::getBuyerName),
-                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress", Component.empty()).forGetter(Agreement::getBuyerAddress),
-                    ComponentCodec.CODEC.optionalFieldOf("title", Component.empty()).forGetter(Agreement::getTitle),
-                    ComponentCodec.CODEC.optionalFieldOf("message", Component.empty()).forGetter(Agreement::getMessage),
-                    Codec.STRING.optionalFieldOf("seal", "default").forGetter(Agreement::getSeal),
-                    Codec.list(ItemStack.CODEC).fieldOf("requestedItems").forGetter(Agreement::getRequestedItems),
-                    Codec.list(ItemStack.CODEC).fieldOf("paymentItems").forGetter(Agreement::getPaymentItems),
-                    Codec.INT.optionalFieldOf("ordered", 0).forGetter(Agreement::getOrdered),
-                    Codec.INT.optionalFieldOf("delivered", 0).forGetter(Agreement::getDelivered),
-                    Codec.INT.optionalFieldOf("experience", 0).forGetter(Agreement::getExperience),
-                    Codec.INT.optionalFieldOf("deliveryTime", 0).forGetter(Agreement::getDeliveryTime),
-                    Codec.LONG.optionalFieldOf("expireTimestamp", -1L).forGetter(Agreement::getExpireTimestamp),
-                    Codec.BOOL.optionalFieldOf("isCompleted", false).forGetter(Agreement::getIsCompleted),
-                    Codec.BOOL.optionalFieldOf("isExpired", false).forGetter(Agreement::getIsExpired))
-            .apply(instance, Agreement::new));
+public class DeliveryAgreement {
+    public static final Codec<DeliveryAgreement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                    Codec.STRING.optionalFieldOf("id", "").forGetter(DeliveryAgreement::getId),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerName", Component.empty()).forGetter(DeliveryAgreement::getBuyerName),
+                    ComponentCodec.CODEC.optionalFieldOf("buyerAddress", Component.empty()).forGetter(DeliveryAgreement::getBuyerAddress),
+                    ComponentCodec.CODEC.optionalFieldOf("title", Component.empty()).forGetter(DeliveryAgreement::getTitle),
+                    ComponentCodec.CODEC.optionalFieldOf("message", Component.empty()).forGetter(DeliveryAgreement::getMessage),
+                    Codec.STRING.optionalFieldOf("seal", "default").forGetter(DeliveryAgreement::getSeal),
+                    Codec.list(RequestedItem.CODEC).fieldOf("requested").forGetter(DeliveryAgreement::getRequested),
+                    Codec.list(ItemStack.CODEC).fieldOf("payment").forGetter(DeliveryAgreement::getPayment),
+                    Codec.INT.optionalFieldOf("ordered", 0).forGetter(DeliveryAgreement::getOrdered),
+                    Codec.INT.optionalFieldOf("delivered", 0).forGetter(DeliveryAgreement::getDelivered),
+                    Codec.INT.optionalFieldOf("experience", 0).forGetter(DeliveryAgreement::getExperience),
+                    Codec.INT.optionalFieldOf("deliveryTime", 0).forGetter(DeliveryAgreement::getDeliveryTime),
+                    Codec.LONG.optionalFieldOf("expireTimestamp", -1L).forGetter(DeliveryAgreement::getExpireTimestamp),
+                    Codec.BOOL.optionalFieldOf("isCompleted", false).forGetter(DeliveryAgreement::getIsCompleted),
+                    Codec.BOOL.optionalFieldOf("isExpired", false).forGetter(DeliveryAgreement::getIsExpired))
+            .apply(instance, DeliveryAgreement::new));
 
     public static final int MAX_REQUESTED_STACKS = 6;
     public static final int MAX_PAYMENT_STACKS = 6;
 
-    public static final Agreement EMPTY = new AgreementBuilder()
-            .addRequestedItem(ItemStack.EMPTY)
-            .addPaymentItem(ItemStack.EMPTY)
-            .build();
+    public static final DeliveryAgreement EMPTY = new AgreementBuilder().build();
 
     private final @NotNull String id;
     private final @NotNull Component buyerName;
@@ -53,8 +51,8 @@ public class Agreement {
     private final @NotNull Component title;
     private final @NotNull Component message;
     private final @NotNull String seal;
-    private final List<ItemStack> requestedItems;
-    private final List<ItemStack> paymentItems;
+    private final List<RequestedItem> requested;
+    private final List<ItemStack> payment;
     private final int ordered;
     private final int experience;
     private final int deliveryTime;
@@ -64,18 +62,18 @@ public class Agreement {
     private boolean isCompleted;
     private boolean isExpired;
 
-    public Agreement(@NotNull String id, @NotNull Component buyerName, @NotNull Component buyerAddress, @NotNull Component title, @NotNull Component message, @NotNull String seal,
-                     List<ItemStack> requestedItems, List<ItemStack> paymentItems,
-                     int orderedQuantity, int delivered, int experience, int deliveryTime, long expireTimestamp,
-                     boolean isCompleted, boolean isExpired) {
+    public DeliveryAgreement(@NotNull String id, @NotNull Component buyerName, @NotNull Component buyerAddress, @NotNull Component title, @NotNull Component message, @NotNull String seal,
+                             List<RequestedItem> requestedItems, List<ItemStack> paymentItems,
+                             int orderedQuantity, int delivered, int experience, int deliveryTime, long expireTimestamp,
+                             boolean isCompleted, boolean isExpired) {
         this.id = id;
         this.buyerName = buyerName;
         this.buyerAddress = buyerAddress;
         this.title = title;
         this.message = message;
         this.seal = seal;
-        this.requestedItems = requestedItems;
-        this.paymentItems = paymentItems;
+        this.requested = requestedItems;
+        this.payment = paymentItems;
         this.ordered = orderedQuantity;
         this.delivered = delivered;
         this.experience = experience;
@@ -89,14 +87,14 @@ public class Agreement {
         return new AgreementBuilder();
     }
 
-    public static Optional<Agreement> fromItemStack(ItemStack itemStack) {
+    public static Optional<DeliveryAgreement> fromItemStack(ItemStack itemStack) {
         @Nullable CompoundTag compoundTag = itemStack.getTag();
         if (compoundTag == null)
             return Optional.empty();
 
         try {
-            DataResult<Pair<Agreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, compoundTag);
-            Agreement agreement = result.getOrThrow(false, Wares.LOGGER::error).getFirst();
+            DataResult<Pair<DeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, compoundTag);
+            DeliveryAgreement agreement = result.getOrThrow(false, Wares.LOGGER::error).getFirst();
             return Optional.of(agreement);
         } catch (Exception e) {
             Wares.LOGGER.error("Failed to decode Agreement from item : '" + itemStack + "'.\n" + e);
@@ -135,11 +133,11 @@ public class Agreement {
     public @NotNull String getSeal() {
         return seal;
     }
-    public List<ItemStack> getRequestedItems() {
-        return requestedItems;
+    public List<RequestedItem> getRequested() {
+        return requested;
     }
-    public List<ItemStack> getPaymentItems() {
-        return paymentItems;
+    public List<ItemStack> getPayment() {
+        return payment;
     }
     public int getOrdered() {
         return ordered;
@@ -193,7 +191,7 @@ public class Agreement {
     }
 
     public boolean canDeliver(long gameTime) {
-        return !isCompleted() && !isExpired(gameTime);
+        return (getRequested().size() > 0 || getPayment().size() > 0) && !isCompleted() && !isExpired(gameTime);
     }
 
     public void complete() {
@@ -208,25 +206,35 @@ public class Agreement {
     }
 
     public boolean isEmpty() {
-        return this == EMPTY;
+        return this.equals(EMPTY);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Agreement agreement = (Agreement) o;
-        return ordered == agreement.ordered && experience == agreement.experience && deliveryTime == agreement.deliveryTime
-                && expireTimestamp == agreement.expireTimestamp && delivered == agreement.delivered
-                && isCompleted == agreement.isCompleted && isExpired == agreement.isExpired && id.equals(agreement.id)
-                && buyerName.equals(agreement.buyerName) && buyerAddress.equals(agreement.buyerAddress) && title.equals(agreement.title)
-                && message.equals(agreement.message)
-                && requestedItems.equals(agreement.requestedItems) && paymentItems.equals(agreement.paymentItems);
+        DeliveryAgreement that = (DeliveryAgreement) o;
+        return ordered == that.ordered &&
+                experience == that.experience &&
+                deliveryTime == that.deliveryTime &&
+                expireTimestamp == that.expireTimestamp &&
+                delivered == that.delivered &&
+                isCompleted == that.isCompleted &&
+                isExpired == that.isExpired &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(buyerName, that.buyerName) &&
+                Objects.equals(buyerAddress, that.buyerAddress) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(seal, that.seal) &&
+                (Objects.equals(requested, that.requested) || requested.size() == that.requested.size()) &&
+                (Objects.equals(payment, that.payment) || payment.size() == that.payment.size());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, buyerName, buyerAddress, title, message, requestedItems, paymentItems, ordered, experience, deliveryTime, expireTimestamp, delivered, isCompleted, isExpired);
+        return Objects.hash(id, buyerName, buyerAddress, title, message, seal, requested, payment, ordered,
+                experience, deliveryTime, expireTimestamp, delivered, isCompleted, isExpired);
     }
 
     @Override
@@ -238,8 +246,8 @@ public class Agreement {
                 ", title=" + title +
                 ", message=" + message +
                 ", seal='" + seal + '\'' +
-                ", requestedItems=" + requestedItems +
-                ", paymentItems=" + paymentItems +
+                ", requested=" + requested +
+                ", payment=" + payment +
                 ", ordered=" + ordered +
                 ", experience=" + experience +
                 ", deliveryTime=" + deliveryTime +

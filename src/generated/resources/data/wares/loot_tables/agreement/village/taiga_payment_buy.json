@@ -183,5 +183,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "wares:agreement/village/taiga_payment_buy"
 }
