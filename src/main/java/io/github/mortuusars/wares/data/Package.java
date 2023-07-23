@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -78,7 +79,9 @@ public record Package(Either<ResourceLocation, List<ItemStack>> items, String se
     }
 
     private static List<ItemStack> unpackLootTable(ServerLevel level, Vec3 position, ResourceLocation tableLocation) {
-        LootTable lootTable = level.getServer().getLootData().getLootTable(tableLocation);
-        return lootTable.getRandomItems(new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, position).create(LootContextParamSets.CHEST));
+        LootTable lootTable = level.getServer().getLootTables().get(tableLocation);
+        LootContext.Builder lootContextBuilder = new LootContext.Builder(level);
+        lootContextBuilder.withParameter(LootContextParams.ORIGIN, position);
+        return lootTable.getRandomItems(lootContextBuilder.create(LootContextParamSets.CHEST));
     }
 }
