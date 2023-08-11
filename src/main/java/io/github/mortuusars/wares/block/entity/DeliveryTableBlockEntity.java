@@ -234,7 +234,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
     public int getBatchSize() {
         Optional<Villager> worker = getPackagerWorker(PACKAGER_WORK_RADIUS);
-        int packages = getItem(BOX_SLOT).getCount();
+        int packages = Config.DELIVERIES_REQUIRE_BOXES.get() ? getItem(BOX_SLOT).getCount() : Integer.MAX_VALUE;
         int villagerLevel = worker.map(villager -> villager.getVillagerData().getLevel()).orElse(1);
         return Math.min(packages, Config.getBatchSizeForLevel(villagerLevel));
     }
