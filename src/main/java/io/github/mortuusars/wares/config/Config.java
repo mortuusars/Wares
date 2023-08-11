@@ -7,6 +7,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Config {
     private static final ForgeConfigSpec COMMON;
@@ -48,17 +49,20 @@ public class Config {
                         "Requires 'PackagerRequiredForDelivery'. Default: true")
                 .define("PackagerShouldHaveWorkedRecently", true);
 
+        List<Integer> batchSizePerLevelDefaultValues = List.of(1, 2, 4, 6, 8);
         BATCH_SIZE_PER_LEVEL = builder
                 .comment("Number of packages that Packager can pack for one delivery based on Packager's level.",
-                        "Should have 5 values corresponding to each villager level. Default: [1,2,4,6,8]")
-                .defineList("PackagerBatchSizePerLevel", List.of(1, 2, 4, 6, 8), value -> ((int) value) > 0);
+                        "Should have 5 values corresponding to each villager level. Default: ["
+                                + batchSizePerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
+                .defineList("PackagerBatchSizePerLevel", batchSizePerLevelDefaultValues, value -> ((int) value) > 0);
 
+        List<Integer> xpPerLevelDefaultValues = List.of(0, 40, 110, 250, 500);
         PACKAGER_XP_PER_LEVEL = builder
                 .comment("How many xp points Packager levels require. Each delivered package counts as 1xp. ",
                         "This works the same as with regular villagers. ",
                         "Villager XP points do not reset to 0 on level up - so each consecutive value should be larger than previous.",
-                        "Default: [0, 30, 90, 200, 400]")
-                .defineList("PackagerXpPerLevel", List.of(0, 40, 110, 250, 500), value -> ((int) value) >= 0);
+                        "Default: [" + xpPerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
+                .defineList("PackagerXpPerLevel", xpPerLevelDefaultValues, value -> ((int) value) >= 0);
 
         MANUAL_DELIVERY_ALLOWED = builder
                 .comment("Players can manually deliver a package if Packager is not currently working at table.",
@@ -78,8 +82,8 @@ public class Config {
 
         DELIVERIES_REQUIRE_BOXES = builder
                 .comment("Each delivery requires (and consumes) a packaging. ('wares:delivery_boxes' tag)",
-                        "A slot for Delivery Packages will be added to delivery table. Default: true")
-                .define("DeliveriesRequirePackaging", true);
+                        "A slot for boxes will be added to delivery table. Default: true")
+                .define("DeliveriesRequireBoxes", true);
 
         builder.pop();
 
