@@ -30,7 +30,7 @@ public class RequestedItem {
                     StringRepresentable.fromEnum(CompoundTagCompareBehavior::values).optionalFieldOf("TagMatching", CompoundTagCompareBehavior.WEAK).forGetter(RequestedItem::getTagCompareBehavior))
             .apply(instance, RequestedItem::new));
 
-    public static final RequestedItem EMPTY = new RequestedItem(Items.AIR, 1);
+    public static final RequestedItem EMPTY = new RequestedItem(Either.right(Items.AIR), 1, (CompoundTag) null, CompoundTagCompareBehavior.WEAK);
 
     private final Either<TagKey<Item>, Item> tagOrItem;
     private final int count;
@@ -46,9 +46,8 @@ public class RequestedItem {
     }
 
     public RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, @Nullable CompoundTag tag) {
-        this(tagOrItem, count, tag, CompoundTagCompareBehavior.STRONG);
+        this(tagOrItem, count, tag, CompoundTagCompareBehavior.WEAK);
     }
-
 
     public RequestedItem(TagKey<Item> tag, int count) {
         this(Either.left(tag), count, (CompoundTag)null);
