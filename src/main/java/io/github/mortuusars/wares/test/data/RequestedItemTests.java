@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
+import io.github.mortuusars.wares.data.agreement.component.CompoundTagCompareBehavior;
 import io.github.mortuusars.wares.test.framework.ITestClass;
 import io.github.mortuusars.wares.test.framework.Test;
 import net.minecraft.nbt.CompoundTag;
@@ -79,6 +80,105 @@ public class RequestedItemTests implements ITestClass {
 
                     assertThat(decoded.matches(stack),
                             String.format("'%s' does not match '%s'.", decoded, stack));
+                }),
+
+                new Test("RequestedItemDecodesIgnoreTagMatching", player -> {
+                    String json = "{`id`:`minecraft:iron_pickaxe`,`count`:2,`tag`:{`Damage`:5},`TagMatching`:`ignore`}".replace('`', '"');
+                    JsonObject obj = GsonHelper.parse(json);
+                    RequestedItem decoded = RequestedItem.CODEC.decode(JsonOps.INSTANCE, obj)
+                            .resultOrPartial(Wares.LOGGER::error).map(Pair::getFirst).orElse(RequestedItem.EMPTY);
+
+                    assertThat(decoded.getTagCompareBehavior() == CompoundTagCompareBehavior.IGNORE, "TagCompareBehaviour not decoded properly");
+                }),
+
+                new Test("RequestedItemDecodesWeakTagMatching", player -> {
+                    String json = "{`id`:`minecraft:iron_pickaxe`,`count`:2,`tag`:{`Damage`:5},`TagMatching`:`weak`}".replace('`', '"');
+                    JsonObject obj = GsonHelper.parse(json);
+                    RequestedItem decoded = RequestedItem.CODEC.decode(JsonOps.INSTANCE, obj)
+                            .resultOrPartial(Wares.LOGGER::error).map(Pair::getFirst).orElse(RequestedItem.EMPTY);
+
+                    assertThat(decoded.getTagCompareBehavior() == CompoundTagCompareBehavior.WEAK, "TagCompareBehaviour not decoded properly");
+                }),
+
+                new Test("RequestedItemDecodesStrongTagMatching", player -> {
+                    String json = "{`id`:`minecraft:iron_pickaxe`,`count`:2,`tag`:{`Damage`:5},`TagMatching`:`strong`}".replace('`', '"');
+                    JsonObject obj = GsonHelper.parse(json);
+                    RequestedItem decoded = RequestedItem.CODEC.decode(JsonOps.INSTANCE, obj)
+                            .resultOrPartial(Wares.LOGGER::error).map(Pair::getFirst).orElse(RequestedItem.EMPTY);
+
+                    assertThat(decoded.getTagCompareBehavior() == CompoundTagCompareBehavior.STRONG, "TagCompareBehaviour not decoded properly");
+                }),
+
+                new Test("RequestedItemWithIgnoreTagMatches", player -> {
+                    CompoundTag requestedTag = new CompoundTag();
+                    requestedTag.putString("Test", "Test");
+                    RequestedItem requested = new RequestedItem(Either.right(Items.IRON_PICKAXE), 1, requestedTag, CompoundTagCompareBehavior.IGNORE);
+
+                    assertThat(requested.matches(new ItemStack(Items.IRON_PICKAXE)), String.format("'%s' does not match '%s'.", requested, new ItemStack(Items.IRON_PICKAXE)));
+
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag = new CompoundTag();
+                    stackTag.putString("Test", "Test");
+                    stack.setTag(stackTag);
+
+                    assertThat(requested.matches(stack), String.format("'%s' does not match '%s'.", requested, stack));
+                }),
+
+                new Test("RequestedItemWithIgnoreTagMatchesWithoutTagSpecified", player -> {
+                    RequestedItem requested = new RequestedItem(Either.right(Items.IRON_PICKAXE), 1, null, CompoundTagCompareBehavior.IGNORE);
+
+                    assertThat(requested.matches(new ItemStack(Items.IRON_PICKAXE)), String.format("'%s' does not match '%s'.", requested, new ItemStack(Items.IRON_PICKAXE)));
+
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag = new CompoundTag();
+                    stackTag.putString("Test", "Test");
+                    stack.setTag(stackTag);
+
+                    assertThat(requested.matches(stack), String.format("'%s' does not match '%s'.", requested, stack));
+                }),
+
+                new Test("RequestedItemWithWeakTagMatches", player -> {
+                    CompoundTag requestedTag = new CompoundTag();
+                    requestedTag.putInt("Damage", 5);
+                    RequestedItem requested = new RequestedItem(Either.right(Items.IRON_PICKAXE), 1, requestedTag, CompoundTagCompareBehavior.WEAK);
+
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag = new CompoundTag();
+                    stackTag.putInt("Damage", 5);
+                    stackTag.putString("Test", "Test");
+                    stack.setTag(stackTag);
+
+                    assertThat(requested.matches(stack), String.format("'%s' does not match '%s'.", requested, stack));
+
+                    ItemStack stack1 = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag1 = new CompoundTag();
+                    stackTag1.putInt("Damage", 4);
+                    stackTag1.putString("Test", "Test");
+                    stack1.setTag(stackTag1);
+
+                    assertThat(!requested.matches(stack1), String.format("'%s' matches when shouldn't '%s'.", requested, stack1));
+                    assertThat(!requested.matches(new ItemStack(Items.IRON_PICKAXE)), String.format("'%s' matches when shouldn't '%s'.", requested, stack1));
+                }),
+
+                new Test("RequestedItemWithStrongTagMatches", player -> {
+                    CompoundTag requestedTag = new CompoundTag();
+                    requestedTag.putInt("Damage", 5);
+                    RequestedItem requested = new RequestedItem(Either.right(Items.IRON_PICKAXE), 1, requestedTag, CompoundTagCompareBehavior.STRONG);
+
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag = new CompoundTag();
+                    stackTag.putInt("Damage", 5);
+                    stack.setTag(stackTag);
+
+                    assertThat(requested.matches(stack), String.format("'%s' does not match '%s'.", requested, stack));
+
+                    ItemStack stack1 = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag1 = new CompoundTag();
+                    stackTag1.putInt("Damage", 5);
+                    stackTag1.putString("Test", "Test");
+                    stack1.setTag(stackTag1);
+
+                    assertThat(!requested.matches(stack1), String.format("'%s' matches when shouldn't '%s'.", requested, stack1));
                 })
         );
     }

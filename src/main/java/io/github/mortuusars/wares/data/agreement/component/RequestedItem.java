@@ -5,8 +5,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +26,8 @@ public class RequestedItem {
     public static final Codec<RequestedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.either(TagKey.hashedCodec(Registry.ITEM_REGISTRY), Registry.ITEM.byNameCodec()).fieldOf("id").forGetter(RequestedItem::getTagOrItem),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("Count", 1).forGetter(RequestedItem::getCount),
-                    CompoundTag.CODEC.optionalFieldOf("tag").forGetter(ri -> Optional.ofNullable(ri.getTag())))
+                    CompoundTag.CODEC.optionalFieldOf("tag").forGetter(ri -> Optional.ofNullable(ri.getTag())),
+                    StringRepresentable.fromEnum(CompoundTagCompareBehavior::values).optionalFieldOf("TagMatching", CompoundTagCompareBehavior.WEAK).forGetter(RequestedItem::getTagCompareBehavior))
             .apply(instance, RequestedItem::new));
 
     public static final RequestedItem EMPTY = new RequestedItem(Items.AIR, 1);
@@ -33,12 +36,19 @@ public class RequestedItem {
     private final int count;
     @Nullable
     private final CompoundTag tag;
+    private final CompoundTagCompareBehavior tagCompareBehavior;
 
-    public RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, @Nullable CompoundTag tag) {
+    public RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, @Nullable CompoundTag tag, CompoundTagCompareBehavior tagCompareBehavior) {
         this.tagOrItem = tagOrItem;
         this.count = count;
         this.tag = tag;
+        this.tagCompareBehavior = tagCompareBehavior;
     }
+
+    public RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, @Nullable CompoundTag tag) {
+        this(tagOrItem, count, tag, CompoundTagCompareBehavior.STRONG);
+    }
+
 
     public RequestedItem(TagKey<Item> tag, int count) {
         this(Either.left(tag), count, (CompoundTag)null);
@@ -52,8 +62,8 @@ public class RequestedItem {
         this(Either.right(stack.getItem()), stack.getCount(), stack.getTag());
     }
 
-    private RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, Optional<CompoundTag> tag) {
-        this(tagOrItem, count, tag.orElse(null));
+    private RequestedItem(Either<TagKey<Item>, Item> tagOrItem, int count, Optional<CompoundTag> tag, CompoundTagCompareBehavior tagCompareBehavior) {
+        this(tagOrItem, count, tag.orElse(null), tagCompareBehavior);
     }
 
     public Either<TagKey<Item>, Item> getTagOrItem() {
@@ -66,6 +76,10 @@ public class RequestedItem {
 
     public @Nullable CompoundTag getTag() {
         return tag;
+    }
+
+    public CompoundTagCompareBehavior getTagCompareBehavior() {
+        return tagCompareBehavior;
     }
 
     public List<ItemStack> getStacks() {
@@ -91,15 +105,41 @@ public class RequestedItem {
     }
 
     public boolean tagMatches(ItemStack stack) {
-        CompoundTag tag = getTag();
-        if (tag == null)
-            return stack.getTag() == null || stack.getTag().isEmpty();
+        switch (tagCompareBehavior) {
+            case IGNORE -> {
+                return true;
+            }
+            case WEAK -> {
+                CompoundTag tag = getTag();
+                CompoundTag stackTag = stack.getTag();
+                if (tag == null || tag.isEmpty())
+                    return true;
 
-        CompoundTag stackTag = stack.getTag();
-        if (stackTag == null)
-            return tag.isEmpty();
+                if (stackTag == null || stackTag.isEmpty())
+                    return false;
 
-        return tag.equals(stackTag);
+                for (String key : tag.getAllKeys()) {
+                    if (!stackTag.contains(key))
+                        return false;
+
+                    Tag innerTag = tag.get(key);
+                    if (innerTag != null && !innerTag.equals(stackTag.get(key)))
+                        return false;
+                }
+
+                return true;
+            }
+            case STRONG -> {
+                CompoundTag tag = getTag();
+                CompoundTag stackTag = stack.getTag();
+                if (tag == null || tag.isEmpty())
+                    return stackTag == null || stackTag.isEmpty();
+
+                return tag.equals(stackTag);
+            }
+        }
+
+        return false;
     }
 
     public boolean isEmpty() {
@@ -125,6 +165,7 @@ public class RequestedItem {
                 "tagOrItem=" + tagOrItem.map(tag -> "#" + tag.location(), item -> Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).toString()) +
                 ", count=" + count +
                 (tag != null ? (", tag=" + tag) : "") +
+                ",TagMatching:" + tagCompareBehavior.getSerializedName() +
                 '}';
     }
 }
