@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,7 +21,8 @@ public class SealedRequestedItem {
     public static final Codec<SealedRequestedItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.either(TagKey.hashedCodec(Registries.ITEM), ForgeRegistries.ITEMS.getCodec()).fieldOf("id").forGetter(SealedRequestedItem::getTagOrItem),
                     Codec.either(ExtraCodecs.POSITIVE_INT, SteppedInt.CODEC).optionalFieldOf("Count", Either.left(1)).forGetter(SealedRequestedItem::getCount),
-                    CompoundTag.CODEC.optionalFieldOf("tag").forGetter(sri -> Optional.ofNullable(sri.getTag())))
+                    CompoundTag.CODEC.optionalFieldOf("tag").forGetter(sri -> Optional.ofNullable(sri.getTag())),
+                    StringRepresentable.fromEnum(CompoundTagCompareBehavior::values).optionalFieldOf("TagMatching", CompoundTagCompareBehavior.WEAK).forGetter(SealedRequestedItem::getTagCompareBehavior))
             .apply(instance, SealedRequestedItem::new));
 
     public static final SealedRequestedItem EMPTY = new SealedRequestedItem(Either.right(Items.AIR), Either.left(1), (CompoundTag)null);
@@ -29,14 +31,21 @@ public class SealedRequestedItem {
     private final Either<Integer, SteppedInt> count;
     @Nullable
     private final CompoundTag tag;
-    public SealedRequestedItem(Either<TagKey<Item>, Item> tagOrItem, Either<Integer, SteppedInt> count, @Nullable CompoundTag tag) {
+    private final CompoundTagCompareBehavior tagCompareBehavior;
+
+    public SealedRequestedItem(Either<TagKey<Item>, Item> tagOrItem, Either<Integer, SteppedInt> count, @Nullable CompoundTag tag, CompoundTagCompareBehavior tagCompareBehavior) {
         this.tagOrItem = tagOrItem;
         this.count = count;
         this.tag = tag;
+        this.tagCompareBehavior = tagCompareBehavior;
     }
 
-    private SealedRequestedItem(Either<TagKey<Item>, Item> tagOrItem, Either<Integer, SteppedInt> count, Optional<CompoundTag> tag) {
-        this(tagOrItem, count, tag.orElse(null));
+    public SealedRequestedItem(Either<TagKey<Item>, Item> tagOrItem, Either<Integer, SteppedInt> count, @Nullable CompoundTag tag) {
+        this(tagOrItem, count, tag, CompoundTagCompareBehavior.STRONG);
+    }
+
+    private SealedRequestedItem(Either<TagKey<Item>, Item> tagOrItem, Either<Integer, SteppedInt> count, Optional<CompoundTag> tag, CompoundTagCompareBehavior tagCompareBehavior) {
+        this(tagOrItem, count, tag.orElse(null), tagCompareBehavior);
     }
 
     public Either<TagKey<Item>, Item> getTagOrItem() {
@@ -51,6 +60,10 @@ public class SealedRequestedItem {
         return tag;
     }
 
+    public CompoundTagCompareBehavior getTagCompareBehavior() {
+        return tagCompareBehavior;
+    }
+
     @Override
     public String toString() {
         return "RequestedItem{" +
@@ -58,6 +71,7 @@ public class SealedRequestedItem {
                 ", count=" + count.map(integer -> Integer.toString(integer),
                     steppedInt -> String.format("SteppedInt{%s,%s,%s}", steppedInt.min(), steppedInt.max(), steppedInt.step())) +
                 (tag != null ? (", tag=" + tag) : "") +
+                ",TagMatching:" + tagCompareBehavior.getSerializedName() +
                 '}';
     }
 }
