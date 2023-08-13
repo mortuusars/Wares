@@ -1,4 +1,4 @@
-2023-08-13 - 1.1.1
+2023-08-13 - 1.2.0
 - Added 'TagMatching' field to the Requested Item. It allows specifying how NBT tags of items will be compared.
   - 'TagMatching:"ignore"' - tag does not matter
   - 'TagMatching:"weak"' - item is required to have defined tags (can have others)
