@@ -88,12 +88,11 @@ public class DeliveryAgreement {
     }
 
     public static Optional<DeliveryAgreement> fromItemStack(ItemStack itemStack) {
-        @Nullable CompoundTag compoundTag = itemStack.getTag();
-        if (compoundTag == null)
+        if (itemStack.isEmpty() || itemStack.getTag() == null || itemStack.getTag().isEmpty())
             return Optional.empty();
 
         try {
-            DataResult<Pair<DeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, compoundTag);
+            DataResult<Pair<DeliveryAgreement, Tag>> result = CODEC.decode(NbtOps.INSTANCE, itemStack.getTag());
             DeliveryAgreement agreement = result.getOrThrow(false, Wares.LOGGER::error).getFirst();
             return Optional.of(agreement);
         } catch (Exception e) {
