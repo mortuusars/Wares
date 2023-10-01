@@ -51,7 +51,7 @@ public class CardboardBoxItem extends BlockItem {
 
     private void openCardboardBoxGui(ServerPlayer serverPlayer, ItemStack cardboardBoxStack) {
         NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider((containerId, playerInventory, player) ->
-                        new CardboardBoxMenu(containerId, playerInventory, cardboardBoxStack), cardboardBoxStack.getHoverName()),
+                        new CardboardBoxMenu(containerId, playerInventory), cardboardBoxStack.getHoverName()),
                 buffer -> buffer.writeItemStack(cardboardBoxStack, false));
 
         serverPlayer.level.playSound(null, serverPlayer, Wares.SoundEvents.CARDBOARD_BOX_USE.get(), SoundSource.PLAYERS,

@@ -1,4 +1,5 @@
-- 1.2.1
+2023-10-01 - 1.2.1
+- Fixed Cardboard Box screen missing player's inventory slots in some cases.  
 - Possible removal of some errors in logs.
 
 2023-08-13 - 1.2.0
