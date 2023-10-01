@@ -59,11 +59,11 @@ public class CardboardBoxScreen extends AbstractContainerScreen<CardboardBoxMenu
 
         graphics.renderItem(cardboardBoxStack, getGuiLeft() + menu.cardboardBoxSlotPos.getFirst(),
                 getGuiTop() + menu.cardboardBoxSlotPos.getSecond());
-        poseStack.translate(0, 0, 300);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+        graphics.pose().translate(0, 0, 300);
+//        RenderSystem.setShaderTexture(0, TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1f, 1f, 1f, 0.5f);
-        blit(poseStack, getGuiLeft() + menu.cardboardBoxSlotPos.getFirst() - 1,
+        graphics.blit(TEXTURE, getGuiLeft() + menu.cardboardBoxSlotPos.getFirst() - 1,
                 getGuiTop() + menu.cardboardBoxSlotPos.getSecond() - 1, 4, 3, 18, 18);
     }
 
