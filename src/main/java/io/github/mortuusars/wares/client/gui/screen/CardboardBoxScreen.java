@@ -29,7 +29,7 @@ public class CardboardBoxScreen extends AbstractContainerScreen<CardboardBoxMenu
         this.packButtonTitle = Component.translatable("gui.wares.cardboard_box.pack");
         this.packButtonTooltip = Component.translatable("gui.wares.cardboard_box.pack.tooltip");
 
-        cardboardBoxStack = playerinventory.getItem(menu.cardboardBoxSlotId);
+        cardboardBoxStack = playerinventory.getItem(menu.openedBoxSlotId);
     }
 
     @Override
@@ -59,6 +59,12 @@ public class CardboardBoxScreen extends AbstractContainerScreen<CardboardBoxMenu
 
         graphics.renderItem(cardboardBoxStack, getGuiLeft() + menu.cardboardBoxSlotPos.getFirst(),
                 getGuiTop() + menu.cardboardBoxSlotPos.getSecond());
+        poseStack.translate(0, 0, 300);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 0.5f);
+        blit(poseStack, getGuiLeft() + menu.cardboardBoxSlotPos.getFirst() - 1,
+                getGuiTop() + menu.cardboardBoxSlotPos.getSecond() - 1, 4, 3, 18, 18);
     }
 
     @Override

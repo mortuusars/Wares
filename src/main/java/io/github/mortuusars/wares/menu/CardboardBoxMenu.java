@@ -26,13 +26,13 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
 
     public static final int SLOTS = 6;
 
-    public final int cardboardBoxSlotId;
+    public final int openedBoxSlotId;
     public Pair<Integer, Integer> cardboardBoxSlotPos = Pair.of(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
     private final IItemHandler cardboardBoxItemHandler;
     private boolean itemsPacked = false;
 
-    public CardboardBoxMenu(int containerId, final Inventory playerInventory, ItemStack cardboardBoxStack) {
+    public CardboardBoxMenu(int containerId, final Inventory playerInventory) {
         super(Wares.MenuTypes.CARDBOARD_BOX.get(), containerId);
 
         cardboardBoxItemHandler = new ItemStackHandler(SLOTS) {
@@ -45,33 +45,25 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
         int boxSlotsX = 62;
         int boxSlotsY = 26;
 
-        int index = 0;
         for (int row = 0; row < 2; row++) {
             for (int column = 0; column < 3; column++) {
-                addSlot(new SlotItemHandler(cardboardBoxItemHandler, index,
+                addSlot(new SlotItemHandler(cardboardBoxItemHandler, column + row * 3,
                         boxSlotsX + column * 18, boxSlotsY + row * 18));
-                index++;
             }
         }
 
-        cardboardBoxSlotId = playerInventory.findSlotMatchingItem(cardboardBoxStack);
+        openedBoxSlotId = playerInventory.selected;
 
-        //Player Inventory
+        // Player Inventory
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-
-                if (index == cardboardBoxSlotId) {
-                    cardboardBoxSlotPos = Pair.of(column * 18 + 8, row * 18 + 84);
-                    continue;
-                }
-
                 addSlot(new Slot(playerInventory, (column + row * 9) + 9, column * 18 + 8, 84 + row * 18));
             }
         }
 
-        //Hotbar
+        // Hotbar
         for (int slot = 0; slot < 9; slot++) {
-            if (slot == cardboardBoxSlotId) {
+            if (slot == openedBoxSlotId) {
                 cardboardBoxSlotPos = Pair.of(slot * 18 + 8, 142);
                 continue;
             }
@@ -81,7 +73,7 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
     }
 
     public static CardboardBoxMenu fromBuffer(int containerID, Inventory playerInventory, FriendlyByteBuf buffer) {
-        return new CardboardBoxMenu(containerID, playerInventory, buffer.readItem());
+        return new CardboardBoxMenu(containerID, playerInventory);
     }
 
     @Override
@@ -121,7 +113,8 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
             }
 
             if (boxStack.isEmpty()) {
-                throw new IllegalStateException("If player doesn't have Cardboard Box in inventory this far - something went wrong.");
+                Wares.LOGGER.error("Cardboard box not found in player's inventory.");
+                return true;
             }
 
             List<ItemStack> packedItems = new ArrayList<>();
@@ -167,6 +160,6 @@ public class CardboardBoxMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return player.getInventory().getItem(cardboardBoxSlotId).is(Wares.Items.CARDBOARD_BOX.get());
+        return player.getInventory().getItem(openedBoxSlotId).is(Wares.Items.CARDBOARD_BOX.get());
     }
 }
