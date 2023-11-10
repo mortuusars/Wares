@@ -14,6 +14,7 @@ public class Config {
     private static final ForgeConfigSpec CLIENT;
 
     // COMMON
+    public static final ForgeConfigSpec.BooleanValue KEEP_SEALED_STACK_NBT_WHEN_OPENED;
     public static final ForgeConfigSpec.BooleanValue PACKAGER_REQUIRED;
     public static final ForgeConfigSpec.BooleanValue PACKAGER_SHOULD_BE_WORKING;
     public static final ForgeConfigSpec.BooleanValue MANUAL_DELIVERY_ALLOWED;
@@ -36,45 +37,47 @@ public class Config {
 
         builder.push("Delivery");
 
-        builder.push("Packager");
+        {
+            builder.push("Packager");
 
-        PACKAGER_REQUIRED = builder
-                .comment("Packager worker is required for Delivery Table to work.",
-                        "For a Packager to be considered a 'worker' he should have current table as a 'job_site' and have 'last_worked_at_poi' less than 40 seconds ago.",
-                        "Default: true")
-                .define("PackagerRequiredForDelivery", true);
+            PACKAGER_REQUIRED = builder
+                    .comment("Packager worker is required for Delivery Table to work.",
+                            "For a Packager to be considered a 'worker' he should have current table as a 'job_site' and have 'last_worked_at_poi' less than 40 seconds ago.",
+                            "Default: true")
+                    .define("PackagerRequiredForDelivery", true);
 
-        PACKAGER_SHOULD_BE_WORKING = builder
-                .comment("Packager should have 'last_worked_at_poi' less than 40 seconds ago to be considered a worker.",
-                        "Requires 'PackagerRequiredForDelivery'. Default: true")
-                .define("PackagerShouldHaveWorkedRecently", true);
+            PACKAGER_SHOULD_BE_WORKING = builder
+                    .comment("Packager should have 'last_worked_at_poi' less than 40 seconds ago to be considered a worker.",
+                            "Requires 'PackagerRequiredForDelivery'. Default: true")
+                    .define("PackagerShouldHaveWorkedRecently", true);
 
-        List<Integer> batchSizePerLevelDefaultValues = List.of(1, 2, 4, 6, 8);
-        BATCH_SIZE_PER_LEVEL = builder
-                .comment("Number of packages that Packager can pack for one delivery based on Packager's level.",
-                        "Should have 5 values corresponding to each villager level. Default: ["
-                                + batchSizePerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
-                .defineList("PackagerBatchSizePerLevel", batchSizePerLevelDefaultValues, value -> ((int) value) > 0);
+            List<Integer> batchSizePerLevelDefaultValues = List.of(1, 2, 4, 6, 8);
+            BATCH_SIZE_PER_LEVEL = builder
+                    .comment("Number of packages that Packager can pack for one delivery based on Packager's level.",
+                            "Should have 5 values corresponding to each villager level. Default: ["
+                                    + batchSizePerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
+                    .defineList("PackagerBatchSizePerLevel", batchSizePerLevelDefaultValues, value -> ((int) value) > 0);
 
-        List<Integer> xpPerLevelDefaultValues = List.of(0, 40, 110, 250, 500);
-        PACKAGER_XP_PER_LEVEL = builder
-                .comment("How many xp points Packager levels require. Each delivered package counts as 1xp. ",
-                        "This works the same as with regular villagers. ",
-                        "Villager XP points do not reset to 0 on level up - so each consecutive value should be larger than previous.",
-                        "Default: [" + xpPerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
-                .defineList("PackagerXpPerLevel", xpPerLevelDefaultValues, value -> ((int) value) >= 0);
+            List<Integer> xpPerLevelDefaultValues = List.of(0, 40, 110, 250, 500);
+            PACKAGER_XP_PER_LEVEL = builder
+                    .comment("How many xp points Packager levels require. Each delivered package counts as 1xp. ",
+                            "This works the same as with regular villagers. ",
+                            "Villager XP points do not reset to 0 on level up - so each consecutive value should be larger than previous.",
+                            "Default: [" + xpPerLevelDefaultValues.stream().map(String::valueOf).collect(Collectors.joining(",")) + "]")
+                    .defineList("PackagerXpPerLevel", xpPerLevelDefaultValues, value -> ((int) value) >= 0);
 
-        MANUAL_DELIVERY_ALLOWED = builder
-                .comment("Players can manually deliver a package if Packager is not currently working at table.",
-                        "Requires 'PackagerRequiredForDelivery'. Default: true")
-                .define("PlayerCanDeliverManually", true);
+            MANUAL_DELIVERY_ALLOWED = builder
+                    .comment("Players can manually deliver a package if Packager is not currently working at table.",
+                            "Requires 'PackagerRequiredForDelivery'. Default: true")
+                    .define("PlayerCanDeliverManually", true);
 
-        MANUAL_DELIVERY_TIME_MODIFIER = builder
-                .comment("Time modifier when delivering manually.",
-                        "Default: 3x")
-                .defineInRange("ManualDeliveryTimeModifier", 3.0D, 1.0D, 999.0D);
+            MANUAL_DELIVERY_TIME_MODIFIER = builder
+                    .comment("Time modifier when delivering manually.",
+                            "Default: 3x")
+                    .defineInRange("ManualDeliveryTimeModifier", 3.0D, 1.0D, 999.0D);
 
-        builder.pop();
+            builder.pop();
+        }
 
         DEFAULT_DELIVERY_TIME = builder
                 .comment("Time in ticks that deliveries take. Agreement can override this value. Default: 200 ticks (10 seconds)")
@@ -98,6 +101,11 @@ public class Config {
                 .defineInRange("WarehouseWeight", 10, 1, Integer.MAX_VALUE);
 
         builder.pop();
+
+        KEEP_SEALED_STACK_NBT_WHEN_OPENED = builder
+                .comment("Item nbt-tags will be transferred to the newly created Delivery Agreement item when Sealed Delivery Agreement is opened. ",
+                        "Useful when you want to keep custom item name, etc.")
+                .define("KeepNBTWhenOpeningAgreement", true);
 
         WANDERING_TRADER_AGREEMENTS = builder
                 .comment("Wandering Trader will sell Sealed Delivery Agreements.")

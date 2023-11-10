@@ -2,10 +2,12 @@ package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
@@ -133,6 +135,12 @@ public class SealedDeliveryAgreementItem extends Item {
                 DeliveryAgreement agreement = descriptionOptional.get().realize(serverLevel);
 
                 ItemStack agreementStack = new ItemStack(Wares.Items.DELIVERY_AGREEMENT.get());
+
+                if (Config.KEEP_SEALED_STACK_NBT_WHEN_OPENED.get()) {
+                    CompoundTag oldTag = stack.getTag().copy();
+                    agreementStack.setTag(oldTag);
+                }
+
                 if (agreement.toItemStack(agreementStack)) {
                     player.awardStat(Wares.Stats.SEALED_LETTERS_OPENED);
                     level.playSound(null,
@@ -140,10 +148,6 @@ public class SealedDeliveryAgreementItem extends Item {
                             player.position().y,
                             player.position().z, Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
                             1f, level.getRandom().nextFloat() * 0.1f + 0.95f);
-
-                    // Release RMB after using. Otherwise, right click will be still held and will activate use again.
-                    if (level.isClientSide)
-                        Minecraft.getInstance().options.keyUse.setDown(false);
 
                     return agreementStack;
                 }

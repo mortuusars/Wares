@@ -1,3 +1,6 @@
+2023-11-10 - 1.2.2
+- Added ability to keep item nbt-tags when opening Sealed Agreement. Can be configured.
+
 2023-10-01 - 1.2.1
 - Fixed Cardboard Box screen missing player's inventory slots in some cases.  
 - Possible removal of some errors in logs.
