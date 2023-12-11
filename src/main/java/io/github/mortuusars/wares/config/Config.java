@@ -21,6 +21,7 @@ public class Config {
     public static final ForgeConfigSpec.ConfigValue<List<? extends Integer>> PACKAGER_XP_PER_LEVEL;
     public static final ForgeConfigSpec.IntValue DEFAULT_DELIVERY_TIME;
     public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_BOXES;
+    public static final ForgeConfigSpec.BooleanValue TABLE_OUTPUTS_FROM_SIDES;
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
     public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
@@ -79,6 +80,11 @@ public class Config {
                 .comment("Each delivery requires (and consumes) a packaging. ('wares:delivery_boxes' tag)",
                         "A slot for Delivery Packages will be added to delivery table. Default: true")
                 .define("DeliveriesRequirePackaging", true);
+
+        TABLE_OUTPUTS_FROM_SIDES = builder
+                .comment("Delivery outputs can be taken by consumers from the side of the delivery table, in addition to the bottom.",
+                        "Default: false")
+                .define("TableOutputsFromSides", false);
 
         builder.pop();
 
