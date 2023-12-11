@@ -60,6 +60,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
     public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
     public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
+    public static final int[] INPUT_PLUS_OUTPUT_SLOTS = new int[] {2,3,4,5,6,7,8,9,10,11,12,13};
 
     public static final int PACKAGER_WORK_RADIUS = 3;
     public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
@@ -503,7 +504,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
             case UP -> Config.DELIVERIES_REQUIRE_BOXES.get() ? AGREEMENT_PLUS_PACKAGES_SLOTS : AGREEMENT_SLOTS;
-            case NORTH, SOUTH, WEST, EAST -> INPUT_SLOTS;
+            case NORTH, SOUTH, WEST, EAST -> Config.TABLE_OUTPUTS_FROM_SIDES.get() ? INPUT_PLUS_OUTPUT_SLOTS : INPUT_SLOTS;
         };
     }
 
