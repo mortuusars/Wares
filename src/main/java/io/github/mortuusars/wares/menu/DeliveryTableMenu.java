@@ -32,7 +32,12 @@ public class DeliveryTableMenu extends AbstractContainerMenu {
         IItemHandler itemHandler = blockEntity.getInventory();
         {
             // AGREEMENT
-            this.addSlot(new SlotItemHandler(itemHandler, DeliveryTableBlockEntity.AGREEMENT_SLOT, 80, 16));
+            this.addSlot(new SlotItemHandler(itemHandler, DeliveryTableBlockEntity.AGREEMENT_SLOT, 80, 16) {
+                @Override
+                public boolean mayPickup(Player playerIn) {
+                    return super.mayPickup(playerIn) && !blockEntity.isAgreementLocked();
+                }
+            });
 
             // PACKAGES
             if (Config.DELIVERIES_REQUIRE_BOXES.get())

@@ -4,6 +4,7 @@
 
   "block.wares.cardboard_box": "Картонна коробка",
   "block.wares.delivery_table": "Торговий стіл",
+  "block.wares.delivery_table.agreement_locked": "Торговий Договір приклеєний до цього столу.",
   "block.wares.package": "Пакунок",
 
   "commands.wares.agreement.complete.already_completed": "Помилка: Договір вже виконаний.",

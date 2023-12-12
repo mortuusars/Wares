@@ -24,6 +24,7 @@ public class Config {
     public static final ForgeConfigSpec.IntValue DEFAULT_DELIVERY_TIME;
     public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_BOXES;
     public static final ForgeConfigSpec.BooleanValue TABLE_OUTPUTS_FROM_SIDES;
+    public static final ForgeConfigSpec.BooleanValue MOVE_COMPLETED_AGREEMENT_TO_OUTPUT;
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
     public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
@@ -93,6 +94,11 @@ public class Config {
                 .comment("Delivery outputs can be taken by consumers from the side of the delivery table, in addition to the bottom.",
                         "Default: false")
                 .define("TableOutputsFromSides", false);
+
+        MOVE_COMPLETED_AGREEMENT_TO_OUTPUT = builder
+                .comment("Completed Delivery Agreement will be moved to the output slots when they have space.",
+                        "Default: true")
+                .define("MoveCompletedAgreementToOutput", true);
 
         builder.pop();
 

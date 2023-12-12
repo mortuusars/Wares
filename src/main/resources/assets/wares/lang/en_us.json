@@ -4,6 +4,7 @@
 
   "block.wares.cardboard_box": "Cardboard Box",
   "block.wares.delivery_table": "Delivery Table",
+  "block.wares.delivery_table.agreement_locked": "Delivery Agreement is glued to this table.",
   "block.wares.package": "Package",
 
   "commands.wares.agreement.complete.already_completed": "Failed: Agreement is already completed.",

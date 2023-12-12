@@ -92,6 +92,10 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
+        // Agreement Slot
+        if (!menu.blockEntity.isAgreementLocked())
+            graphics.blit(TEXTURE, leftPos + 79, topPos + 15, 176, 16, 18, 18);
+
         // Agreement placeholder
         if (!menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT).hasItem())
             graphics.blit(TEXTURE, leftPos + 79, topPos + 15, 176, 34, 18, 18);
