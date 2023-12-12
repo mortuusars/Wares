@@ -8,10 +8,11 @@ import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -114,10 +115,16 @@ public class DeliveryTableBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
+        // REMOVE
         ItemStack agreementStack = deliveryTableBlockEntity.getAgreementItem();
-        if (hitResult.getLocation().y > pos.getY() + 1 && !agreementStack.isEmpty()) {
+        if (!agreementStack.isEmpty() && hitResult.getLocation().y > pos.getY() + 1) {
             if (player.isSecondaryUseActive()) {
                 if (!level.isClientSide) {
+                    if (deliveryTableBlockEntity.isAgreementLocked()) {
+                        player.displayClientMessage(Component.translatable("block.wares.delivery_table.agreement_locked"), true);
+                        return InteractionResult.SUCCESS;
+                    }
+
                     agreementStack = deliveryTableBlockEntity.extractAgreementItem();
 
                     ItemEntity item = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, agreementStack);
@@ -146,9 +153,18 @@ public class DeliveryTableBlock extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            BlockEntity blockentity = level.getBlockEntity(pos);
-            if (blockentity instanceof Container container) {
-                Containers.dropContents(level, pos, container);
+            if (level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity blockEntity) {
+                NonNullList<ItemStack> items = NonNullList.withSize(blockEntity.getContainerSize(), ItemStack.EMPTY);
+
+                for (int slot = 0; slot < blockEntity.getContainerSize(); slot++) {
+                    if (slot == DeliveryTableBlockEntity.AGREEMENT_SLOT && blockEntity.shouldVoidAgreementOnBreak())
+                        continue;
+
+                    items.set(slot, blockEntity.getItem(slot));
+                }
+
+                Containers.dropContents(level, pos, items);
+
                 level.updateNeighbourForOutputSignal(pos, this);
             }
 

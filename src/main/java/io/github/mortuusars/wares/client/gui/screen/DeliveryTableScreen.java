@@ -99,6 +99,10 @@ public class DeliveryTableScreen extends AbstractContainerScreen<DeliveryTableMe
         RenderSystem.setShaderTexture(0, TEXTURE);
         this.blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
+        // Agreement Slot
+        if (!menu.blockEntity.isAgreementLocked())
+            this.blit(poseStack, leftPos + 79, topPos + 15, 176, 16, 18, 18);
+
         // Agreement placeholder
         if (!menu.slots.get(DeliveryTableBlockEntity.AGREEMENT_SLOT).hasItem())
             this.blit(poseStack, leftPos + 79, topPos + 15, 176, 34, 18, 18);

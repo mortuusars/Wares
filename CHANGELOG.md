@@ -1,5 +1,6 @@
 2023-12-11 - 1.2.3
-- Added a configurable option to allow taking outputs from the side of a delivery table. Off by default.
+- Added an option to config that allow taking outputs from the side of a delivery table. Off by default.
+- Added several settings to the Delivery Table NBT data for modpack developers. More details on the [Wiki](https://github.com/mortuusars/Wares/wiki/Delivery-Table)
 
 2023-11-10 - 1.2.2
 - Added ability to keep item nbt-tags when opening Sealed Agreement. Can be configured.

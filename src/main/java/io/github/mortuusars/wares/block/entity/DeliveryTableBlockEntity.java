@@ -54,13 +54,13 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public static final int SLOTS = 14;
     public static final int AGREEMENT_SLOT = 0;
     public static final int BOX_SLOT = 1;
-    public static final int[] AGREEMENT_SLOTS = new int[] {0};
-    public static final int[] AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1};
-    public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[] {0,1,2,3,4,5,6,7};
-    public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[] {1,2,3,4,5,6,7};
-    public static final int[] INPUT_SLOTS = new int[] {2,3,4,5,6,7};
-    public static final int[] OUTPUT_SLOTS = new int[] {8,9,10,11,12,13};
-    public static final int[] INPUT_PLUS_OUTPUT_SLOTS = new int[] {2,3,4,5,6,7,8,9,10,11,12,13};
+    public static final int[] AGREEMENT_SLOTS = new int[]{0};
+    public static final int[] AGREEMENT_PLUS_PACKAGES_SLOTS = new int[]{0, 1};
+    public static final int[] INPUT_PLUS_AGREEMENT_PLUS_PACKAGES_SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
+    public static final int[] INPUT_PLUS_PACKAGES_SLOTS = new int[]{1, 2, 3, 4, 5, 6, 7};
+    public static final int[] INPUT_SLOTS = new int[]{2, 3, 4, 5, 6, 7};
+    public static final int[] OUTPUT_SLOTS = new int[]{8, 9, 10, 11, 12, 13};
+    public static final int[] INPUT_PLUS_OUTPUT_SLOTS = new int[]{2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
     public static final int PACKAGER_WORK_RADIUS = 3;
     public static final int PACKAGER_LAST_WORK_THRESHOLD = 20 * 40; // 40 seconds = 800 ticks
@@ -75,7 +75,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return switch (id) {
                 case CONTAINER_DATA_PROGRESS -> DeliveryTableBlockEntity.this.progress;
                 case CONTAINER_DATA_DURATION -> DeliveryTableBlockEntity.this.getDeliveryTime();
-                case CONTAINER_DATA_CAN_DELIVER_MANUALLY -> Config.MANUAL_DELIVERY_ALLOWED.get() && DeliveryTableBlockEntity.this.canDeliverManually ? 1 : 0;
+                case CONTAINER_DATA_CAN_DELIVER_MANUALLY ->
+                        Config.MANUAL_DELIVERY_ALLOWED.get() && DeliveryTableBlockEntity.this.canDeliverManually ? 1 : 0;
                 default -> 0;
             };
         }
@@ -99,6 +100,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected boolean deliveringManually = false;
 
     protected DeliveryAgreement agreement = DeliveryAgreement.EMPTY;
+    protected boolean voidAgreementOnBreak;
+    protected AgreementTableLock agreementLock = new AgreementTableLock(this);
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -114,17 +117,17 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         ItemStack agreementItem = getAgreementItem();
         if (!agreementItem.is(Wares.Items.DELIVERY_AGREEMENT.get())) {
-            if (progress > 0){
+            if (progress > 0) {
                 resetProgress();
                 setChanged();
             }
 
-            if (agreementItem.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())) {
-                ItemStack agreementStack = getItem(AGREEMENT_SLOT);
+            if (Config.MOVE_COMPLETED_AGREEMENT_TO_OUTPUT.get() && agreementItem.is(Wares.Items.COMPLETED_DELIVERY_AGREEMENT.get())) {
+                ItemStack agreementStack = getAgreementItem();
                 for (int outputSlot : OUTPUT_SLOTS) {
                     if (getItem(outputSlot).isEmpty()) {
                         setItem(outputSlot, agreementStack);
-                        setItem(AGREEMENT_SLOT, ItemStack.EMPTY);
+                        setAgreementItem(ItemStack.EMPTY);
                         break;
                     }
                 }
@@ -141,21 +144,19 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             if (!deliveringManually && Config.PACKAGER_REQUIRED.get() && !packagerWorkingAtTable) {
                 canDeliverManually = Config.MANUAL_DELIVERY_ALLOWED.get();
                 return;
-            }
-            else
+            } else
                 canDeliverManually = false;
 
             if (deliveringManually && packagerWorkingAtTable) {
                 // Adjusting progress to not complete instantly when worker arrives.
-                double completion = (progress / (double)getDeliveryTime());
+                double completion = (progress / (double) getDeliveryTime());
                 progress = Math.round((float) (agreement.getDeliveryTimeOrDefault() * completion));
 
                 deliveringManually = false;
             }
 
             progress++;
-        }
-        else if (deliverability != Deliverability.NO_SPACE_FOR_OUTPUT)
+        } else if (deliverability != Deliverability.NO_SPACE_FOR_OUTPUT)
             resetProgress();
 
         if (progress >= getDeliveryTime()) {
@@ -207,7 +208,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             return false;
 
         assert level != null;
-        final int timeSinceLastWork = (int)(level.getGameTime() - lastWorkedAt);
+        final int timeSinceLastWork = (int) (level.getGameTime() - lastWorkedAt);
         return timeSinceLastWork < PACKAGER_LAST_WORK_THRESHOLD;
     }
 
@@ -258,7 +259,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
             // Adjusting progress to manual delivery time modifier:
             int duration = agreement.getDeliveryTimeOrDefault();
-            double completion = progress / (double)duration;
+            double completion = progress / (double) duration;
             progress = (int) Math.round(getDeliveryTime() * completion);
         }
     }
@@ -402,6 +403,14 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         }
     }
 
+    public boolean isAgreementLocked() {
+        return agreementLock.isLocked();
+    }
+
+    public boolean shouldVoidAgreementOnBreak() {
+        return voidAgreementOnBreak;
+    }
+
 
     // <Container>
 
@@ -428,7 +437,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             protected void onContentsChanged(int slot) {
                 if (slot == AGREEMENT_SLOT) {
                     updateBlockStateIfNeeded();
-                    agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT)).orElse(DeliveryAgreement.EMPTY);
+                    agreement = DeliveryAgreement.fromItemStack(getItem(AGREEMENT_SLOT))
+                            .orElse(DeliveryAgreement.EMPTY);
                     resetProgress();
                 }
                 setChanged();
@@ -452,7 +462,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return super.getCapability(cap, side);
     }
 
-    public int getContainerSize(){
+    public int getContainerSize() {
         return inventory.getSlots();
     }
 
@@ -504,7 +514,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return switch (side) {
             case DOWN -> OUTPUT_SLOTS;
             case UP -> Config.DELIVERIES_REQUIRE_BOXES.get() ? AGREEMENT_PLUS_PACKAGES_SLOTS : AGREEMENT_SLOTS;
-            case NORTH, SOUTH, WEST, EAST -> Config.TABLE_OUTPUTS_FROM_SIDES.get() ? INPUT_PLUS_OUTPUT_SLOTS : INPUT_SLOTS;
+            case NORTH, SOUTH, WEST, EAST ->
+                    Config.TABLE_OUTPUTS_FROM_SIDES.get() ? INPUT_PLUS_OUTPUT_SLOTS : INPUT_SLOTS;
         };
     }
 
@@ -558,20 +569,24 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        this.inventory.deserializeNBT(tag.getCompound("Inventory"));
-        this.progress = tag.getInt("Progress");
-        this.deliveringManually = tag.getBoolean("DeliveringManually");
-
+        inventory.deserializeNBT(tag.getCompound("Inventory"));
+        progress = tag.getInt("Progress");
+        deliveringManually = tag.getBoolean("DeliveringManually");
+        voidAgreementOnBreak = tag.getBoolean("VoidAgreementOnBreak");
         agreement = DeliveryAgreement.fromItemStack(getAgreementItem()).orElse(DeliveryAgreement.EMPTY);
+        agreementLock.load(tag.getCompound("AgreementLock"));
         updateBlockStateIfNeeded();
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put("Inventory", this.inventory.serializeNBT());
+        tag.put("Inventory", inventory.serializeNBT());
         tag.putInt("Progress", progress);
         tag.putBoolean("DeliveringManually", deliveringManually);
+        if (voidAgreementOnBreak)
+            tag.putBoolean("VoidAgreementOnBreak", true);
+        tag.put("AgreementLock", agreementLock.save(new CompoundTag()));
     }
 
     // <Updating>

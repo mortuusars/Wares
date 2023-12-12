@@ -155,7 +155,7 @@ public class DeliveryAgreement {
     public long getExpireTimestamp() {
         return expireTimestamp;
     }
-    protected boolean getIsExpired() {
+    public boolean getIsExpired() {
         return isExpired;
     }
     public boolean canExpire() {
