@@ -1,5 +1,5 @@
 2023-12-23 - 1.2.4
-- Added `batch_delivered`, `agreement_completed` and `agreement_expired` advancement triggers. Details on the [Wiki](https://github.com/mortuusars/Wares/wiki)
+- Added `batch_delivered`, `agreement_completed` and `agreement_expired` advancement conditions. Details on the [Wiki](https://github.com/mortuusars/Wares/wiki)
   - They are meant for modpack developers and are not used in the mod itself.
 - Added config option to show infinity symbol for infinite agreements. Disabled by default.
 - Potentially fixed occasional config reset to default settings. 
