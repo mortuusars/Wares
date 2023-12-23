@@ -14,6 +14,7 @@
 
   "entity.minecraft.villager.wares.packager": "Packager",
 
+  "gui.wares.agreement.infinite.tooltip": "Infinite",
   "gui.wares.agreement.completed.tooltip": "Completed",
   "gui.wares.agreement.deliveries.tooltip": "%s / %s",
   "gui.wares.agreement.expire_time": "Expire time",

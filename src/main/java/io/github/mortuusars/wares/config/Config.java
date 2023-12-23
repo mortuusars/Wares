@@ -39,6 +39,7 @@ public class Config {
     // CLIENT
     public static final ForgeConfigSpec.BooleanValue AGREEMENT_CLOSE_WITH_RMB;
     public static final ForgeConfigSpec.BooleanValue AGREEMENT_APPEND_BUYER_INFO_TO_MESSAGE;
+    public static final ForgeConfigSpec.BooleanValue AGREEMENT_INFINITY_SYMBOL;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -158,6 +159,9 @@ public class Config {
                 .comment("Buyer Name and Buyer Address will be appended (if provided) to the end of the message in the Delivery Agreement View Screen.",
                         "(Buyer info can also be seen by hovering over the Wax Seal)")
                 .define("AgreementScreenAppendBuyerInfo", true);
+        AGREEMENT_INFINITY_SYMBOL = builder
+                .comment("Show infinity symbol in infinite agreements (do not have 'ordered' specified)")
+                .define("AgreementScreenInfinitySymbol", false);
 
         builder.pop();
 

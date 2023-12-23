@@ -14,6 +14,7 @@
 
   "entity.minecraft.villager.wares.packager": "Пакувальник",
 
+  "gui.wares.agreement.infinite.tooltip": "Нескінченний",
   "gui.wares.agreement.completed.tooltip": "Виконано",
   "gui.wares.agreement.deliveries.tooltip": "%s / %s",
   "gui.wares.agreement.expire_time": "Термін дії",
