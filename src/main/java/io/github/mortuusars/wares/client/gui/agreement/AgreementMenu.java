@@ -157,7 +157,7 @@ public class AgreementMenu extends AbstractContainerMenu {
         int slotsHeight = getAgreement().getRequested().size() > 3 || getAgreement().getPayment().size() > 3 ? 36 : 18;
 
         // Info
-        boolean shouldDisplayOrderedCount = !getAgreement().isInfinite();
+        boolean shouldDisplayOrderedCount = !getAgreement().isInfinite() || Config.AGREEMENT_INFINITY_SYMBOL.get();
         boolean shouldDisplayExpirationTime = !getAgreement().isExpired(level.getGameTime());
 
         int infoHeight = 0;

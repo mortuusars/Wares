@@ -23,9 +23,9 @@ public class DeliveryTableTrigger extends SimpleCriterionTrigger<DeliveryTableTr
 
     @Override
     protected DeliveryTableTrigger.@NotNull TriggerInstance createInstance(@NotNull JsonObject json,
-                                                                           EntityPredicate.@NotNull Composite player,
+                                                                           @NotNull ContextAwarePredicate predicate,
                                                                            @NotNull DeserializationContext conditionsParser) {
-        return new DeliveryTableTrigger.TriggerInstance(getId(), player,
+        return new DeliveryTableTrigger.TriggerInstance(getId(), predicate,
                 AgreementPredicate.fromJson(json.get("agreement")),
                 NbtPredicate.fromJson(json.get("agreement_nbt")),
                 LocationPredicate.fromJson(json.get("location")));
@@ -41,9 +41,9 @@ public class DeliveryTableTrigger extends SimpleCriterionTrigger<DeliveryTableTr
         private final NbtPredicate agreementNbt;
         private final LocationPredicate location;
 
-        public TriggerInstance(ResourceLocation id, EntityPredicate.Composite player, AgreementPredicate agreementPredicate,
+        public TriggerInstance(ResourceLocation id, ContextAwarePredicate predicate, AgreementPredicate agreementPredicate,
                                NbtPredicate agreementNbtPredicate, LocationPredicate locationPredicate) {
-            super(id, player);
+            super(id, predicate);
             agreement = agreementPredicate;
             agreementNbt = agreementNbtPredicate;
             location = locationPredicate;

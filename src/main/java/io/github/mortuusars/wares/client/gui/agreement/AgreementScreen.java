@@ -120,11 +120,16 @@ public class AgreementScreen extends AbstractContainerScreen<AgreementMenu> {
         // ORDERS
         Rectangle orderedRect = layout.getElement(AgreementLayout.Element.ORDERED);
         if (orderedRect != null) {
-            addRenderableOnly(new TextBlockRenderable(() -> Component.literal(
+            String text = getAgreement().isInfinite() ? "∞" :
                     TextUtil.shortenNumber(getAgreement().getDelivered()) + " / " +
-                            TextUtil.shortenNumber(getAgreement().getOrdered())), orderedRect.left(), orderedRect.top(), orderedRect.width(), orderedRect.height())
+                    TextUtil.shortenNumber(getAgreement().getOrdered());
+            addRenderableOnly(new TextBlockRenderable(() -> Component.literal(text),
+                    orderedRect.left(), orderedRect.top(), orderedRect.width(), orderedRect.height())
                     .setDefaultColor(FONT_COLOR)
                     .setTooltip(() -> {
+                        if (getAgreement().isInfinite())
+                            return Component.translatable("gui.wares.agreement.infinite.tooltip");
+
                         int delivered = getAgreement().getDelivered();
                         int ordered = getAgreement().getOrdered();
                         if (delivered >= 1000 || ordered >= 1000)
