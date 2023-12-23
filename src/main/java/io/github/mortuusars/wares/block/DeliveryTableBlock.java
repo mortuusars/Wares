@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -102,7 +103,10 @@ public class DeliveryTableBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity))
             return InteractionResult.FAIL;
 
-        player.awardStat(Wares.Stats.INTERACT_WITH_DELIVERY_TABLE);
+        if (player instanceof ServerPlayer serverPlayer) {
+            deliveryTableBlockEntity.trySetOwner(serverPlayer);
+            player.awardStat(Wares.Stats.INTERACT_WITH_DELIVERY_TABLE);
+        }
 
         // PLACE
         ItemStack stackInHand = player.getItemInHand(hand);
@@ -144,8 +148,10 @@ public class DeliveryTableBlock extends BaseEntityBlock {
             }
         }
 
-        if (player instanceof ServerPlayer serverPlayer)
+        if (player instanceof ServerPlayer serverPlayer) {
+            deliveryTableBlockEntity.trySetOwner(serverPlayer);
             NetworkHooks.openScreen(serverPlayer, deliveryTableBlockEntity, pos);
+        }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -175,6 +181,17 @@ public class DeliveryTableBlock extends BaseEntityBlock {
     @Override
     public boolean hasAnalogOutputSignal(BlockState pState) {
         return true;
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (!(level.getBlockEntity(pos) instanceof DeliveryTableBlockEntity deliveryTableBlockEntity))
+            return;
+
+        if (stack.hasCustomHoverName())
+            deliveryTableBlockEntity.setCustomName(stack.getHoverName());
+
+        deliveryTableBlockEntity.onPlacedBy(placer, stack);
     }
 
     @Override

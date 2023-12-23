@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.block.entity;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.advancement.DeliveryTableTrigger;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
@@ -8,10 +9,12 @@ import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
 import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -24,7 +27,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.player.Inventory;
@@ -48,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @SuppressWarnings({"SameParameterValue", "BooleanMethodIsAlwaysInverted", "unused"})
 public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
@@ -102,6 +108,7 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     protected DeliveryAgreement agreement = DeliveryAgreement.EMPTY;
     protected boolean voidAgreementOnBreak;
     protected AgreementTableLock agreementLock = new AgreementTableLock(this);
+    protected UUID ownerUUID = Util.NIL_UUID;
 
     public DeliveryTableBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.DELIVERY_TABLE.get(), pos, blockState);
@@ -170,13 +177,17 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     private void onBatchDelivered(final int deliveredBatches) {
+        if (level == null)
+            return;
+
         deliveringManually = false;
-        assert level != null;
         level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_FALL.get(), SoundSource.BLOCKS,
                 0.85f, level.getRandom().nextFloat() * 0.1f + 0.95f);
         if (!getAgreement().isInfinite())
             level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,
                     0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
+
+        triggerAdvancement(Wares.AdvancementTriggers.BATCH_DELIVERED);
 
         Optional<Villager> worker = getPackagerWorker(16);
         if (worker.isPresent()) {
@@ -575,6 +586,10 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         voidAgreementOnBreak = tag.getBoolean("VoidAgreementOnBreak");
         agreement = DeliveryAgreement.fromItemStack(getAgreementItem()).orElse(DeliveryAgreement.EMPTY);
         agreementLock.load(tag.getCompound("AgreementLock"));
+
+        if (tag.contains("Owner", Tag.TAG_INT_ARRAY))
+            ownerUUID = tag.getUUID("Owner");
+
         updateBlockStateIfNeeded();
     }
 
@@ -587,20 +602,27 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         if (voidAgreementOnBreak)
             tag.putBoolean("VoidAgreementOnBreak", true);
         tag.put("AgreementLock", agreementLock.save(new CompoundTag()));
+
+        if (!Util.NIL_UUID.equals(ownerUUID))
+            tag.putUUID("Owner", ownerUUID);
     }
 
     // <Updating>
 
     protected void convertAgreementStackIfNeeded() {
+        if (level == null || level.isClientSide)
+            return;
+
         if (!getAgreementItem().is(Wares.Items.DELIVERY_AGREEMENT.get()))
             return;
 
-        if (getAgreement().isCompleted())
+        if (getAgreement().isCompleted()) {
             setAgreementItem(DeliveryAgreementItem.convertToCompleted(getAgreementItem()));
-        else {
-            assert level != null;
-            if (getAgreement().isExpired(level.getGameTime()))
-                setAgreementItem(DeliveryAgreementItem.convertToExpired(getAgreementItem()));
+            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_COMPLETED);
+        }
+        else if (getAgreement().isExpired(level.getGameTime())) {
+            setAgreementItem(DeliveryAgreementItem.convertToExpired(getAgreementItem()));
+            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_EXPIRED);
         }
     }
 
@@ -654,5 +676,45 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     public void reviveCaps() {
         super.reviveCaps();
         inventoryHandlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.DOWN, Direction.UP, Direction.NORTH);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean trySetOwner(ServerPlayer serverPlayer) {
+        if (Util.NIL_UUID.equals(ownerUUID) || Config.LAST_PLAYER_IS_OWNER.get()) {
+            ownerUUID = serverPlayer.getUUID();
+            setChanged();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void triggerAdvancement(DeliveryTableTrigger trigger) {
+        if (level == null)
+            return;
+
+        @Nullable ServerPlayer player = null;
+
+        if (!Util.NIL_UUID.equals(ownerUUID)) {
+            @Nullable Player owner = level.getPlayerByUUID(ownerUUID);
+            if (owner instanceof ServerPlayer serverPlayer) {
+                player = serverPlayer;
+            }
+        }
+        else if (Config.TRIGGER_FOR_NEAREST_PLAYER.get()) {
+            @Nullable Player nearestPlayer = level.getNearestPlayer(TargetingConditions.forNonCombat(),
+                    getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ());
+            if (nearestPlayer instanceof ServerPlayer serverPlayer)
+                player = serverPlayer;
+        }
+
+        if (player != null)
+            trigger.trigger(player, this);
+    }
+
+    public void onPlacedBy(LivingEntity placer, ItemStack stack) {
+        if (placer instanceof ServerPlayer serverPlayer) {
+            trySetOwner(serverPlayer);
+        }
     }
 }
