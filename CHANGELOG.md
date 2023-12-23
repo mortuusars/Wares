@@ -1,3 +1,8 @@
+2023-12-23 - 1.2.4
+- Added `batch_delivered`, `agreement_completed` and `agreement_expired` advancement triggers. Details on the [Wiki](https://github.com/mortuusars/Wares/wiki)
+  - They are meant for modpack developers and are not used in the mod itself.
+- Potentially fixed occasional config reset to default settings. 
+
 2023-12-11 - 1.2.3
 - Added an option to config that allow taking outputs from the side of a delivery table. Off by default.
 - Added config option to disable moving Completed Agreement to the output slots.

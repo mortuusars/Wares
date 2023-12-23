@@ -3,6 +3,7 @@ package io.github.mortuusars.wares;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.logging.LogUtils;
+import io.github.mortuusars.wares.advancement.DeliveryTableTrigger;
 import io.github.mortuusars.wares.block.CardboardBoxBlock;
 import io.github.mortuusars.wares.block.DeliveryTableBlock;
 import io.github.mortuusars.wares.block.PackageBlock;
@@ -16,6 +17,7 @@ import io.github.mortuusars.wares.item.SealedDeliveryAgreementItem;
 import io.github.mortuusars.wares.menu.CardboardBoxMenu;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import io.github.mortuusars.wares.world.VillageStructures;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -227,6 +229,18 @@ public class Wares
                 Registry.register(Registry.CUSTOM_STAT, location, location);
                 net.minecraft.stats.Stats.CUSTOM.get(location, formatter);
             });
+        }
+    }
+
+    public static class AdvancementTriggers {
+        public static DeliveryTableTrigger BATCH_DELIVERED = new DeliveryTableTrigger(Wares.resource("batch_delivered"));
+        public static DeliveryTableTrigger AGREEMENT_COMPLETED = new DeliveryTableTrigger(Wares.resource("agreement_completed"));
+        public static DeliveryTableTrigger AGREEMENT_EXPIRED = new DeliveryTableTrigger(Wares.resource("agreement_expired"));
+
+        public static void register() {
+            CriteriaTriggers.register(BATCH_DELIVERED);
+            CriteriaTriggers.register(AGREEMENT_COMPLETED);
+            CriteriaTriggers.register(AGREEMENT_EXPIRED);
         }
     }
 

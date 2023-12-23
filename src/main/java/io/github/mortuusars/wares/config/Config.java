@@ -13,6 +13,8 @@ public class Config {
     private static final ForgeConfigSpec COMMON;
     private static final ForgeConfigSpec CLIENT;
 
+    // TODO: Restructure config for next MC version. (Delivery Table category, Remove PackagerXXX in the names, etc)
+
     // COMMON
     public static final ForgeConfigSpec.BooleanValue KEEP_SEALED_STACK_NBT_WHEN_OPENED;
     public static final ForgeConfigSpec.BooleanValue PACKAGER_REQUIRED;
@@ -25,6 +27,10 @@ public class Config {
     public static final ForgeConfigSpec.BooleanValue DELIVERIES_REQUIRE_BOXES;
     public static final ForgeConfigSpec.BooleanValue TABLE_OUTPUTS_FROM_SIDES;
     public static final ForgeConfigSpec.BooleanValue MOVE_COMPLETED_AGREEMENT_TO_OUTPUT;
+
+    // MISC
+    public static final ForgeConfigSpec.BooleanValue LAST_PLAYER_IS_OWNER;
+    public static final ForgeConfigSpec.BooleanValue TRIGGER_FOR_NEAREST_PLAYER;
 
     public static final ForgeConfigSpec.BooleanValue GENERATE_WAREHOUSES;
     public static final ForgeConfigSpec.IntValue WAREHOUSE_WEIGHT;
@@ -123,6 +129,21 @@ public class Config {
                 .comment("Wandering Trader will sell Sealed Delivery Agreements.")
                 .define("WanderingTraderSellsAgreements", true);
 
+        builder.push("Misc");
+
+        LAST_PLAYER_IS_OWNER = builder
+                .comment("Owner of the table is set to the last player who interacted with it (instead of who placed it or first interacted)",
+                        "Can be useful for modpack developers. Not used by the mod itself.",
+                        "Default: false")
+                .define("ChangeOwnerToLastPlayer", false);
+
+        TRIGGER_FOR_NEAREST_PLAYER = builder
+                .comment("Delivery Table advancements would be triggered on the closest player if owner is offline or table doesn't have one.")
+                .define("TriggerTableAdvancementOnNearestPlayer", true);
+
+        builder.pop();
+
+
         COMMON = builder.build();
 
 
@@ -143,13 +164,13 @@ public class Config {
         CLIENT = builder.build();
     }
 
-    public static void onConfigReload(final ModConfigEvent.Reloading ignoredEvent) {
-        if (COMMON.isLoaded())
+    public static void onConfigReload(final ModConfigEvent.Reloading event) {
+        if (event.getConfig().getType() == ModConfig.Type.COMMON)
             validateConfig();
     }
 
-    public static void onConfigLoad(final ModConfigEvent.Loading ignoredEvent) {
-        if (COMMON.isLoaded())
+    public static void onConfigLoad(final ModConfigEvent.Loading event) {
+        if (event.getConfig().getType() == ModConfig.Type.COMMON)
             validateConfig();
     }
 

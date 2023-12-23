@@ -18,7 +18,10 @@ public class CommonEvents {
     public static class ModBus {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
-            event.enqueueWork(Wares.Stats::register);
+            event.enqueueWork(() -> {
+                Wares.AdvancementTriggers.register();
+                Wares.Stats.register();
+            });
         }
     }
 
