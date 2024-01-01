@@ -1,25 +1,27 @@
-2024-01-01 - 1.2.5
-- NBT-tag will now match properly when TagMatching is "weak".
+# Changelog
 
-2023-12-23 - 1.2.4
+## 1.2.5 - 2024-01-01
+- NBT-tag will now match properly when RequestedItem's TagMatching is "weak".
+
+## 1.2.4 - 2023-12-23
 - Added `batch_delivered`, `agreement_completed` and `agreement_expired` advancement conditions. Details on the [Wiki](https://github.com/mortuusars/Wares/wiki)
   - They are meant for modpack developers and are not used in the mod itself.
 - Added config option to show infinity symbol for infinite agreements. Disabled by default.
 - Potentially fixed occasional config reset to default settings. 
 
-2023-12-11 - 1.2.3
+## 1.2.3 - 2023-12-11
 - Added an option to config that allow taking outputs from the side of a delivery table. Off by default.
 - Added config option to disable moving Completed Agreement to the output slots.
 - Added several settings to the Delivery Table NBT data for modpack developers. More details on the [Wiki](https://github.com/mortuusars/Wares/wiki/Delivery-Table)
 
-2023-11-10 - 1.2.2
+## 1.2.2 - 2023-11-10
 - Added ability to keep item nbt-tags when opening Sealed Agreement. Can be configured.
 
-2023-10-01 - 1.2.1
+## 1.2.1 - 2023-10-01
 - Fixed Cardboard Box screen missing player's inventory slots in some cases.  
 - Possible removal of some errors in logs.
 
-2023-08-13 - 1.2.0
+## 1.2.0 - 2023-08-13
 - Added 'TagMatching' field to the Requested Item. It allows specifying how NBT tags of items will be compared.
   - 'TagMatching:"ignore"' - tag does not matter
   - 'TagMatching:"weak"' - item is required to have defined tags (can have others)
@@ -28,7 +30,7 @@
 - Fixed deliveries not delivering when 'Require Boxes' was disabled in the config.
 - Fixed Zombie Packager not having a texture.
 
-2023-07-23 - 1.1.0
+## 1.1.0 - 2023-07-23
 - Tags can now be used as a requested item.
 - Added sounds to Delivery Table opening and closing.
 - When Delivery Agreement is completed - it will be placed into output slots (and therefore can be automatically extracted).
@@ -36,3 +38,13 @@
 - Wandering Trader will now sell some Delivery Agreements.
 
 - Fixed custom seal textures not working
+
+## 1.0.2 - 2023-07-17
+- Fixed crash when ctrl+picking a package block.
+- Fixed Items not dropping from a package that was picked from a block (with BlockEntityTag).
+
+## 1.0.1 - 2023-07-12
+- Fixed items getting deleted instead of dropping when closing Cardboard Box inventory without packing.
+
+## 1.0.0 - 2023-04-18
+- Release
