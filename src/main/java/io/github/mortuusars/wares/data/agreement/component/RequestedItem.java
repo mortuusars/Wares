@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -109,24 +110,7 @@ public class RequestedItem {
                 return true;
             }
             case WEAK -> {
-                CompoundTag tag = getTag();
-                CompoundTag stackTag = stack.getTag();
-                if (tag == null || tag.isEmpty())
-                    return true;
-
-                if (stackTag == null || stackTag.isEmpty())
-                    return false;
-
-                for (String key : tag.getAllKeys()) {
-                    if (!stackTag.contains(key))
-                        return false;
-
-                    Tag innerTag = tag.get(key);
-                    if (innerTag != null && !innerTag.equals(stackTag.get(key)))
-                        return false;
-                }
-
-                return true;
+                return NbtUtils.compareNbt(getTag(), stack.getTag(), true);
             }
             case STRONG -> {
                 CompoundTag tag = getTag();

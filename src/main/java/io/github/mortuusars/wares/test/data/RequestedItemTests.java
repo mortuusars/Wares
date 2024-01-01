@@ -10,6 +10,8 @@ import io.github.mortuusars.wares.data.agreement.component.CompoundTagCompareBeh
 import io.github.mortuusars.wares.test.framework.ITestClass;
 import io.github.mortuusars.wares.test.framework.Test;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -158,6 +160,33 @@ public class RequestedItemTests implements ITestClass {
 
                     assertThat(!requested.matches(stack1), String.format("'%s' matches when shouldn't '%s'.", requested, stack1));
                     assertThat(!requested.matches(new ItemStack(Items.IRON_PICKAXE)), String.format("'%s' matches when shouldn't '%s'.", requested, stack1));
+
+                    requestedTag = new CompoundTag();
+                    requestedTag.putInt("Damage", 5);
+
+                    CompoundTag additional = new CompoundTag();
+                    additional.putString("String", "SomeString");
+                    ListTag tags = new ListTag();
+                    tags.add(StringTag.valueOf("2"));
+                    additional.put("List", tags);
+                    requestedTag.put("AdditionalTag", additional);
+
+                    requested = new RequestedItem(Either.right(Items.IRON_PICKAXE), 1, requestedTag, CompoundTagCompareBehavior.WEAK);
+
+                    ItemStack stack2 = new ItemStack(Items.IRON_PICKAXE);
+                    CompoundTag stackTag2 = new CompoundTag();
+                    stackTag2.putInt("Damage", 5);
+
+                    CompoundTag stackTag2Add = new CompoundTag();
+                    stackTag2Add.putString("String", "SomeString");
+                    ListTag tags2 = new ListTag();
+                    tags2.add(StringTag.valueOf("1"));
+                    tags2.add(StringTag.valueOf("2"));
+                    stackTag2Add.put("List", tags2);
+                    stackTag2.put("AdditionalTag", stackTag2Add);
+
+                    stack2.setTag(stackTag2);
+                    assertThat(requested.matches(stack2), String.format("'%s' does not match '%s'.", requested, stack2));
                 }),
 
                 new Test("RequestedItemWithStrongTagMatches", player -> {

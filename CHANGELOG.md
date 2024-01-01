@@ -1,3 +1,6 @@
+2024-01-01 - 1.2.5
+- NBT-tag will now match properly when TagMatching is "weak".
+
 2023-12-23 - 1.2.4
 - Added `batch_delivered`, `agreement_completed` and `agreement_expired` advancement conditions. Details on the [Wiki](https://github.com/mortuusars/Wares/wiki)
   - They are meant for modpack developers and are not used in the mod itself.
