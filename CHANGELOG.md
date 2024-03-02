@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.6 - 2024-03-03
+- Fixed errors in logs when right-clicking an agreement.
+
 ## 1.2.5 - 2024-01-01
 - NBT-tag will now match properly when RequestedItem's TagMatching is "weak".
 

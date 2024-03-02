@@ -3,13 +3,10 @@ package io.github.mortuusars.wares.item;
 import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.client.gui.agreement.AgreementGUI;
-import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
+import io.github.mortuusars.wares.util.ClientHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,15 +56,10 @@ public class DeliveryAgreementItem extends Item {
                         slot.set(convertToExpired(agreementStack));
                 }
 
-                if (player instanceof LocalPlayer) {
-                    Supplier<DeliveryAgreement> agreementSupplier;
-
-                    if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen &&
-                            ItemStack.isSameItemSameTags(deliveryTableScreen.getMenu().blockEntity.getAgreementItem(), agreementStack)) {
-                        agreementSupplier = () -> deliveryTableScreen.getMenu().blockEntity.getAgreement();
-                    }
-                    else
-                        agreementSupplier = () -> agreement;
+                if (player.getLevel().isClientSide) {
+                    Supplier<DeliveryAgreement> agreementSupplier = ClientHelper.isViewingInDeliveryTableScreen(agreementStack) ?
+                        ClientHelper.getDeliveryTableAgreementSupplier() :
+                        () -> agreement;
 
                     AgreementGUI.showAsOverlay(player, agreementSupplier);
                 }

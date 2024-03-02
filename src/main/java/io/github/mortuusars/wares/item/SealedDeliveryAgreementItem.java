@@ -5,8 +5,8 @@ import io.github.mortuusars.wares.client.gui.agreement.SealedAgreementScreen;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
+import io.github.mortuusars.wares.util.ClientHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -161,9 +161,9 @@ public class SealedDeliveryAgreementItem extends Item {
             }
         }
 
-        // Release RMB after using. Otherwise, right click will be still held and will activate use again.
+        // Release use key after opening. Otherwise, right click will be still held and will activate use again.
         if (level.isClientSide)
-            Minecraft.getInstance().options.keyUse.setDown(false);
+            ClientHelper.releaseUseKey();
 
         return stack;
     }
