@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.7 - 2024-03-05
+- Fixed crash when R-Clicking Agreement in Delivery Table. 
+
 ## 1.2.6 - 2024-03-03
 - Fixed errors in logs when right-clicking an agreement.
 
