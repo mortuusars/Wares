@@ -1,5 +1,6 @@
 package io.github.mortuusars.wares.util;
 
+import io.github.mortuusars.wares.block.entity.DeliveryTableBlockEntity;
 import io.github.mortuusars.wares.client.gui.screen.DeliveryTableScreen;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import net.minecraft.client.Minecraft;
@@ -16,10 +17,12 @@ public class ClientHelper {
         return Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen && ItemStack.isSameItemSameTags(deliveryTableScreen.getMenu().blockEntity.getAgreementItem(), agreementStack);
     }
 
-    public static Supplier<DeliveryAgreement> getDeliveryTableAgreementSupplier() {
-        return () -> {
-            assert Minecraft.getInstance().screen != null;
-            return ((DeliveryTableScreen) Minecraft.getInstance().screen).getMenu().blockEntity.getAgreement();
-        };
+    public static Supplier<DeliveryAgreement> getDeliveryTableAgreementSupplier(DeliveryAgreement fallbackAgreement) {
+        if (Minecraft.getInstance().screen instanceof DeliveryTableScreen deliveryTableScreen) {
+            DeliveryTableBlockEntity blockEntity = deliveryTableScreen.getMenu().blockEntity;
+            return blockEntity::getAgreement;
+        }
+
+        return () -> fallbackAgreement;
     }
 }

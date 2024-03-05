@@ -58,7 +58,7 @@ public class DeliveryAgreementItem extends Item {
 
                 if (player.getLevel().isClientSide) {
                     Supplier<DeliveryAgreement> agreementSupplier = ClientHelper.isViewingInDeliveryTableScreen(agreementStack) ?
-                        ClientHelper.getDeliveryTableAgreementSupplier() :
+                        ClientHelper.getDeliveryTableAgreementSupplier(agreement) :
                         () -> agreement;
 
                     AgreementGUI.showAsOverlay(player, agreementSupplier);
