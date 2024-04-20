@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.8 - 2024-04-20
+- Breaking Package while sneaking will now prevent it from breaking and dropping items. 
+- Packages are now automation friendly:
+  - Placing one down is no longer requires sneaking.
+  - Dispensers can also place a Package now.
+  - Pushing a Package with piston will break it and drop contained items.
+  - All configurable.
+
 ## 1.2.7 - 2024-03-05
 - Fixed crash when R-Clicking Agreement in Delivery Table. 
 

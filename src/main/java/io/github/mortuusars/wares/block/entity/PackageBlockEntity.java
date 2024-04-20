@@ -14,9 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class PackageBlockEntity extends BlockEntity {
     private Package pack;
+    private boolean unpacksWhenBroken = true;
 
     public PackageBlockEntity(BlockPos pos, BlockState blockState) {
         super(Wares.BlockEntities.PACKAGE.get(), pos, blockState);
+    }
+
+    public Package getPackage() {
+        return pack;
     }
 
     public void setPackage(Package pack) {
@@ -24,14 +29,23 @@ public class PackageBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    public Package getPackage() {
-        return pack;
+    public boolean unpacksWhenBroken() {
+        return unpacksWhenBroken;
+    }
+
+    public void setUnpacksWhenBroken(boolean unpackWhenBroken) {
+        unpacksWhenBroken = unpackWhenBroken;
+        setChanged();
     }
 
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         pack = Package.fromTag(tag).orElse(Package.DEFAULT);
+        if (tag.contains("unpacksWhenBroken"))
+            unpacksWhenBroken = tag.getBoolean("unpacksWhenBroken");
+        else
+            unpacksWhenBroken = true; // Unpacks by default (and for backwards compatibility)
     }
 
     @Override
@@ -39,6 +53,8 @@ public class PackageBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         if (pack != null)
             pack.toTag(tag);
+
+        tag.putBoolean("unpacksWhenBroken", unpacksWhenBroken);
     }
 
     @Override

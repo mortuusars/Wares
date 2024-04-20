@@ -2,6 +2,7 @@ package io.github.mortuusars.wares.item;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
+import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.Package;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -42,10 +43,10 @@ public class PackageItem extends BlockItem {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
 
-        if (level instanceof ClientLevel) {
+        if (level != null && level.isClientSide) {
             Package.fromItemStack(stack).ifPresent(pkg -> {
                 String sender = pkg.sender();
-                if (sender.length() > 0)
+                if (!sender.isEmpty())
                     tooltip.add(Component.translatable("item.wares.package.sender.tooltip").withStyle(ChatFormatting.GRAY)
                             .append(Component.literal(sender).withStyle(ChatFormatting.WHITE)));
 
@@ -73,7 +74,10 @@ public class PackageItem extends BlockItem {
     }
 
     @Override
-    public @NotNull InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+        if (!Config.PACKAGE_PLACING_REQUIRES_SNEAK.get())
+            return super.useOn(context);
+
         if (!context.isSecondaryUseActive()) {
             Objects.requireNonNull(context.getPlayer()).startUsingItem(context.getHand());
             return InteractionResult.sidedSuccess(context.getLevel().isClientSide);

@@ -2,11 +2,14 @@ package io.github.mortuusars.wares.block;
 
 import io.github.mortuusars.wares.Wares;
 import io.github.mortuusars.wares.block.entity.PackageBlockEntity;
+import io.github.mortuusars.wares.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -18,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -72,15 +76,22 @@ public class PackageBlock extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof PackageBlockEntity packageBlockEntity) {
-                List<ItemStack> items = packageBlockEntity.getPackage().getItems(serverLevel, Vec3.atCenterOf(pos));
-                for (ItemStack item : items) {
-                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item.copy());
-                }
+            if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof PackageBlockEntity packageBE) {
+                if (packageBE.unpacksWhenBroken()) {
+                    List<ItemStack> items = packageBE.getPackage().getItems(serverLevel, Vec3.atCenterOf(pos));
+                    for (ItemStack item : items) {
+                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item.copy());
+                    }
 
-                level.playSound(null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f,
-                        Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
-                        1f, level.getRandom().nextFloat() * 0.5f + 0.8f);
+                    level.playSound(null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f,
+                            Wares.SoundEvents.PAPER_TEAR.get(), SoundSource.PLAYERS,
+                            1f, level.getRandom().nextFloat() * 0.5f + 0.8f);
+                }
+                else {
+                    ItemStack stack = new ItemStack(Wares.Items.PACKAGE.get());
+                    stack.setTag(packageBE.getPackage().toTag(new CompoundTag()));
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                }
             }
 
             super.onRemove(state, level, pos, newState, isMoving);
@@ -104,5 +115,22 @@ public class PackageBlock extends BaseEntityBlock {
     @Override
     public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull PushReaction getPistonPushReaction(@NotNull BlockState state) {
+        return Config.PACKAGE_PISTON_DESTROY.get() ? PushReaction.DESTROY : super.getPistonPushReaction(state);
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, @NotNull BlockPos pos, @NotNull BlockState pState, @NotNull Player player) {
+        if (!level.isClientSide && player.isSecondaryUseActive()
+                && Config.PACKAGE_SNEAK_PREVENTS_UNPACKING.get()
+                && level.getBlockEntity(pos) instanceof PackageBlockEntity packageBlockEntity) {
+            packageBlockEntity.setUnpacksWhenBroken(false);
+        }
+
+        super.playerWillDestroy(level, pos, pState, player);
     }
 }

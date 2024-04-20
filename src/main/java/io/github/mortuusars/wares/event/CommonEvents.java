@@ -1,11 +1,13 @@
 package io.github.mortuusars.wares.event;
 
 import io.github.mortuusars.wares.Wares;
+import io.github.mortuusars.wares.block.PackageDispenseBehavior;
 import io.github.mortuusars.wares.command.WaresCommand;
 import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.agreement.SealedDeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.component.SteppedInt;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.common.BasicItemListing;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
@@ -21,6 +23,7 @@ public class CommonEvents {
             event.enqueueWork(() -> {
                 Wares.AdvancementTriggers.register();
                 Wares.Stats.register();
+                DispenserBlock.registerBehavior(Wares.Items.PACKAGE.get(), new PackageDispenseBehavior());
             });
         }
     }

@@ -28,6 +28,12 @@ public class Config {
     public static final ForgeConfigSpec.BooleanValue TABLE_OUTPUTS_FROM_SIDES;
     public static final ForgeConfigSpec.BooleanValue MOVE_COMPLETED_AGREEMENT_TO_OUTPUT;
 
+    // PACKAGE
+    public static final ForgeConfigSpec.BooleanValue PACKAGE_SNEAK_PREVENTS_UNPACKING;
+    public static final ForgeConfigSpec.BooleanValue PACKAGE_PLACING_REQUIRES_SNEAK;
+    public static final ForgeConfigSpec.BooleanValue PACKAGE_DISPENSER_PLACE;
+    public static final ForgeConfigSpec.BooleanValue PACKAGE_PISTON_DESTROY;
+
     // MISC
     public static final ForgeConfigSpec.BooleanValue LAST_PLAYER_IS_OWNER;
     public static final ForgeConfigSpec.BooleanValue TRIGGER_FOR_NEAREST_PLAYER;
@@ -108,6 +114,32 @@ public class Config {
                 .define("MoveCompletedAgreementToOutput", true);
 
         builder.pop();
+
+
+        builder.push("Package");
+
+        PACKAGE_SNEAK_PREVENTS_UNPACKING = builder
+                .comment("Breaking placed Package while sneaking will not unpack it, but will drop intact package as an item instead.",
+                        "Default: true")
+                .define("SneakPreventsUnpacking", true);
+
+        PACKAGE_PLACING_REQUIRES_SNEAK = builder
+                .comment("Package is placed as a block only when sneaking. Set to 'true' to restore old behavior.",
+                        "Default: false")
+                .define("PlacingRequiresSneak", false);
+
+        PACKAGE_DISPENSER_PLACE = builder
+                .comment("Dispensers can place Packages as blocks.",
+                        "Default: true")
+                .define("DispenserPlace", true);
+
+        PACKAGE_PISTON_DESTROY = builder
+                .comment("Packages pushed by pistons will break and drop their contents.",
+                        "Default: true")
+                .define("BrokenByPistons", true);
+
+        builder.pop();
+
 
         builder.push("Structures");
 

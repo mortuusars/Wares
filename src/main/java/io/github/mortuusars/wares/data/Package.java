@@ -37,10 +37,12 @@ public record Package(Either<ResourceLocation, List<ItemStack>> items, String se
         this(items, "");
     }
 
-    public void toTag(CompoundTag tag) {
+    public CompoundTag toTag(CompoundTag tag) {
         CODEC.encodeStart(NbtOps.INSTANCE, this)
                 .resultOrPartial(Wares.LOGGER::error)
                 .ifPresent(resultTag -> tag.merge((CompoundTag) resultTag));
+
+        return tag;
     }
 
     public void toItemStack(ItemStack stack) {
