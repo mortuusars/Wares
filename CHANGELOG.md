@@ -2,6 +2,7 @@
 
 ## 1.2.9 - 2024-09-15
 - Fixed crash when Packager has level larger than 5.
+- Added Korean localization.
 
 ## 1.2.8 - 2024-04-20
 - Breaking Package while sneaking will now prevent it from breaking and dropping items. 
