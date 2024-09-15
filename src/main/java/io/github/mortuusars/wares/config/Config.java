@@ -1,6 +1,7 @@
 package io.github.mortuusars.wares.config;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -223,8 +224,10 @@ public class Config {
         }
     }
 
-    public static int getBatchSizeForLevel(final int level) {
-        return BATCH_SIZE_PER_LEVEL.get().get(level - 1);
+    public static int getBatchSizeForLevel(int level) {
+        List<? extends Integer> sizes = BATCH_SIZE_PER_LEVEL.get();
+        level = Mth.clamp(level, 1, sizes.size()); // Fixes crash when villager level is bigger than expected.
+        return sizes.get(level - 1);
     }
 
     public static int getMaxXpPerLevel(final int level) {
