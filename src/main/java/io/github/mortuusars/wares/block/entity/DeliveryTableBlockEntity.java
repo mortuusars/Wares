@@ -7,6 +7,7 @@ import io.github.mortuusars.wares.config.Config;
 import io.github.mortuusars.wares.data.agreement.DeliveryAgreement;
 import io.github.mortuusars.wares.data.agreement.AgreementType;
 import io.github.mortuusars.wares.data.agreement.component.RequestedItem;
+import io.github.mortuusars.wares.integration.kubejs.KubeJS;
 import io.github.mortuusars.wares.item.DeliveryAgreementItem;
 import io.github.mortuusars.wares.menu.DeliveryTableMenu;
 import net.minecraft.Util;
@@ -24,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -176,18 +178,17 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
             setChanged();
     }
 
-    private void onBatchDelivered(final int deliveredBatches) {
+    private void onBatchDelivered(int deliveredBatches) {
         if (level == null)
             return;
 
         deliveringManually = false;
         level.playSound(null, getBlockPos(), Wares.SoundEvents.CARDBOARD_FALL.get(), SoundSource.BLOCKS,
                 0.85f, level.getRandom().nextFloat() * 0.1f + 0.95f);
-        if (!getAgreement().isInfinite())
+        if (!getAgreement().isInfinite()) {
             level.playSound(null, getBlockPos(), Wares.SoundEvents.WRITING.get(), SoundSource.BLOCKS,
                     0.5f, level.getRandom().nextFloat() * 0.1f + 0.95f);
-
-        triggerAdvancement(Wares.AdvancementTriggers.BATCH_DELIVERED);
+        }
 
         Optional<Villager> worker = getPackagerWorker(16);
         if (worker.isPresent()) {
@@ -202,6 +203,11 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
                 packager.updateMerchantTimer = 30;
             }
         }
+
+        @Nullable ServerPlayer player = getAwardedPlayer();
+
+        triggerAdvancement(Wares.AdvancementTriggers.BATCH_DELIVERED, player);
+        KubeJS.batchDelivered(this, player);
     }
 
     protected boolean isPackagerWorkingAtTable() {
@@ -554,14 +560,8 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override
-    public boolean stillValid(@NotNull Player pPlayer) {
-        assert this.level != null;
-        if (this.level.getBlockEntity(this.worldPosition) != this)
-            return false;
-        else
-            return pPlayer.distanceToSqr(this.worldPosition.getX() + 0.5D,
-                    this.worldPosition.getY() + 0.5D,
-                    this.worldPosition.getZ() + 0.5D) <= 64.0D;
+    public boolean stillValid(@NotNull Player player) {
+        return Container.stillValidBlockEntity(this, player);
     }
 
     @Override
@@ -618,11 +618,15 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
 
         if (getAgreement().isCompleted()) {
             setAgreementItem(DeliveryAgreementItem.convertToCompleted(getAgreementItem()));
-            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_COMPLETED);
+            @Nullable ServerPlayer player = getAwardedPlayer();
+            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_COMPLETED, player);
+            KubeJS.agreementCompleted(this, player);
         }
         else if (getAgreement().isExpired(level.getGameTime())) {
             setAgreementItem(DeliveryAgreementItem.convertToExpired(getAgreementItem()));
-            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_EXPIRED);
+            @Nullable ServerPlayer player = getAwardedPlayer();
+            triggerAdvancement(Wares.AdvancementTriggers.AGREEMENT_EXPIRED, player);
+            KubeJS.agreementExpired(this, player);
         }
     }
 
@@ -689,27 +693,31 @@ public class DeliveryTableBlockEntity extends BaseContainerBlockEntity implement
         return false;
     }
 
-    public void triggerAdvancement(DeliveryTableTrigger trigger) {
-        if (level == null)
-            return;
+    public void triggerAdvancement(DeliveryTableTrigger trigger, @Nullable ServerPlayer player) {
+        if (player != null) {
+            trigger.trigger(player, this);
+        }
+    }
 
-        @Nullable ServerPlayer player = null;
+    private @Nullable ServerPlayer getAwardedPlayer() {
+        if (level == null) return null;
 
         if (!Util.NIL_UUID.equals(ownerUUID)) {
             @Nullable Player owner = level.getPlayerByUUID(ownerUUID);
             if (owner instanceof ServerPlayer serverPlayer) {
-                player = serverPlayer;
+                return serverPlayer;
             }
         }
-        else if (Config.TRIGGER_FOR_NEAREST_PLAYER.get()) {
+
+        if (Config.TRIGGER_FOR_NEAREST_PLAYER.get()) {
             @Nullable Player nearestPlayer = level.getNearestPlayer(TargetingConditions.forNonCombat(),
                     getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ());
-            if (nearestPlayer instanceof ServerPlayer serverPlayer)
-                player = serverPlayer;
+            if (nearestPlayer instanceof ServerPlayer serverPlayer) {
+                return serverPlayer;
+            }
         }
 
-        if (player != null)
-            trigger.trigger(player, this);
+        return null;
     }
 
     public void onPlacedBy(LivingEntity placer, ItemStack stack) {

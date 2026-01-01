@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.10 - 2026-01-01
+- Added KubeJS events. 
+  - `WaresEvents.batchDelivered`
+  - `WaresEvents.agreementCompleted`
+  - `WaresEvents.agreementExpired`
+- Interaction with Delivery Table respects player's block reach distance now. 
+
 ## 1.2.9 - 2024-09-15
 - Fixed crash when Packager has level larger than 5.
 - Added Korean localization.
